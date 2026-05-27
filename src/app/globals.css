@@ -1742,6 +1742,10 @@ body::before {
   margin-top: 20px;
 }
 
+.home-domain-item:hover {
+  background: var(--fg-5);
+}
+
 .home-action-card {
   display: flex;
   align-items: center;

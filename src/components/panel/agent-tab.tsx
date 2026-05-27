@@ -3,16 +3,21 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { ArrowUp, Paperclip, Check, AlertTriangle, Bot, User } from 'lucide-react';
 import { useAgentStore } from '@/lib/stores/agent-store';
+import { useProjectStore } from '@/lib/stores/project-store';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { StreamingMarkdown } from '@/components/ui/streaming-text';
 import { uid, formatRelativeTime } from '@/lib/utils';
+import { sendChatMessage } from '@/lib/eval-pipeline';
 
 export function AgentTab() {
   const messages = useAgentStore((s) => s.messages);
   const isStreaming = useAgentStore((s) => s.isStreaming);
   const currentToolCalls = useAgentStore((s) => s.currentToolCalls);
   const addMessage = useAgentStore((s) => s.addMessage);
+  const updateMessage = useAgentStore((s) => s.updateMessage);
+  const setStreaming = useAgentStore((s) => s.setStreaming);
+  const project = useProjectStore((s) => s.project);
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -24,10 +29,11 @@ export function AgentTab() {
     }
   }, [messages, isStreaming]);
 
-  const handleSend = useCallback(() => {
+  const handleSend = useCallback(async () => {
     const text = input.trim();
-    if (!text) return;
+    if (!text || isStreaming) return;
 
+    // Add user message
     addMessage({
       id: uid(),
       role: 'user',
@@ -36,12 +42,37 @@ export function AgentTab() {
     });
 
     setInput('');
-
-    // Auto-resize textarea back
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
-  }, [input, addMessage]);
+
+    // Create placeholder assistant message
+    const assistantMsgId = uid();
+    addMessage({
+      id: assistantMsgId,
+      role: 'assistant',
+      content: '',
+      timestamp: Date.now(),
+    });
+
+    setStreaming(true);
+
+    await sendChatMessage(
+      text,
+      (fullText) => {
+        // Update the assistant message with streamed content
+        updateMessage(assistantMsgId, fullText);
+      },
+      (finalText) => {
+        updateMessage(assistantMsgId, finalText);
+        setStreaming(false);
+      },
+      (error) => {
+        updateMessage(assistantMsgId, `Error: ${error}. Please try again.`);
+        setStreaming(false);
+      }
+    );
+  }, [input, isStreaming, addMessage, updateMessage, setStreaming]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -62,16 +93,36 @@ export function AgentTab() {
       {/* Messages */}
       <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto' }}>
         <div className="chat-messages">
+          {messages.length === 0 && (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              gap: 12,
+              padding: 40,
+              textAlign: 'center',
+            }}>
+              <Bot size={24} style={{ color: 'var(--fg-20)' }} />
+              <p style={{ fontFamily: 'var(--font-figtree)', fontSize: 13, color: 'var(--fg-40)', maxWidth: 260 }}>
+                {project
+                  ? `Ask me anything about evaluating ${project.targetModel.modelName}, or click a domain node to start probing.`
+                  : 'Create a project to start chatting with the evaluation agent.'}
+              </p>
+            </div>
+          )}
+
           {messages.map((msg) => (
             <div key={msg.id} className="chat-message" data-role={msg.role}>
-              {msg.role === 'assistant' && (
+              {(msg.role === 'assistant' || msg.role === 'system') && (
                 <div className="chat-message-avatar">
                   <Bot size={14} />
                 </div>
               )}
               <div>
                 <div className="chat-message-bubble">
-                  {msg.role === 'assistant' ? (
+                  {msg.role === 'assistant' || msg.role === 'system' ? (
                     <StreamingMarkdown content={msg.content} />
                   ) : (
                     msg.content
@@ -119,7 +170,7 @@ export function AgentTab() {
           ))}
 
           {/* Typing indicator */}
-          {isStreaming && (
+          {isStreaming && messages[messages.length - 1]?.content === '' && (
             <div className="chat-message" data-role="assistant">
               <div className="chat-message-avatar">
                 <Bot size={14} />
@@ -155,7 +206,7 @@ export function AgentTab() {
           variant="primary"
           size="sm"
           icon
-          disabled={!input.trim()}
+          disabled={!input.trim() || isStreaming}
           onClick={handleSend}
           aria-label="Send message"
         >

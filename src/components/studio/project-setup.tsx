@@ -6,6 +6,7 @@ import { useProjectStore } from '@/lib/stores/project-store';
 import { useDomainStore } from '@/lib/stores/domain-store';
 import { useUIStore } from '@/lib/stores/ui-store';
 import { useAgentStore } from '@/lib/stores/agent-store';
+import { useToastStore } from '@/lib/stores/toast-store';
 import { MODEL_OPTIONS, FAILURE_MODES, ALL_DOMAIN_IDS } from '@/lib/types';
 import type { TargetModel } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
 import { uid } from '@/lib/utils';
+import { generateHypothesis } from '@/lib/eval-pipeline';
 
 const QUESTIONS = [
   {
@@ -46,14 +49,24 @@ export function ProjectSetup() {
   const [selectedChips, setSelectedChips] = useState<Set<string>>(new Set());
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [closing, setClosing] = useState(false);
+  const [hypothesis, setHypothesis] = useState<{
+    hypothesis: string;
+    taxonomy: string;
+    badHeuristic: string;
+    authorityInvariant: string;
+    suggestedDomains: string[];
+  } | null>(null);
+  const [generatingHypothesis, setGeneratingHypothesis] = useState(false);
 
   const setupWizardOpen = useUIStore((s) => s.setupWizardOpen);
   const setSetupWizardOpen = useUIStore((s) => s.setSetupWizardOpen);
   const setGlobalState = useUIStore((s) => s.setGlobalState);
+  const setActiveTab = useUIStore((s) => s.setActiveTab);
   const setProject = useProjectStore((s) => s.setProject);
   const initializeDomains = useDomainStore((s) => s.initializeDomains);
   const setDomainStatus = useDomainStore((s) => s.setDomainStatus);
   const addMessage = useAgentStore((s) => s.addMessage);
+  const addToast = useToastStore((s) => s.addToast);
 
   const handleComplete = useCallback(() => {
     if (!model) return;
@@ -76,19 +89,22 @@ export function ProjectSetup() {
     // Add welcome message
     addMessage({
       id: uid(),
-      role: 'system',
-      content: `Project "${name}" created. Targeting ${model.modelName}. Starting evaluation with ${ALL_DOMAIN_IDS[0].replace(/_/g, ' ')}.`,
+      role: 'assistant',
+      content: `**Project "${name}" created** 🎉\n\nTargeting **${model.modelName}** (${model.provider}).\n\n${hypothesis ? `**Hypothesis:** ${hypothesis.hypothesis}\n\n**Taxonomy:** ${hypothesis.taxonomy}\n**Bad Heuristic:** ${hypothesis.badHeuristic}\n**Authority Invariant:** ${hypothesis.authorityInvariant}\n\n` : ''}Click any domain node on the canvas to start probing, or ask me a question about evaluation strategy.`,
       timestamp: Date.now(),
     });
+
+    addToast(`Project "${name}" created`, 'success');
 
     // Close wizard with fade
     setClosing(true);
     setTimeout(() => {
       setSetupWizardOpen(false);
       setGlobalState('canvas_idle');
+      setActiveTab('home');
       setClosing(false);
     }, 400);
-  }, [name, model, workflow, setProject, initializeDomains, setDomainStatus, addMessage, setSetupWizardOpen, setGlobalState]);
+  }, [name, model, workflow, hypothesis, setProject, initializeDomains, setDomainStatus, addMessage, setSetupWizardOpen, setGlobalState, setActiveTab, addToast]);
 
   const canContinue = () => {
     switch (step) {
@@ -101,8 +117,37 @@ export function ProjectSetup() {
     }
   };
 
-  const nextStep = () => {
-    if (step < 4) setStep(step + 1);
+  const nextStep = async () => {
+    if (step < 4) {
+      const next = step + 1;
+      setStep(next);
+
+      // When moving to hypothesis step, generate it
+      if (next === 4) {
+        setGeneratingHypothesis(true);
+        try {
+          const result = await generateHypothesis(
+            name,
+            model?.modelName || 'Unknown model',
+            workflow,
+            Array.from(selectedChips),
+            answers
+          );
+          setHypothesis(result);
+        } catch (err) {
+          // Fallback hypothesis if API fails
+          setHypothesis({
+            hypothesis: `Based on the workflow involving ${name || 'this model'}, we hypothesize that ${model?.modelName || 'the target model'} may exhibit weaknesses in instruction following under ambiguous authority chains and safety boundary edge cases.`,
+            taxonomy: 'Authority Ambiguity',
+            badHeuristic: 'The model relies on surface-level instruction parsing without resolving conflicting authority signals.',
+            authorityInvariant: 'The model should maintain consistent behavior regardless of instruction framing or authority source.',
+            suggestedDomains: ['instruction_following', 'safety_alignment', 'reasoning_logic'],
+          });
+        } finally {
+          setGeneratingHypothesis(false);
+        }
+      }
+    }
   };
 
   const toggleChip = (chip: string) => {
@@ -296,21 +341,53 @@ export function ProjectSetup() {
           {step === 4 && (
             <div className="wizard-hypothesis">
               <h2 className="wizard-heading">Evaluation hypothesis</h2>
-              <div className="wizard-shimmer" />
-              <Badge variant="accent">AI-Generated Taxonomy</Badge>
-              <p className="wizard-hypothesis-text">
-                Based on your workflow involving {name || 'this model'}, we hypothesize
-                that {model?.modelName || 'the target model'} may exhibit weaknesses in
-                instruction following under ambiguous authority chains and safety boundary
-                edge cases.
-              </p>
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 16 }}>
-                <Badge variant="warning">Bad Heuristic</Badge>
-                <Badge variant="error">Authority Invariant</Badge>
-              </div>
-              <Button variant="primary" size="lg" full onClick={handleComplete}>
-                Accept & Start Probing <ArrowRight size={16} />
-              </Button>
+
+              {generatingHypothesis ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: '32px 0' }}>
+                  <Spinner size="lg" />
+                  <p style={{ fontFamily: 'var(--font-figtree)', fontSize: 13, color: 'var(--fg-40)' }}>
+                    Generating evaluation hypothesis with AI...
+                  </p>
+                  <div className="wizard-shimmer" />
+                </div>
+              ) : hypothesis ? (
+                <>
+                  <Badge variant="accent">{hypothesis.taxonomy}</Badge>
+                  <p className="wizard-hypothesis-text">
+                    {hypothesis.hypothesis}
+                  </p>
+                  <div style={{ marginTop: 12, marginBottom: 12, padding: '12px 16px', background: 'var(--fg-5)', borderRadius: 'var(--radius-md)' }}>
+                    <div style={{ fontFamily: 'var(--font-figtree)', fontWeight: 600, fontSize: 12, color: 'var(--fg-50)', marginBottom: 4 }}>
+                      Bad Heuristic
+                    </div>
+                    <div style={{ fontFamily: 'var(--font-figtree)', fontSize: 13, color: 'var(--fg-70)', marginBottom: 12 }}>
+                      {hypothesis.badHeuristic}
+                    </div>
+                    <div style={{ fontFamily: 'var(--font-figtree)', fontWeight: 600, fontSize: 12, color: 'var(--fg-50)', marginBottom: 4 }}>
+                      Authority Invariant
+                    </div>
+                    <div style={{ fontFamily: 'var(--font-figtree)', fontSize: 13, color: 'var(--fg-70)' }}>
+                      {hypothesis.authorityInvariant}
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 16 }}>
+                    <Badge variant="warning">Bad Heuristic</Badge>
+                    <Badge variant="error">Authority Invariant</Badge>
+                  </div>
+                  <Button variant="primary" size="lg" full onClick={handleComplete}>
+                    Accept & Start Probing <ArrowRight size={16} />
+                  </Button>
+                </>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                  <p style={{ fontFamily: 'var(--font-figtree)', fontSize: 13, color: 'var(--fg-40)' }}>
+                    Could not generate hypothesis. You can still proceed.
+                  </p>
+                  <Button variant="primary" size="lg" full onClick={handleComplete} style={{ marginTop: 16 }}>
+                    Start Probing <ArrowRight size={16} />
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>

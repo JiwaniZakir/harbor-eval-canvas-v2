@@ -1,41 +1,18 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
-import { X, Check } from 'lucide-react';
+import { useEffect, useCallback, useState } from 'react';
+import { X, Check, Play, ArrowRight, RotateCcw } from 'lucide-react';
 import { useUIStore } from '@/lib/stores/ui-store';
 import { useDomainStore } from '@/lib/stores/domain-store';
 import { DOMAIN_META, PIPELINE_STAGES } from '@/lib/types';
-import type { DomainStatus, PipelineStageState } from '@/lib/types';
+import type { DomainStatus, PipelineStageState, DomainId } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
+import { runDomainProbe, runDomainScaffold, runDomainValidation } from '@/lib/eval-pipeline';
 
 function getPipelineStageState(status: DomainStatus, stageIdx: number): PipelineStageState {
-  const stageMap: Record<number, DomainStatus[]> = {
-    0: ['probe_queued', 'probing', 'probe_complete', 'promoted', 'redesign', 'rejected',
-        'scaffold_queued', 'scaffolding', 'scaffold_complete', 'validation_gate',
-        'gate_passed', 'gate_failed', 'target_sweep', 'sweep_complete', 'iterating',
-        'published', 'ready_to_publish'],
-    1: ['probing', 'probe_complete', 'promoted', 'redesign', 'rejected',
-        'scaffold_queued', 'scaffolding', 'scaffold_complete', 'validation_gate',
-        'gate_passed', 'gate_failed', 'target_sweep', 'sweep_complete', 'iterating',
-        'published', 'ready_to_publish'],
-    2: ['scaffolding', 'scaffold_complete', 'validation_gate', 'gate_passed', 'gate_failed',
-        'target_sweep', 'sweep_complete', 'iterating', 'published', 'ready_to_publish'],
-    3: ['validation_gate', 'gate_passed', 'gate_failed', 'target_sweep', 'sweep_complete',
-        'iterating', 'published', 'ready_to_publish'],
-    4: ['published', 'ready_to_publish'],
-  };
-
-  const activeStages: Record<number, DomainStatus[]> = {
-    0: ['probe_queued'],
-    1: ['probing'],
-    2: ['scaffold_queued', 'scaffolding'],
-    3: ['validation_gate'],
-    4: ['ready_to_publish'],
-  };
-
   const completeStages: Record<number, DomainStatus[]> = {
     0: ['probing', 'probe_complete', 'promoted', 'scaffold_queued', 'scaffolding',
         'scaffold_complete', 'validation_gate', 'gate_passed', 'target_sweep',
@@ -49,9 +26,23 @@ function getPipelineStageState(status: DomainStatus, stageIdx: number): Pipeline
     4: ['published'],
   };
 
+  const activeStages: Record<number, DomainStatus[]> = {
+    0: ['probe_queued'],
+    1: ['probing'],
+    2: ['scaffold_queued', 'scaffolding'],
+    3: ['validation_gate'],
+    4: ['ready_to_publish'],
+  };
+
   if (completeStages[stageIdx]?.includes(status)) return 'complete';
   if (activeStages[stageIdx]?.includes(status)) return 'active';
-  if (stageMap[stageIdx]?.includes(status)) return 'available';
+
+  // Check if any earlier stage is complete (which means this stage is available)
+  for (let s = stageIdx - 1; s >= 0; s--) {
+    if (completeStages[s]?.includes(status)) return 'available';
+  }
+
+  if (stageIdx === 0) return 'available';
   return 'locked';
 }
 
@@ -63,10 +54,9 @@ function getStatusBadgeVariant(status: DomainStatus): 'default' | 'success' | 'w
   return 'default';
 }
 
-// Probe variant names
 const PROBE_VARIANTS = ['Plain', 'Prior Work', 'Schema Hint', 'Audit Trail', 'Speed Run'];
 const SCAFFOLD_AGENTS = ['Fixtures', 'Environment', 'Verifier', 'Instruction', 'Contamination'];
-const VALIDATION_GATES = [
+const VALIDATION_GATES_META = [
   { name: 'Oracle Sweep', type: 'oracle' as const },
   { name: 'Nop Sweep', type: 'nop' as const },
   { name: 'Spoiler Lint', type: 'spoiler' as const },
@@ -75,9 +65,10 @@ const VALIDATION_GATES = [
 export function WorkspacePlate() {
   const focusedDomainId = useUIStore((s) => s.focusedDomainId);
   const setFocusedDomain = useUIStore((s) => s.setFocusedDomain);
+  const setActiveTab = useUIStore((s) => s.setActiveTab);
   const domainStates = useDomainStore((s) => s.domainStates);
+  const [isRunning, setIsRunning] = useState(false);
 
-  // ESC to close
   const handleEsc = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') setFocusedDomain(null);
@@ -96,11 +87,45 @@ export function WorkspacePlate() {
   const meta = DOMAIN_META[focusedDomainId];
   const statusLabel = domain.status.replace(/_/g, ' ');
 
-  // Determine which fan-out to show
-  const showProbes = ['untested', 'probe_queued', 'probing', 'probe_complete'].includes(domain.status);
-  const showScaffold = ['scaffold_queued', 'scaffolding', 'scaffold_complete'].includes(domain.status);
-  const showValidation = ['validation_gate', 'gate_passed', 'gate_failed'].includes(domain.status);
-  const showSweep = ['target_sweep', 'sweep_complete'].includes(domain.status);
+  const handleProbe = async () => {
+    setIsRunning(true);
+    setActiveTab('agent');
+    try {
+      await runDomainProbe(focusedDomainId as DomainId);
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  const handleScaffold = async () => {
+    setIsRunning(true);
+    setActiveTab('agent');
+    try {
+      await runDomainScaffold(focusedDomainId as DomainId);
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  const handleValidate = async () => {
+    setIsRunning(true);
+    setActiveTab('agent');
+    try {
+      await runDomainValidation(focusedDomainId as DomainId);
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  // Determine which fan-out and actions to show
+  const canProbe = ['untested', 'probe_queued'].includes(domain.status) && !isRunning;
+  const isProbing = domain.status === 'probing';
+  const hasProbeResults = !!domain.probeSummary;
+  const canScaffold = ['probe_complete', 'promoted'].includes(domain.status) && !isRunning;
+  const isScaffolding = domain.status === 'scaffolding';
+  const canValidate = domain.status === 'scaffold_complete' && !isRunning;
+  const isValidating = domain.status === 'validation_gate';
+  const isPublished = domain.status === 'published';
 
   return (
     <div className="workspace-plate" data-domain={focusedDomainId}>
@@ -136,12 +161,9 @@ export function WorkspacePlate() {
                   ) : state === 'complete' ? (
                     <Check className="roadmap-stage-icon" />
                   ) : (
-                    <img
-                      src={`/eval-icons/${stage.icon}.svg`}
-                      alt=""
-                      className="roadmap-stage-icon"
-                      style={{ opacity: state === 'locked' ? 0.3 : 1 }}
-                    />
+                    <span className="roadmap-stage-icon" style={{ opacity: state === 'locked' ? 0.3 : 0.6, fontSize: 12 }}>
+                      {i + 1}
+                    </span>
                   )}
                   <span className="roadmap-stage-label">{stage.label}</span>
                 </div>
@@ -150,9 +172,54 @@ export function WorkspacePlate() {
           })}
         </div>
 
-        {/* Fan-out content */}
-        {showProbes && (
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', gap: 8, margin: '16px 0' }}>
+          {canProbe && (
+            <Button variant="primary" size="md" onClick={handleProbe}>
+              <Play size={14} /> Run Probe
+            </Button>
+          )}
+          {isProbing && (
+            <Button variant="secondary" size="md" disabled>
+              <Spinner size="sm" /> Probing...
+            </Button>
+          )}
+          {canScaffold && (
+            <Button variant="primary" size="md" onClick={handleScaffold}>
+              <ArrowRight size={14} /> Scaffold
+            </Button>
+          )}
+          {isScaffolding && (
+            <Button variant="secondary" size="md" disabled>
+              <Spinner size="sm" /> Scaffolding...
+            </Button>
+          )}
+          {canValidate && (
+            <Button variant="primary" size="md" onClick={handleValidate}>
+              <ArrowRight size={14} /> Validate
+            </Button>
+          )}
+          {isValidating && (
+            <Button variant="secondary" size="md" disabled>
+              <Spinner size="sm" /> Validating...
+            </Button>
+          )}
+          {isPublished && (
+            <Badge variant="success">Published ✅</Badge>
+          )}
+          {domain.status === 'gate_failed' && (
+            <Button variant="secondary" size="md" onClick={handleProbe}>
+              <RotateCcw size={14} /> Retry
+            </Button>
+          )}
+        </div>
+
+        {/* Probe Results */}
+        {hasProbeResults && (
           <div>
+            <h3 style={{ fontFamily: 'var(--font-figtree)', fontWeight: 600, fontSize: 13, color: 'var(--fg-60)', marginBottom: 8 }}>
+              Probe Results: {domain.probeSummary?.weaknessTitle}
+            </h3>
             <div className="fanout-grid">
               {PROBE_VARIANTS.map((name, i) => {
                 const variant = domain.probeSummary?.variants?.[i];
@@ -160,15 +227,10 @@ export function WorkspacePlate() {
                 const rate = variant?.failureRate;
 
                 return (
-                  <Card
-                    key={name}
-                    className={`fanout-card ${state === 'running' ? 'fanout-card' : ''}`}
-                    variant="default"
-                  >
+                  <Card key={name} variant="default" className={`stagger-${i + 1}`}>
                     <div
                       className="fanout-card"
                       data-state={state}
-                      style={{ animationDelay: `${i * 80}ms` }}
                     >
                       <div className="fanout-card-header">
                         <span className="fanout-card-name">{name}</span>
@@ -176,7 +238,7 @@ export function WorkspacePlate() {
                         {state === 'complete' && <Check size={14} style={{ color: 'var(--status-success)' }} />}
                       </div>
                       {rate !== undefined && (
-                        <span className="fanout-card-rate">{rate}%</span>
+                        <span className="fanout-card-rate tabular-nums">{(rate * 100).toFixed(0)}%</span>
                       )}
                     </div>
                   </Card>
@@ -186,9 +248,9 @@ export function WorkspacePlate() {
 
             {domain.probeSummary && (
               <div className="fanout-verdict">
-                <span className="fanout-verdict-mean">
+                <span className="fanout-verdict-mean tabular-nums">
                   {domain.probeSummary.aggregateFailureRate !== undefined
-                    ? `${domain.probeSummary.aggregateFailureRate}% mean`
+                    ? `${(domain.probeSummary.aggregateFailureRate * 100).toFixed(1)}% mean failure`
                     : '---'}
                 </span>
                 {domain.probeSummary.verdict && (
@@ -209,51 +271,71 @@ export function WorkspacePlate() {
           </div>
         )}
 
-        {showScaffold && (
-          <div className="fanout-grid">
-            {SCAFFOLD_AGENTS.map((name, i) => {
-              const agent = domain.scaffoldAgents?.[i];
-              const state = agent?.status || 'idle';
-              return (
-                <Card key={name} className="fanout-card" data-state={state}>
-                  <div className="fanout-card-header">
-                    <span className="fanout-card-name">{name}</span>
-                    {state === 'running' && <Spinner size="sm" />}
-                    {state === 'complete' && <Check size={14} style={{ color: 'var(--status-success)' }} />}
-                  </div>
-                  {agent?.artifactLabel && (
-                    <span className="fanout-card-artifact">{agent.artifactLabel}</span>
-                  )}
-                </Card>
-              );
-            })}
+        {/* Scaffold Agents */}
+        {domain.scaffoldAgents && domain.scaffoldAgents.length > 0 && (
+          <div style={{ marginTop: 16 }}>
+            <h3 style={{ fontFamily: 'var(--font-figtree)', fontWeight: 600, fontSize: 13, color: 'var(--fg-60)', marginBottom: 8 }}>
+              Scaffold Artifacts
+            </h3>
+            <div className="fanout-grid">
+              {SCAFFOLD_AGENTS.map((name, i) => {
+                const agent = domain.scaffoldAgents?.[i];
+                const state = agent?.status || 'idle';
+                return (
+                  <Card key={name} variant="default" className={`stagger-${i + 1}`}>
+                    <div className="fanout-card" data-state={state}>
+                      <div className="fanout-card-header">
+                        <span className="fanout-card-name">{name}</span>
+                        {state === 'running' && <Spinner size="sm" />}
+                        {state === 'complete' && <Check size={14} style={{ color: 'var(--status-success)' }} />}
+                      </div>
+                      {agent?.artifactLabel && (
+                        <span className="fanout-card-artifact">{agent.artifactLabel}</span>
+                      )}
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
           </div>
         )}
 
-        {showValidation && (
-          <div className="fanout-grid">
-            {VALIDATION_GATES.map((gate) => {
-              const gateData = domain.validationGates?.find((g) => g.type === gate.type);
-              const state = gateData?.status || 'pending';
-              return (
-                <Card key={gate.name} className={`fanout-card gate-card`} data-state={state}>
-                  <div className="fanout-card-header">
-                    <span className="fanout-card-name">{gate.name}</span>
-                    {state === 'running' && <Spinner size="sm" />}
-                    {state === 'passed' && <Check size={14} style={{ color: 'var(--status-success)' }} />}
-                    {state === 'failed' && <X size={14} style={{ color: 'var(--status-error)' }} />}
-                  </div>
-                </Card>
-              );
-            })}
+        {/* Validation Gates */}
+        {domain.validationGates && domain.validationGates.length > 0 && (
+          <div style={{ marginTop: 16 }}>
+            <h3 style={{ fontFamily: 'var(--font-figtree)', fontWeight: 600, fontSize: 13, color: 'var(--fg-60)', marginBottom: 8 }}>
+              Validation Gates
+            </h3>
+            <div className="fanout-grid">
+              {VALIDATION_GATES_META.map((gate) => {
+                const gateData = domain.validationGates?.find((g) => g.type === gate.type);
+                const state = gateData?.status || 'pending';
+                return (
+                  <Card key={gate.name} variant="default">
+                    <div className="fanout-card gate-card" data-state={state}>
+                      <div className="fanout-card-header">
+                        <span className="fanout-card-name">{gate.name}</span>
+                        {state === 'running' && <Spinner size="sm" />}
+                        {state === 'passed' && <Check size={14} style={{ color: 'var(--status-success)' }} />}
+                        {state === 'failed' && <X size={14} style={{ color: 'var(--status-error)' }} />}
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
           </div>
         )}
 
-        {showSweep && domain.sweepSummary && (
-          <div>
-            <div style={{ textAlign: 'center', marginBottom: 16 }}>
+        {/* Sweep Results */}
+        {domain.sweepSummary && (
+          <div style={{ marginTop: 16 }}>
+            <h3 style={{ fontFamily: 'var(--font-figtree)', fontWeight: 600, fontSize: 13, color: 'var(--fg-60)', marginBottom: 8 }}>
+              Sweep Results
+            </h3>
+            <div style={{ textAlign: 'center', marginBottom: 12 }}>
               <span
-                className="sweep-headline"
+                className="sweep-headline tabular-nums"
                 data-result={domain.sweepSummary.passAt3 >= 0.7 ? 'good' : domain.sweepSummary.passAt3 >= 0.4 ? 'partial' : 'bad'}
               >
                 pass@3: {(domain.sweepSummary.passAt3 * 100).toFixed(0)}%
