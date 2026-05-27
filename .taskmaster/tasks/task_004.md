@@ -1,138 +1,69 @@
 # Task ID: 4
 
-**Title:** Onboarding Wizard: 5-Step Setup Flow
+**Title:** UI Primitives: Button, Input, Badge, Card, Dialog, Spinner
 
 **Status:** pending
 
-**Dependencies:** 1, 2, 3
+**Dependencies:** 2, 3
 
 **Priority:** high
 
-**Description:** Full onboarding wizard with premium animations and transitions.
+**Description:** Shared UI primitive components that enforce consistent design language across the ENTIRE platform. Every interactive element must use these primitives.
 
-File: src/components/studio/project-setup.tsx (single file, ~650 lines)
+Files to create:
+- src/components/ui/button.tsx: Primary (bg-fg-90, white text), Secondary (border fg-10, fg-60 text), Ghost (no border, fg-50), Danger (red). All sizes: sm(28px), md(36px), lg(44px). All have: radius-md, Figtree font, hover/active/disabled states, focus ring.
+- src/components/ui/input.tsx: Text input with fg-5 border, bg-l200, Figtree 400 14px, placeholder fg-30. Focus: shadow-input-focus, border fg-10. Sizes: sm(32px), md(40px), lg(48px).
+- src/components/ui/badge.tsx: Inline pill with radius-full, padding 2px 8px, Departure 11px. Variants: default(fg-5 bg), accent(domain-accent bg), success(green), warning(amber), error(red).
+- src/components/ui/card.tsx: Container with bg-l200, border fg-10, radius-lg, padding 16px. Variants: default, elevated(shadow-outset-050), interactive(hover bg-fg-5).
+- src/components/ui/dialog.tsx: Modal overlay (bg-fg-100 at 20%, blur 4px) + centered content (bg-l200, radius-lg, shadow-outset-150, max-width 400px). Close on ESC, close on backdrop click.
+- src/components/ui/spinner.tsx: Loader2 icon with spin animation. Sizes: sm(14px), md(18px), lg(24px). Color inherits.
+- src/components/ui/textarea.tsx: Multi-line input matching input.tsx styles but with auto-resize capability.
+- src/components/ui/switch.tsx: Toggle switch, 36x20px, bg-fg-10 off, bg-fg-90 on, circle thumb.
 
-Wizard Shell:
-- Full-viewport overlay with bg-l0
-- Centered card: max-width 560px, bg-l100, radius-xl, shadow-outset-150
-- Soft radial glow: 500x500px radial gradient, accent color at 15% opacity
-- Step indicator: 5 dots (8px, gap 6px), active=fg-60, inactive=fg-15
-- Transitions between steps: 300ms translateX + opacity
-
-Step 1 - Project Name:
-- Heading: 'What should we call this evaluation?' (Mondwest 600 22px fg-90)
-- Subtext (Figtree 400 14px fg-40)
-- Full-width input (48px, Figtree 400 16px, placeholder 'e.g. GPT-4o Safety Audit')
-- Continue button disabled until >= 3 chars
-
-Step 2 - Model Selection:
-- Provider cards in grid: Google/Gemini, Anthropic/Claude, OpenAI/GPT, Meta/Llama
-- Card: 100% width, 68px, provider logo 24px + name (Figtree 500 14px) + model slug (Departure 12px fg-40)
-- Selected: border-fg-30, bg-fg-5, checkmark
-- Custom model expandable input
-
-Step 3 - Workflow Description:
-- Textarea: 160px min-height, auto-resize
-- 8 failure mode chips: Authority Ambiguity, False Recency, Instruction Drift, Schema Hallucination, Safety Boundary, Context Window, Tool Misuse, Calibration Collapse
-- Chip click populates textarea with template text
-- Chip style: inline-flex, radius-full, border fg-10, Figtree 400 12px
-
-Step 4 - Clarifying Questions:
-- Chat-style layout with 5 AI questions
-- Agent message bubbles (left, avatar, bg-l200)
-- 3-4 option cards per question with radio buttons
-- 'Decide all' shortcut button
-- Answered questions collapse with checkmark
-
-Step 5 - Hypothesis Review:
-- Shimmer loading bar (1.5s)
-- Taxonomy badge (bg-fg-5, fg-60)
-- Hypothesis text (EB Garamond italic 16px fg-70)
-- Bad Heuristic + Authority Invariant sections
-- 'Accept & Start Probing' dark CTA with ArrowRight
+DESIGN CONSISTENCY RULE: All components use ONLY CSS custom properties from Task 2. No hardcoded colors, no Tailwind color classes. Every radius is var(--radius-*), every shadow is var(--shadow-*), every color is var(--fg-*) or var(--bg-*).
 
 **Details:**
 
-Full onboarding wizard with premium animations and transitions.
+These primitives are the building blocks. The onboarding wizard uses Button and Input. The project tab uses Card and Dialog. The command palette uses Input. The chat uses Textarea. Badges appear in sweeps, status indicators, and pipeline stages.
 
-File: src/components/studio/project-setup.tsx (single file, ~650 lines)
-
-Wizard Shell:
-- Full-viewport overlay with bg-l0
-- Centered card: max-width 560px, bg-l100, radius-xl, shadow-outset-150
-- Soft radial glow: 500x500px radial gradient, accent color at 15% opacity
-- Step indicator: 5 dots (8px, gap 6px), active=fg-60, inactive=fg-15
-- Transitions between steps: 300ms translateX + opacity
-
-Step 1 - Project Name:
-- Heading: 'What should we call this evaluation?' (Mondwest 600 22px fg-90)
-- Subtext (Figtree 400 14px fg-40)
-- Full-width input (48px, Figtree 400 16px, placeholder 'e.g. GPT-4o Safety Audit')
-- Continue button disabled until >= 3 chars
-
-Step 2 - Model Selection:
-- Provider cards in grid: Google/Gemini, Anthropic/Claude, OpenAI/GPT, Meta/Llama
-- Card: 100% width, 68px, provider logo 24px + name (Figtree 500 14px) + model slug (Departure 12px fg-40)
-- Selected: border-fg-30, bg-fg-5, checkmark
-- Custom model expandable input
-
-Step 3 - Workflow Description:
-- Textarea: 160px min-height, auto-resize
-- 8 failure mode chips: Authority Ambiguity, False Recency, Instruction Drift, Schema Hallucination, Safety Boundary, Context Window, Tool Misuse, Calibration Collapse
-- Chip click populates textarea with template text
-- Chip style: inline-flex, radius-full, border fg-10, Figtree 400 12px
-
-Step 4 - Clarifying Questions:
-- Chat-style layout with 5 AI questions
-- Agent message bubbles (left, avatar, bg-l200)
-- 3-4 option cards per question with radio buttons
-- 'Decide all' shortcut button
-- Answered questions collapse with checkmark
-
-Step 5 - Hypothesis Review:
-- Shimmer loading bar (1.5s)
-- Taxonomy badge (bg-fg-5, fg-60)
-- Hypothesis text (EB Garamond italic 16px fg-70)
-- Bad Heuristic + Authority Invariant sections
-- 'Accept & Start Probing' dark CTA with ArrowRight
+By building these FIRST with consistent tokens, every downstream component automatically has the same look and feel.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Render each component in isolation, verify it uses design tokens (inspect computed styles)
+2. Verify hover/active/disabled states work
+3. Verify focus ring appears on keyboard nav
+4. Verify all sizes render correctly
+5. Dialog closes on ESC and backdrop click
 
 ## Subtasks
 
-### 4.1. Wizard shell with overlay, glow, step dots, transitions
+### 4.1. Build Button with 4 variants (primary/secondary/ghost/danger) and 3 sizes
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 4.2. Step 1: Project name input with validation
+### 4.2. Build Input with focus states and 3 sizes
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 4.3. Step 2: Model selection cards with provider logos
+### 4.3. Build Badge with 5 variants (default/accent/success/warning/error)
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 4.4. Step 3: Workflow textarea with 8 failure mode chips
+### 4.4. Build Card with 3 variants (default/elevated/interactive)
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 4.5. Step 4: Chat-style AI questions with option cards
+### 4.5. Build Dialog with overlay, ESC close, backdrop close
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 4.6. Step 5: Hypothesis card with shimmer and accept CTA
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 4.7. Wire wizard completion to ProjectStore + DomainStore init + canvas transition
+### 4.6. Build Spinner, Textarea (auto-resize), Switch
 
 **Status:** pending  
 **Dependencies:** None  

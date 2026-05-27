@@ -1,73 +1,58 @@
 # Task ID: 28
 
-**Title:** Domain Node → Workspace Plate Transition
+**Title:** Keyboard Shortcuts: Tab Switch + Escape Cascade + Enter Context
 
 **Status:** pending
 
-**Dependencies:** 5, 6, 7, 8, 9
+**Dependencies:** 7, 5, 25
 
-**Priority:** medium
+**Priority:** low
 
-**Description:** Clicking a domain node opens the workspace plate with fan-out.
+**Description:** Global keyboard shortcut handling.
 
-Flow:
-1. User clicks domain node on ring
-2. UIStore.focusedDomainId set
-3. Workspace plate slides in (sd-slideUp animation)
-4. Fan-out cards stagger in (80ms delay each)
-5. Pipeline roadmap updates to show current stage
-6. Clicking different domain: plate content cross-fades
-7. ESC or X: plate slides out, focusedDomainId clears
+Implement in top-bar.tsx or dedicated useKeyboardShortcuts hook:
 
-Fan-out content depends on domain status:
-- probe_queued/probing → show probe fan-out
-- scaffold_queued/scaffolding → show scaffold fan-out
-- validation_gate → show validation gates
-- target_sweep → show sweep results
-- published → show published summary
+- 1-5: Switch to tab (Home, Agent, Project, Files, Sweeps)
+- ESC: Close in priority order: command palette → workspace plate → modal/dialog → dropdown
+- Enter: Submit onboarding input / Send chat message (when focused)
+- Cmd+K: Command palette (handled by Task 25)
+- Cmd+/: Focus chat composer
+
+Guard: Don't fire number keys when typing in input/textarea.
+
+Accessibility: Add aria-keyshortcuts attributes to targets.
 
 **Details:**
 
-Clicking a domain node opens the workspace plate with fan-out.
-
-Flow:
-1. User clicks domain node on ring
-2. UIStore.focusedDomainId set
-3. Workspace plate slides in (sd-slideUp animation)
-4. Fan-out cards stagger in (80ms delay each)
-5. Pipeline roadmap updates to show current stage
-6. Clicking different domain: plate content cross-fades
-7. ESC or X: plate slides out, focusedDomainId clears
-
-Fan-out content depends on domain status:
-- probe_queued/probing → show probe fan-out
-- scaffold_queued/scaffolding → show scaffold fan-out
-- validation_gate → show validation gates
-- target_sweep → show sweep results
-- published → show published summary
+Escape cascade is important: ESC should close the MOST RECENT thing opened, not everything at once. Check UIStore state in order: commandPaletteOpen → focusedDomainId (plate) → any open dialog → any open dropdown.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Press 1 → Home tab active
+2. Press 3 → Project tab active
+3. ESC closes workspace plate when open
+4. ESC closes command palette when open
+5. Number keys don't fire when typing in input
+6. Cmd+/ focuses chat composer
 
 ## Subtasks
 
-### 28.1. Domain click → workspace plate open with animation
+### 28.1. Number key (1-5) tab switching with input guard
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 28.2. Fan-out content routing based on domain status
+### 28.2. Escape cascade (palette → plate → dialog → dropdown)
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 28.3. Cross-fade when switching domains
+### 28.3. Enter context handling
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 28.4. Close plate on ESC/X with animation
+### 28.4. Cmd+/ focus chat composer
 
 **Status:** pending  
 **Dependencies:** None  

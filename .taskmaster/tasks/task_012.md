@@ -1,72 +1,58 @@
 # Task ID: 12
 
-**Title:** Project Tab: Settings Sections + Model Chips + Danger Zone
+**Title:** Probe Fan-out: 5 Variant Cards
 
 **Status:** pending
 
-**Dependencies:** 2, 3
+**Dependencies:** 4, 11
 
 **Priority:** medium
 
-**Description:** Project settings tab.
+**Description:** Grid of 5 probe variant cards inside the workspace plate.
 
-File: src/components/panel/project-tab.tsx
+Variants: Plain, Prior Work, Schema Hint, Audit Trail, Speed Run
 
-Settings Sections:
-- Section headers: Figtree 600 13px fg-60, uppercase, letter-spacing 0.04em
-- Key-value rows: label (Figtree 400 13px fg-50) + value (Figtree 500 13px fg-80)
-- Edit icons on hover
+Each card uses the Card primitive (interactive variant) with additions:
+- Idle: default Card border
+- Running: 2px accent border + pulseGlow animation, Spinner icon
+- Complete: green-50 bg, green Check icon, failure rate (Departure 600 14px)
+- Failed: red-50 bg, X icon
 
-Model Chips:
-- Primary model: starred chip with gold star icon
-- Secondary models: outlined chips
-- Add model button: dashed border, Plus icon
-- Chip: radius-full, padding 4px 10px, Departure 12px
+Stagger entrance: each card delays 80ms (CSS animation-delay: calc(var(--i) * 80ms))
 
-Danger Zone:
-- Red text links: 'Reset Project', 'Delete All Data'
-- Confirmation dialog on click: overlay blur, 'Are you sure?', red CTA + cancel
-- Dialog: bg-l200, radius-lg, shadow-outset-150, 400px max-width
+Below cards:
+- Mean failure rate (Departure 600 16px)
+- Verdict Badge: 'promote' (success), 'redesign' (warning), 'reject' (error)
 
 **Details:**
 
-Project settings tab.
+Cards are rendered in a CSS grid (repeat(auto-fill, minmax(140px, 1fr))).
 
-File: src/components/panel/project-tab.tsx
+The stagger entrance uses the fanout-entrance keyframe from Task 3.
 
-Settings Sections:
-- Section headers: Figtree 600 13px fg-60, uppercase, letter-spacing 0.04em
-- Key-value rows: label (Figtree 400 13px fg-50) + value (Figtree 500 13px fg-80)
-- Edit icons on hover
-
-Model Chips:
-- Primary model: starred chip with gold star icon
-- Secondary models: outlined chips
-- Add model button: dashed border, Plus icon
-- Chip: radius-full, padding 4px 10px, Departure 12px
-
-Danger Zone:
-- Red text links: 'Reset Project', 'Delete All Data'
-- Confirmation dialog on click: overlay blur, 'Are you sure?', red CTA + cancel
-- Dialog: bg-l200, radius-lg, shadow-outset-150, 400px max-width
+Variant data comes from DomainStore.domainStates[focusedDomainId].probeSummary.variants
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. 5 cards render in grid
+2. Stagger animation visible (each card appears 80ms after previous)
+3. Running state shows pulsing border + spinner
+4. Complete state shows green with percentage
+5. Verdict badge shows correct color
 
 ## Subtasks
 
-### 12.1. Settings sections with key-value rows
+### 12.1. 5 variant Cards with 4 visual states
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 12.2. Model chips (primary starred + secondary + add)
+### 12.2. Stagger entrance animation with CSS delay
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 12.3. Danger zone with red links and confirmation dialog
+### 12.3. Mean failure rate + verdict Badge display
 
 **Status:** pending  
 **Dependencies:** None  

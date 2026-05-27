@@ -1,102 +1,71 @@
 # Task ID: 11
 
-**Title:** Agent Tab: Chat Messages + Composer + Tool Indicators
+**Title:** Workspace Plate: Container + Pipeline Roadmap Strip
 
 **Status:** pending
 
-**Dependencies:** 2, 3
+**Dependencies:** 4, 5, 6, 9
 
-**Priority:** medium
+**Priority:** high
 
-**Description:** Agent chat tab - the primary interaction surface.
+**Description:** Overlay plate that opens when a domain is clicked, showing the pipeline workflow.
 
-File: src/components/panel/agent-tab.tsx
+File: src/components/canvas/workspace-plate.tsx (~270 lines)
 
-Message List:
-- Auto-scroll to bottom on new messages
-- Agent messages: left-aligned, 24px avatar circle (bot icon), bg-l200 bubble, max-width 90%
-- User messages: right-aligned, accent-tinted bubble, max-width 85%
-- Message text: Figtree 400 14px/1.6 fg-80
-- Timestamp: Departure 11px fg-30
+Plate Container:
+- 680px max-width, centered, bg-l-neg-50, shadow-inset-200, radius-xl
+- Header: accent dot (8px) + domain name (Figtree 600 16px fg-80) + status Badge + X close button
+- Status badges use the Badge primitive with state-specific variants
 
-Tool Call Indicators (inline):
-- 32px height bar within message flow
-- Running: Loader2 12px spinning + 'Running: tool_name' (Figtree 400 12px fg-40)
-- Complete: Check 12px green + 'Completed: summary'
-- Failed: AlertTriangle 12px red
+Pipeline Roadmap Strip:
+- 5 stages: Intake → Probe → Scaffold → Validate → Publish
+- Each: 72px Card with icon (from SVG assets) + label
+- States: locked (fg-10 bg, fg-30), available (fg-5 bg, fg-60), active (fg-10 bg, fg-80, Spinner), complete (green bg, white Check)
+- Connectors: 24px × 2px lines between cards, color by state
 
-Typing Indicator:
-- 3 dots with bounce animation (typingBounce 1.4s, staggered delays)
-- Shows when agent is processing
-
-Chat Composer (bottom-fixed within tab):
-- Auto-resize textarea (min 44px, max 140px)
-- Wrapper: bg-l200, radius-sm, border 0.5px fg-5, shadow-inset-025
-- Focus: shadow-input-focus, border fg-10
-- Placeholder: 'Ask about this evaluation...' (fg-30)
-- Send button: 28px, accent bg, white ArrowUp icon, disabled when empty
-- Attach button: 28px, fg-40, Paperclip icon
-- Enter sends, Shift+Enter newline
+Open/Close:
+- sd-slideUp animation on open
+- ESC key closes
+- X button closes
+- UIStore.focusedDomainId drives show/hide
 
 **Details:**
 
-Agent chat tab - the primary interaction surface.
+The workspace plate replaces the radial ring view when a domain is active. Content inside depends on domain status (probe/scaffold/validate fan-outs are separate tasks).
 
-File: src/components/panel/agent-tab.tsx
-
-Message List:
-- Auto-scroll to bottom on new messages
-- Agent messages: left-aligned, 24px avatar circle (bot icon), bg-l200 bubble, max-width 90%
-- User messages: right-aligned, accent-tinted bubble, max-width 85%
-- Message text: Figtree 400 14px/1.6 fg-80
-- Timestamp: Departure 11px fg-30
-
-Tool Call Indicators (inline):
-- 32px height bar within message flow
-- Running: Loader2 12px spinning + 'Running: tool_name' (Figtree 400 12px fg-40)
-- Complete: Check 12px green + 'Completed: summary'
-- Failed: AlertTriangle 12px red
-
-Typing Indicator:
-- 3 dots with bounce animation (typingBounce 1.4s, staggered delays)
-- Shows when agent is processing
-
-Chat Composer (bottom-fixed within tab):
-- Auto-resize textarea (min 44px, max 140px)
-- Wrapper: bg-l200, radius-sm, border 0.5px fg-5, shadow-inset-025
-- Focus: shadow-input-focus, border fg-10
-- Placeholder: 'Ask about this evaluation...' (fg-30)
-- Send button: 28px, accent bg, white ArrowUp icon, disabled when empty
-- Attach button: 28px, fg-40, Paperclip icon
-- Enter sends, Shift+Enter newline
+Uses Badge primitive for status labels. Uses Card primitive for stage cards. Uses Spinner for active stage.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Plate opens with slide animation when domain clicked
+2. Header shows correct domain name with accent dot
+3. Pipeline strip shows 5 stages with correct states
+4. ESC key closes plate
+5. Status badge matches domain state
 
 ## Subtasks
 
-### 11.1. Message list with agent/user bubble styles and auto-scroll
+### 11.1. Plate container with header (accent dot, name, Badge, close)
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 11.2. Tool call indicator bars (running/complete/failed)
+### 11.2. Pipeline roadmap strip with 5 stage Cards and connectors
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 11.3. Typing indicator with bouncing dots
+### 11.3. Stage state rendering (locked/available/active/complete)
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 11.4. Chat composer with auto-resize textarea and send/attach buttons
+### 11.4. Open/close animations and ESC handler
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 11.5. Enter to send, Shift+Enter for newline
+### 11.5. CSS for plate, roadmap, stages, connectors
 
 **Status:** pending  
 **Dependencies:** None  

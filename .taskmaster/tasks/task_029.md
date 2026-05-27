@@ -1,109 +1,66 @@
 # Task ID: 29
 
-**Title:** CSS: All Component Styles in globals.css
+**Title:** Responsive Layout: Mobile + Tablet + Touch + iOS Safe Areas
 
 **Status:** pending
 
-**Dependencies:** 1
+**Dependencies:** 2, 7
 
-**Priority:** high
+**Priority:** low
 
-**Description:** Comprehensive CSS for every component, organized by section.
+**Description:** Full responsive design.
 
-This is a massive task covering ~3500+ lines of CSS. Organize in globals.css by section:
+Mobile (<768px):
+- Hide right panel
+- Full-width workspace plate
+- Smaller progress ring (48px)
+- Stack fan-out cards vertically
+- Canvas scales down via CSS transform
 
-1. Design tokens (variables) - ~200 lines
-2. Global resets and base styles - ~50 lines
-3. Layout (top bar, bottom nav, panel, canvas) - ~300 lines
-4. Onboarding wizard (all 5 steps) - ~400 lines
-5. Radial ring canvas (nodes, connections, hub) - ~300 lines
-6. State-to-visual mapping (14 domain states) - ~150 lines
-7. Workspace plate (container, fan-out, gates, roadmap) - ~350 lines
-8. Panel tabs (home, agent, project, files, sweeps) - ~500 lines
-9. Chat cards (tool, probe, approval, iteration, sweep) - ~250 lines
-10. Chat composer - ~100 lines
-11. Toast system - ~80 lines
-12. Skeleton loading - ~60 lines
-13. Command palette - ~100 lines
-14. Error states - ~100 lines
-15. Streaming text + markdown prose - ~120 lines
-16. File upload - ~100 lines
-17. Animations (all keyframes) - ~80 lines
-18. Scrollbar + focus ring - ~30 lines
-19. Responsive (mobile, tablet, touch, safe areas) - ~150 lines
+Tablet (768-1023px):
+- Narrow panel: 300px
+- Compact fan-out grid
 
-Every CSS value must match the spec exactly. Use CSS custom properties throughout.
+Touch (pointer: coarse):
+- 44px minimum touch targets: buttons, tree items, trial rows, command items
+
+iOS Safe Areas:
+- Bottom nav: padding-bottom env(safe-area-inset-bottom)
+- Toast stack: bottom offset includes safe area
+
+All breakpoints in globals.css as @media queries.
 
 **Details:**
 
-Comprehensive CSS for every component, organized by section.
+CRITICAL: Test on actual mobile viewport. The bottom nav must be usable with thumb reach. The panel must not overlap the canvas on tablet.
 
-This is a massive task covering ~3500+ lines of CSS. Organize in globals.css by section:
-
-1. Design tokens (variables) - ~200 lines
-2. Global resets and base styles - ~50 lines
-3. Layout (top bar, bottom nav, panel, canvas) - ~300 lines
-4. Onboarding wizard (all 5 steps) - ~400 lines
-5. Radial ring canvas (nodes, connections, hub) - ~300 lines
-6. State-to-visual mapping (14 domain states) - ~150 lines
-7. Workspace plate (container, fan-out, gates, roadmap) - ~350 lines
-8. Panel tabs (home, agent, project, files, sweeps) - ~500 lines
-9. Chat cards (tool, probe, approval, iteration, sweep) - ~250 lines
-10. Chat composer - ~100 lines
-11. Toast system - ~80 lines
-12. Skeleton loading - ~60 lines
-13. Command palette - ~100 lines
-14. Error states - ~100 lines
-15. Streaming text + markdown prose - ~120 lines
-16. File upload - ~100 lines
-17. Animations (all keyframes) - ~80 lines
-18. Scrollbar + focus ring - ~30 lines
-19. Responsive (mobile, tablet, touch, safe areas) - ~150 lines
-
-Every CSS value must match the spec exactly. Use CSS custom properties throughout.
+Touch targets: Apply to ALL interactive elements that are < 44px in desktop mode.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Mobile (375px): panel hidden, canvas centered, nav usable
+2. Tablet (768px): panel narrows to 300px
+3. Touch targets all ≥ 44px on touch devices
+4. iOS safe area prevents bottom nav from being under home indicator
 
 ## Subtasks
 
-### 29.1. Layout CSS: top bar, bottom nav, panel, canvas
+### 29.1. Mobile breakpoint: hide panel, full-width plate, scale canvas
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 29.2. Onboarding CSS: wizard shell, all 5 steps
+### 29.2. Tablet breakpoint: narrow panel, compact grid
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 29.3. Canvas CSS: ring, nodes, connections, hub, state visuals
+### 29.3. Touch: 44px minimum targets on all interactive elements
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 29.4. Workspace CSS: plate, fan-out, gates, roadmap
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 29.5. Panel tabs CSS: home, agent, project, files, sweeps
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 29.6. Chat cards CSS: tool, probe, approval, iteration, sweep
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 29.7. Polish CSS: toast, skeleton, command palette, errors, streaming, upload
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 29.8. Responsive CSS: mobile, tablet, touch, safe areas
+### 29.4. iOS safe area insets
 
 **Status:** pending  
 **Dependencies:** None  

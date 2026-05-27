@@ -1,99 +1,54 @@
 # Task ID: 13
 
-**Title:** Files Tab: File Tree + Inline Editor + Upload Zone
+**Title:** Scaffold Fan-out + Validation Gates
 
 **Status:** pending
 
-**Dependencies:** 2, 3
+**Dependencies:** 4, 11
 
 **Priority:** medium
 
-**Description:** Files tab showing generated artifacts.
+**Description:** Scaffold agent cards and validation gate cards inside workspace plate.
 
-File: src/components/panel/files-tab.tsx
+Scaffold Fan-out (5 cards):
+- Agents: Fixtures, Environment, Verifier, Instruction, Contamination
+- Same Card primitive as probe variants
+- Each shows: agent name, artifact label, generation status
+- Stagger entrance animation
 
-File Tree:
-- Recursive tree builder from artifacts list
-- Folder: ChevronRight icon (rotates 90° on expand), folder icon, name
-- File: type-specific icon with domain color, name, size
-- Indent: 16px per level
-- Click file: opens inline preview
-- Tree item: 32px height, hover bg fg-5, radius-sm
-
-File Type Icons:
-- .json/.jsonl: braces icon, blue
-- .py: code icon, green
-- .yaml/.yml: config icon, purple
-- .md: text icon, gray
-- .csv: table icon, amber
-
-Inline Editor Preview:
-- Code view: monospace font, line numbers, syntax-highlighted bg
-- Preview toggle: Code/Preview tabs
-- File header with filename and close button
-
-Upload Zone:
-- Drag-and-drop area with dashed border
-- Accept: .json, .jsonl, .csv, .yaml, .yml, .py, .txt, .md
-- Max 50MB per file
-- Progress bars during upload
-- File list with remove buttons
+Validation Gates (3 cards):
+- Oracle Sweep, Nop Sweep, Spoiler Lint
+- States: pending (fg-20 dot), running (shimmer animation on border), passed (green Check, green-50 bg), failed (red X, red-50 bg)
+- Shimmer uses skeleton-shimmer keyframe on border
 
 **Details:**
 
-Files tab showing generated artifacts.
+These sections show conditionally based on domain status:
+- scaffold_queued/scaffolding → scaffold fan-out
+- validation_gate → validation gates
 
-File: src/components/panel/files-tab.tsx
-
-File Tree:
-- Recursive tree builder from artifacts list
-- Folder: ChevronRight icon (rotates 90° on expand), folder icon, name
-- File: type-specific icon with domain color, name, size
-- Indent: 16px per level
-- Click file: opens inline preview
-- Tree item: 32px height, hover bg fg-5, radius-sm
-
-File Type Icons:
-- .json/.jsonl: braces icon, blue
-- .py: code icon, green
-- .yaml/.yml: config icon, purple
-- .md: text icon, gray
-- .csv: table icon, amber
-
-Inline Editor Preview:
-- Code view: monospace font, line numbers, syntax-highlighted bg
-- Preview toggle: Code/Preview tabs
-- File header with filename and close button
-
-Upload Zone:
-- Drag-and-drop area with dashed border
-- Accept: .json, .jsonl, .csv, .yaml, .yml, .py, .txt, .md
-- Max 50MB per file
-- Progress bars during upload
-- File list with remove buttons
+Both use the same Card primitive to maintain visual consistency with probe fan-out.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Scaffold cards render when domain is in scaffolding state
+2. Validation gates render when domain is in validation state
+3. Shimmer animation visible on running gates
+4. Pass/fail states show correct colors
 
 ## Subtasks
 
-### 13.1. Recursive file tree with expand/collapse
+### 13.1. 5 scaffold agent Cards with artifact labels
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 13.2. File type icons with domain colors
+### 13.2. 3 validation gate Cards with 4 states including shimmer
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 13.3. Inline editor preview with code/preview toggle
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 13.4. Drag-and-drop upload zone with progress bars
+### 13.3. Conditional rendering based on domain status
 
 **Status:** pending  
 **Dependencies:** None  

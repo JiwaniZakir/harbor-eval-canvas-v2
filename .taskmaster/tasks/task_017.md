@@ -1,75 +1,64 @@
 # Task ID: 17
 
-**Title:** Skeleton Loading States
+**Title:** Chat Card Components: Tool, Probe, Approval, Iteration, Sweep
 
 **Status:** pending
 
-**Dependencies:** 1
+**Dependencies:** 4, 5, 16
 
-**Priority:** low
+**Priority:** medium
 
-**Description:** Shimmer skeleton placeholders for all loading states.
+**Description:** 5 specialized card types embedded in agent chat messages.
 
-File: src/components/ui/skeleton-loading.tsx
+File: src/components/panel/chat-cards.tsx
 
-6 Base Variants:
-- SkeletonLine: 100% width, 12px height, rounded-sm
-- SkeletonTitle: 60% width, 20px height, rounded-sm
-- SkeletonCircle: configurable diameter, rounded-full
-- SkeletonCard: full width, 80px height, rounded-md
-- SkeletonStat: 48px width, 32px height
-- SkeletonAvatar: 24px circle
+1. ToolCallCard: Expandable 32px inline card. Uses Spinner when running.
+2. ProbeSummaryCard: Variant bars + verdict Badge + Button CTAs.
+3. ApprovalGateCard: Amber border card with AlertTriangle + approve/reject Buttons.
+4. IterationCard: Diff view (removed=red, added=green lines) + apply/dismiss Buttons.
+5. SweepResultCard: pass@k (Departure 700 20px) + trial rows with Badges.
 
-Shimmer animation:
-- Linear gradient sweep: transparent → fg-5 → transparent
-- 1.5s linear infinite
-- background-size: 200% 100%
-
-5 Tab-Specific Layouts:
-- HomeTabSkeleton: greeting line + progress ring circle + 2 card skeletons
-- AgentTabSkeleton: 3 alternating message bubbles (left/right)
-- ProjectTabSkeleton: section header + 4 key-value rows
-- FilesTabSkeleton: 6 tree item lines with indent
-- SweepsTabSkeleton: headline stat + 3 trial rows
+DESIGN CONSISTENCY: All CTAs use Button primitive. All badges use Badge primitive. All containers use Card primitive styles. Colors use CSS variables only.
 
 **Details:**
 
-Shimmer skeleton placeholders for all loading states.
+These cards appear inline in the Agent tab message flow. They are rendered based on ChatMessage.toolCalls and special message types.
 
-File: src/components/ui/skeleton-loading.tsx
+The ProbeSummaryCard variant bars use fg-5 track + green/amber/red fill matching status colors from design tokens.
 
-6 Base Variants:
-- SkeletonLine: 100% width, 12px height, rounded-sm
-- SkeletonTitle: 60% width, 20px height, rounded-sm
-- SkeletonCircle: configurable diameter, rounded-full
-- SkeletonCard: full width, 80px height, rounded-md
-- SkeletonStat: 48px width, 32px height
-- SkeletonAvatar: 24px circle
-
-Shimmer animation:
-- Linear gradient sweep: transparent → fg-5 → transparent
-- 1.5s linear infinite
-- background-size: 200% 100%
-
-5 Tab-Specific Layouts:
-- HomeTabSkeleton: greeting line + progress ring circle + 2 card skeletons
-- AgentTabSkeleton: 3 alternating message bubbles (left/right)
-- ProjectTabSkeleton: section header + 4 key-value rows
-- FilesTabSkeleton: 6 tree item lines with indent
-- SweepsTabSkeleton: headline stat + 3 trial rows
+The diff view in IterationCard uses hardcoded semantic colors (red for removed, green for added) which is acceptable for code diffs.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Each card renders correctly with mock data
+2. Expandable ToolCallCard opens/closes
+3. Variant bars fill proportionally
+4. Approve/reject buttons fire callbacks
+5. Diff lines show correct colors and prefixes
 
 ## Subtasks
 
-### 17.1. 6 base skeleton variants with shimmer animation
+### 17.1. ToolCallCard with expand/collapse + Spinner
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 17.2. 5 tab-specific skeleton layouts
+### 17.2. ProbeSummaryCard with variant bars + verdict Badge + Buttons
+
+**Status:** pending  
+**Dependencies:** None  
+
+### 17.3. ApprovalGateCard with amber styling + approve/reject Buttons
+
+**Status:** pending  
+**Dependencies:** None  
+
+### 17.4. IterationCard with diff view + apply/dismiss Buttons
+
+**Status:** pending  
+**Dependencies:** None  
+
+### 17.5. SweepResultCard with pass@k headline + trial Badges
 
 **Status:** pending  
 **Dependencies:** None  

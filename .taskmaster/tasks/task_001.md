@@ -1,6 +1,6 @@
 # Task ID: 1
 
-**Title:** Design System: CSS Custom Properties & Font Loading
+**Title:** Project Scaffolding: Next.js Config, Tailwind v4, ESLint, tsconfig
 
 **Status:** pending
 
@@ -8,85 +8,66 @@
 
 **Priority:** high
 
-**Description:** Create the complete design token system as CSS custom properties. This is the foundation every other component depends on.
+**Description:** Configure the foundational build toolchain for production quality.
 
-Implement in src/app/globals.css:
-- Background scale: --bg-l0 (#FAFAF9), --bg-l50 (#F5F5F4), --bg-l100 (#EFEEEC), --bg-l200 (#E7E5E4), --bg-l-neg-50 (#FEFEFD)
-- Foreground opacity scale: --fg-5 through --fg-100 using rgba(26,26,26,N) where N maps to percentage
-- All intermediate values: fg-8, fg-15, fg-55, fg-70, fg-90
-- Typography variables: --font-figtree, --font-mondwest, --font-departure, --font-garamond, --font-mono
-- Spacing: --topbar-height (48px), --panel-width (360px), --bottom-height (56px)
-- Radius: xs(4px), sm(6px), md(8px), lg(12px), xl(16px), full(9999px)
-- Shadows: inset-025, inset-050, inset-200, outset-050, outset-150, input-focus
-- Easing: --ease-smooth (cubic-bezier(0.4,0,0.2,1)), --ease-spring (cubic-bezier(0.34,1.56,0.64,1))
-- 8 domain accent colors with data-attribute selectors
-- Status colors for success/warning/error/info
+Files to modify/create:
+- next.config.ts: Enable strict mode, configure image domains, set output standalone for production
+- tsconfig.json: strict: true, noUnusedLocals: true, noUnusedParameters: true, paths alias @/ → src/
+- eslint.config.mjs: Next.js recommended + React hooks rules
+- postcss.config.mjs: Tailwind v4 plugin
+- tailwind.config.ts: Extend theme with design tokens (or use CSS-only approach for Tailwind v4)
+- .env.example: Document all env vars (ANTHROPIC_API_KEY, etc.)
+- src/app/layout.tsx: HTML lang='en', viewport meta, OG tags, font preloading
+- src/lib/utils.ts: cn() utility (clsx + tailwind-merge or simple template literal helper)
 
-Font loading in src/app/layout.tsx:
-- Google Fonts: Figtree (300-700), EB Garamond (400i, 600)
-- Local @font-face: Mondwest (woff2), Departure Mono (woff2)
-- Font files in public/fonts/
-
-Global styles:
-- Focus ring: 2px solid fg-20, only on :focus-visible
-- Scrollbar: 6px width, fg-10 thumb, transparent track
-- Reduced motion media query
-- Base reset and box-sizing
+The goal is that after this task, `npm run dev` starts clean, `npx tsc --noEmit` passes, and the app renders a blank page with correct HTML structure.
 
 **Details:**
 
-Create the complete design token system as CSS custom properties. This is the foundation every other component depends on.
+This task establishes the build pipeline. Every subsequent task depends on TypeScript compiling and the dev server running.
 
-Implement in src/app/globals.css:
-- Background scale: --bg-l0 (#FAFAF9), --bg-l50 (#F5F5F4), --bg-l100 (#EFEEEC), --bg-l200 (#E7E5E4), --bg-l-neg-50 (#FEFEFD)
-- Foreground opacity scale: --fg-5 through --fg-100 using rgba(26,26,26,N) where N maps to percentage
-- All intermediate values: fg-8, fg-15, fg-55, fg-70, fg-90
-- Typography variables: --font-figtree, --font-mondwest, --font-departure, --font-garamond, --font-mono
-- Spacing: --topbar-height (48px), --panel-width (360px), --bottom-height (56px)
-- Radius: xs(4px), sm(6px), md(8px), lg(12px), xl(16px), full(9999px)
-- Shadows: inset-025, inset-050, inset-200, outset-050, outset-150, input-focus
-- Easing: --ease-smooth (cubic-bezier(0.4,0,0.2,1)), --ease-spring (cubic-bezier(0.34,1.56,0.64,1))
-- 8 domain accent colors with data-attribute selectors
-- Status colors for success/warning/error/info
-
-Font loading in src/app/layout.tsx:
-- Google Fonts: Figtree (300-700), EB Garamond (400i, 600)
-- Local @font-face: Mondwest (woff2), Departure Mono (woff2)
-- Font files in public/fonts/
-
-Global styles:
-- Focus ring: 2px solid fg-20, only on :focus-visible
-- Scrollbar: 6px width, fg-10 thumb, transparent track
-- Reduced motion media query
-- Base reset and box-sizing
+Specific configs:
+- next.config.ts: reactStrictMode: true
+- tsconfig paths: '@/*' → './src/*'
+- Tailwind v4 uses CSS-based config with @theme directive, NOT tailwind.config.ts
+- Create src/lib/utils.ts with cn() function for conditional class merging
+- Create src/app/layout.tsx with <html lang='en'>, viewport meta tag, basic <body> structure
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. npm run dev starts without errors
+2. npx tsc --noEmit exits 0
+3. curl localhost:3000 returns 200
+4. Browser shows blank page with correct <html lang='en'>
 
 ## Subtasks
 
-### 1.1. Create CSS custom properties for backgrounds, foregrounds, typography, spacing, radius, shadows, easing
+### 1.1. Configure next.config.ts with strict mode
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 1.2. Add 8 domain accent colors with [data-domain] attribute selectors
+### 1.2. Set up tsconfig.json with strict + path aliases
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 1.3. Set up font loading (Google Fonts + local @font-face)
+### 1.3. Configure Tailwind v4 with CSS-based approach
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 1.4. Add global focus ring, scrollbar, reduced motion, box-sizing
+### 1.4. Create src/lib/utils.ts with cn() utility
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 1.5. Create public/fonts/ directory with Mondwest and Departure woff2 files
+### 1.5. Create .env.example documenting all env vars
+
+**Status:** pending  
+**Dependencies:** None  
+
+### 1.6. Set up src/app/layout.tsx with HTML shell, viewport, OG tags
 
 **Status:** pending  
 **Dependencies:** None  

@@ -1,52 +1,52 @@
 # Task ID: 32
 
-**Title:** Vercel Deployment Configuration
+**Title:** TypeScript Strict Verification + Build Check
 
 **Status:** pending
 
-**Dependencies:** 30
+**Dependencies:** 31
 
-**Priority:** medium
+**Priority:** high
 
-**Description:** Production deployment to Vercel.
+**Description:** Final TypeScript and build verification gate.
 
-- vercel.json configuration if needed
-- Environment variables setup
-- Build optimization (output: standalone if needed)
-- Performance budget: FCP < 1.5s, TTI < 3s
-- Verify build: next build passes clean
-- Test production URL renders correctly
-- Add deployment URL to README
+1. npx tsc --noEmit: Zero errors
+2. npm run build: Clean production build
+3. No unused exports/imports
+4. No 'any' types (except justified exceptions)
+5. All event handlers properly typed
+6. All store actions properly typed
+7. All component props properly typed
 
 **Details:**
 
-Production deployment to Vercel.
+This is the quality gate. Nothing ships unless this passes.
 
-- vercel.json configuration if needed
-- Environment variables setup
-- Build optimization (output: standalone if needed)
-- Performance budget: FCP < 1.5s, TTI < 3s
-- Verify build: next build passes clean
-- Test production URL renders correctly
-- Add deployment URL to README
+Also verify:
+- No console.log statements
+- No TODO comments (or document them)
+- No commented-out code blocks
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. npx tsc --noEmit exits 0
+2. npm run build exits 0
+3. grep -r 'console.log' returns 0 results in src/
+4. grep -r ': any' returns only justified uses
 
 ## Subtasks
 
-### 32.1. Verify next build passes clean
+### 32.1. Fix all TypeScript errors
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 32.2. Deploy to Vercel
+### 32.2. Clean production build verification
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 32.3. Verify production URL renders correctly
+### 32.3. Remove console.logs and dead code
 
 **Status:** pending  
 **Dependencies:** None  

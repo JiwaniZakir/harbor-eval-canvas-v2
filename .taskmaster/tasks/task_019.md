@@ -1,93 +1,73 @@
 # Task ID: 19
 
-**Title:** Streaming Text Display + Markdown Renderer
+**Title:** Files Tab: File Tree + Editor Preview + Upload Zone
 
 **Status:** pending
 
-**Dependencies:** 1
+**Dependencies:** 4, 5, 7, 22
 
 **Priority:** medium
 
-**Description:** Character-by-character streaming and markdown rendering for agent messages.
+**Description:** Files tab showing generated artifacts.
 
-File: src/components/ui/streaming-text.tsx
+File: src/components/panel/files-tab.tsx
 
-StreamingText component:
-- Props: text, speed (ms per char, default 12), onComplete
-- Uses requestAnimationFrame for smooth rendering
-- Blinking cursor at end (2px wide, fg-40, cursorBlink 1s step-end)
-- Respects prefers-reduced-motion (shows all immediately)
+File Tree:
+- Recursive builder from DomainStore artifacts
+- Folder: ChevronRight (rotates 90° on expand) + folder icon + name
+- File: type-specific icon with color + name + size
+- Indent: 16px per depth level
+- Click: opens inline preview
+- Item: 32px height, hover bg fg-5, radius-sm
 
-StreamingMarkdown component:
-- Renders complete blocks as they stream in
-- Auto-scrolls to bottom during streaming
+File Type Icons (Lucide):
+- .json/.jsonl: Braces, blue
+- .py: Code, green
+- .yaml/.yml: Settings, purple
+- .md: FileText, gray
+- .csv: Table, amber
 
-Markdown renderer (no external deps):
-- Code blocks: ```lang → <pre class='md-code-block'>
-- Inline code: `text` → <code class='md-inline-code'>
-- Bold: **text** → <strong>
-- Italic: *text* → <em>
-- Headers: # ## ### → h2 h3 h4 with Figtree sizing
-- Lists: - item → <li>
-- Line breaks: \n\n → paragraph breaks
+Inline Preview:
+- Code view: monospace, line numbers
+- Toggle: Code/Preview tabs (uses same tab pattern as panel)
+- File header with filename + close button
 
-CSS for prose:
-- .agent-prose: Figtree 400 14px/1.6 fg-80
-- Code block: fg-5 bg, fg-10 border, mono 12px
-- Inline code: fg-5 bg, radius-xs, padding 2px 5px
+Upload Zone (uses File Upload component from Task 22):
+- Drag-drop area at bottom of tree
+- Only shown when tree is non-empty or as empty state
 
 **Details:**
 
-Character-by-character streaming and markdown rendering for agent messages.
+The file tree is purely client-side. Artifacts are stored in DomainStore as file metadata objects.
 
-File: src/components/ui/streaming-text.tsx
-
-StreamingText component:
-- Props: text, speed (ms per char, default 12), onComplete
-- Uses requestAnimationFrame for smooth rendering
-- Blinking cursor at end (2px wide, fg-40, cursorBlink 1s step-end)
-- Respects prefers-reduced-motion (shows all immediately)
-
-StreamingMarkdown component:
-- Renders complete blocks as they stream in
-- Auto-scrolls to bottom during streaming
-
-Markdown renderer (no external deps):
-- Code blocks: ```lang → <pre class='md-code-block'>
-- Inline code: `text` → <code class='md-inline-code'>
-- Bold: **text** → <strong>
-- Italic: *text* → <em>
-- Headers: # ## ### → h2 h3 h4 with Figtree sizing
-- Lists: - item → <li>
-- Line breaks: \n\n → paragraph breaks
-
-CSS for prose:
-- .agent-prose: Figtree 400 14px/1.6 fg-80
-- Code block: fg-5 bg, fg-10 border, mono 12px
-- Inline code: fg-5 bg, radius-xs, padding 2px 5px
+In MVP, file content is mock/placeholder. The upload zone stores files in-memory only.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. File tree renders with correct icons and indentation
+2. Folders expand/collapse with chevron animation
+3. File click shows inline preview
+4. Upload zone accepts drag-drop
+5. File type icons match file extension
 
 ## Subtasks
 
-### 19.1. StreamingText with rAF-based character reveal and cursor
+### 19.1. Recursive file tree with expand/collapse
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 19.2. StreamingMarkdown with auto-scroll
+### 19.2. File type icons with extension-based colors
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 19.3. simpleMarkdown renderer (no deps)
+### 19.3. Inline editor preview with code/preview toggle
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 19.4. CSS for agent prose, code blocks, inline code
+### 19.4. Integration with upload zone component
 
 **Status:** pending  
 **Dependencies:** None  

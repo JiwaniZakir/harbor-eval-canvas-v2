@@ -1,81 +1,62 @@
 # Task ID: 18
 
-**Title:** Command Palette (Cmd+K)
+**Title:** Project Tab: Settings + Model Chips + Danger Zone
 
 **Status:** pending
 
-**Dependencies:** 1, 2, 3
+**Dependencies:** 4, 5, 7
 
-**Priority:** low
+**Priority:** medium
 
-**Description:** Global command palette for quick navigation and actions.
+**Description:** Project settings tab.
 
-File: src/components/studio/command-palette-modal.tsx
+File: src/components/panel/project-tab.tsx
 
-Trigger: Cmd+K (Mac) / Ctrl+K (Windows)
+Settings Sections:
+- Section header: Figtree 600 13px fg-60, uppercase, letter-spacing 0.04em
+- Key-value rows: label (Figtree 400 13px fg-50) + value (Figtree 500 13px fg-80)
 
-Dialog:
-- 480px width, centered, bg-l200, radius-lg, shadow-outset-150
-- Backdrop: bg-fg-100 at 20% opacity, blur(4px)
-- Search input: full width, 44px, Search icon 16px, Figtree 400 14px
-- Auto-focus on open
+Model Chips:
+- Primary: Badge (accent) with star icon
+- Secondary: Badge (default)
+- Add: dashed border Badge with Plus icon
 
-Results:
-- Grouped: Actions section + Navigation section
-- Item: 36px height, icon 16px + label (Figtree 400 13px fg-70) + shortcut hint (Departure 11px fg-30)
-- Keyboard nav: arrow keys move selection, Enter activates, Escape closes
-- Active item: bg fg-5, fg-80 text
-- Max 8 visible results, scrollable
+Danger Zone:
+- Red text links for 'Reset Project', 'Delete All Data'
+- Click opens Dialog (from UI primitives) with:
+  - Warning text
+  - 'Cancel' Button (secondary) + 'Confirm' Button (danger)
+  - Overlay with blur
 
-Actions: New Project, Reset Canvas, Export Data
-Navigation: Home, Agent, Project, Files, Sweeps + each domain name
+DESIGN CONSISTENCY: Uses Badge for chips, Dialog for confirmation, Button for actions.
 
 **Details:**
 
-Global command palette for quick navigation and actions.
+Settings data comes from ProjectStore. Model changes update ProjectStore.setTargetModel().
 
-File: src/components/studio/command-palette-modal.tsx
-
-Trigger: Cmd+K (Mac) / Ctrl+K (Windows)
-
-Dialog:
-- 480px width, centered, bg-l200, radius-lg, shadow-outset-150
-- Backdrop: bg-fg-100 at 20% opacity, blur(4px)
-- Search input: full width, 44px, Search icon 16px, Figtree 400 14px
-- Auto-focus on open
-
-Results:
-- Grouped: Actions section + Navigation section
-- Item: 36px height, icon 16px + label (Figtree 400 13px fg-70) + shortcut hint (Departure 11px fg-30)
-- Keyboard nav: arrow keys move selection, Enter activates, Escape closes
-- Active item: bg fg-5, fg-80 text
-- Max 8 visible results, scrollable
-
-Actions: New Project, Reset Canvas, Export Data
-Navigation: Home, Agent, Project, Files, Sweeps + each domain name
+The danger zone confirmation Dialog uses the Dialog primitive with red CTA Button (danger variant).
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Settings show correct project data
+2. Model chips display with correct styling
+3. Danger link opens confirmation Dialog
+4. Cancel closes dialog without action
+5. Confirm executes destructive action and closes
 
 ## Subtasks
 
-### 18.1. Cmd+K listener and dialog rendering
+### 18.1. Settings sections with key-value rows
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 18.2. Search input with filtering
+### 18.2. Model chips using Badge primitive
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 18.3. Grouped results with keyboard navigation
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 18.4. Action execution (navigate, create, reset)
+### 18.3. Danger zone with Dialog confirmation
 
 **Status:** pending  
 **Dependencies:** None  

@@ -1,79 +1,60 @@
 # Task ID: 6
 
-**Title:** Workspace Plate: Container + Pipeline Roadmap Strip
+**Title:** SVG Assets: Pipeline Icons + Domain Icons
 
 **Status:** pending
 
-**Dependencies:** 1, 2, 3, 5
+**Dependencies:** None
 
-**Priority:** high
+**Priority:** medium
 
-**Description:** The workspace plate overlays the canvas when a domain is selected for pipeline work.
+**Description:** Create all SVG icon assets before any component that references them.
 
-File: src/components/canvas/workspace-plate.tsx (~270 lines)
+Directory: public/eval-icons/
 
-Plate Container:
-- 680px max-width, centered in canvas area
-- bg-l-neg-50, shadow-inset-200, radius-xl
-- Header: accent dot (8px, domain color) + domain name (Figtree 600 16px fg-80) + status badge + X close button
-- Status badges with state-specific colors: probing (accent bg), scaffolding (blue bg), validating (purple bg), etc.
+5 Pipeline Stage Icons (24x24, stroke-based, 1.5px, currentColor, round caps):
+- intake.svg: Inbox/funnel shape
+- probe.svg: Magnifying glass with crosshair
+- scaffold.svg: Building blocks / layers
+- validate.svg: Shield with checkmark
+- publish.svg: Rocket / share arrow
 
-Pipeline Roadmap Strip:
-- Horizontal strip at bottom of plate
-- 5 stages: Intake → Probe → Scaffold → Validate → Publish
-- Each stage card: 72px min-width, radius-md, icon + label
-- Stage states: locked (fg-10 bg, fg-30 text), available (fg-5 bg, fg-60 text), active (fg-10 bg, fg-80 text, Loader2 rotating), complete (green bg, white check)
-- Connector segments: 24px wide, 2px height between cards
-- Connector colors: fg-10 for upcoming, fg-30 for passed, accent for active transition
-
-Shows/hides based on UIStore.detailPanel state.
-ESC key closes the plate.
+8 Domain Icons (24x24, same style):
+- instruction.svg: Document with arrow
+- reasoning.svg: Brain / logic gate
+- safety.svg: Shield
+- knowledge.svg: Book / database
+- multilingual.svg: Globe with text
+- code.svg: Code brackets <>
+- creativity.svg: Sparkle / star
+- multimodal.svg: Image + text layers
 
 **Details:**
 
-The workspace plate overlays the canvas when a domain is selected for pipeline work.
+All icons must be:
+- Exactly 24x24 viewBox
+- stroke='currentColor' (inherits color from parent)
+- strokeWidth='1.5'
+- strokeLinecap='round' strokeLinejoin='round'
+- fill='none'
+- No embedded styles or classes
 
-File: src/components/canvas/workspace-plate.tsx (~270 lines)
-
-Plate Container:
-- 680px max-width, centered in canvas area
-- bg-l-neg-50, shadow-inset-200, radius-xl
-- Header: accent dot (8px, domain color) + domain name (Figtree 600 16px fg-80) + status badge + X close button
-- Status badges with state-specific colors: probing (accent bg), scaffolding (blue bg), validating (purple bg), etc.
-
-Pipeline Roadmap Strip:
-- Horizontal strip at bottom of plate
-- 5 stages: Intake → Probe → Scaffold → Validate → Publish
-- Each stage card: 72px min-width, radius-md, icon + label
-- Stage states: locked (fg-10 bg, fg-30 text), available (fg-5 bg, fg-60 text), active (fg-10 bg, fg-80 text, Loader2 rotating), complete (green bg, white check)
-- Connector segments: 24px wide, 2px height between cards
-- Connector colors: fg-10 for upcoming, fg-30 for passed, accent for active transition
-
-Shows/hides based on UIStore.detailPanel state.
-ESC key closes the plate.
+This ensures icons adapt to any color context via CSS color property.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. All 13 SVGs render at 24px in browser
+2. Icons change color when parent color CSS changes
+3. No rendering artifacts at small sizes (16px, 12px)
 
 ## Subtasks
 
-### 6.1. Plate container with header (accent dot, name, status badge, close)
+### 6.1. Create 5 pipeline stage SVGs in public/eval-icons/
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 6.2. Pipeline roadmap strip with 5 stage cards and connectors
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 6.3. Stage state rendering (locked/available/active/complete)
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 6.4. ESC key handler to close plate
+### 6.2. Create 8 domain SVGs in public/eval-icons/
 
 **Status:** pending  
 **Dependencies:** None  

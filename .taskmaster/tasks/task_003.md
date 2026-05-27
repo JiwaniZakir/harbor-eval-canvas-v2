@@ -1,110 +1,51 @@
 # Task ID: 3
 
-**Title:** Zustand State Stores: Project, Domain, UI, Agent
+**Title:** Animation Keyframes Library
 
 **Status:** pending
 
-**Dependencies:** None
+**Dependencies:** 2
 
 **Priority:** high
 
-**Description:** Create all 4 Zustand stores with full type definitions.
+**Description:** All CSS keyframes used throughout the app. Created early so every component can reference them.
 
-Files:
-- src/lib/types.ts: All TypeScript interfaces
-- src/lib/stores/project-store.ts
-- src/lib/stores/domain-store.ts
-- src/lib/stores/ui-store.ts
-- src/lib/stores/agent-store.ts
+Add to globals.css AFTER design tokens:
 
-Types (src/lib/types.ts):
-- DomainId: union of 8 domain string literals
-- DomainStatus: 22-state union (untested, probe_queued, probing, probe_complete, promoted, redesign, rejected, scaffold_queued, scaffolding, scaffold_complete, validation_gate, gate_passed, gate_failed, target_sweep, sweep_complete, iterating, published, ready_to_publish, calibrating, needs_review, blocked, archived)
-- ToolCallStatus, ToolCall, PlanStep, ChatMessage, ProbeSummary, SweepTrial, SweepSummary interfaces
-- Project, DomainState, ProbeVariantResult interfaces
-
-ProjectStore:
-- project: {name, targetModel, globalProgress, createdAt}
-- setProject, updateProgress, setTargetModel actions
-- Persist to localStorage
-
-DomainStore:
-- domainStates: Record<DomainId, DomainState>
-- setDomainStatus, addArtifact, setProbeSummary, setSweepSummary
-- Initialize all 8 domains as 'untested'
-
-UIStore:
-- activeTab, focusedDomainId, detailPanelOpen, setupWizardOpen
-- globalState (8 states: empty→onboarding→canvas_idle→probing→scaffolding→validating→calibrating→published)
-- setActiveTab, setFocusedDomain, openDetailPanel, closeDetailPanel, setSetupWizardOpen, setGlobalState
-
-AgentStore:
-- messages: ChatMessage[], isStreaming, currentToolCalls
-- addMessage, updateMessage, setStreaming, addToolCall, updateToolCall
+@keyframes pulseGlow { 0%,100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 12px 0 var(--domain-accent, rgba(99,102,241,0.2)); } }
+@keyframes dotPulse { 0%,100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.3); opacity: 1; } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes sd-slideUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes sd-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cursorBlink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
+@keyframes typingBounce { 0%,60%,100% { transform: translateY(0); opacity: 0.3; } 30% { transform: translateY(-4px); opacity: 1; } }
+@keyframes dashScroll { to { stroke-dashoffset: -9; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes progress-fill { from { width: 0; } }
+@keyframes toast-countdown { from { width: 100%; } to { width: 0; } }
+@keyframes fanout-entrance { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes skeleton-shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 
 **Details:**
 
-Create all 4 Zustand stores with full type definitions.
+These keyframes are referenced by: radial ring nodes (pulseGlow, dotPulse), onboarding (shimmer), dropdowns/modals (sd-slideUp, sd-fadeIn), streaming text (cursorBlink), agent chat (typingBounce), connection lines (dashScroll), loaders (spin), progress bars (progress-fill), toasts (toast-countdown), fan-out cards (fanout-entrance), skeletons (skeleton-shimmer).
 
-Files:
-- src/lib/types.ts: All TypeScript interfaces
-- src/lib/stores/project-store.ts
-- src/lib/stores/domain-store.ts
-- src/lib/stores/ui-store.ts
-- src/lib/stores/agent-store.ts
-
-Types (src/lib/types.ts):
-- DomainId: union of 8 domain string literals
-- DomainStatus: 22-state union (untested, probe_queued, probing, probe_complete, promoted, redesign, rejected, scaffold_queued, scaffolding, scaffold_complete, validation_gate, gate_passed, gate_failed, target_sweep, sweep_complete, iterating, published, ready_to_publish, calibrating, needs_review, blocked, archived)
-- ToolCallStatus, ToolCall, PlanStep, ChatMessage, ProbeSummary, SweepTrial, SweepSummary interfaces
-- Project, DomainState, ProbeVariantResult interfaces
-
-ProjectStore:
-- project: {name, targetModel, globalProgress, createdAt}
-- setProject, updateProgress, setTargetModel actions
-- Persist to localStorage
-
-DomainStore:
-- domainStates: Record<DomainId, DomainState>
-- setDomainStatus, addArtifact, setProbeSummary, setSweepSummary
-- Initialize all 8 domains as 'untested'
-
-UIStore:
-- activeTab, focusedDomainId, detailPanelOpen, setupWizardOpen
-- globalState (8 states: empty→onboarding→canvas_idle→probing→scaffolding→validating→calibrating→published)
-- setActiveTab, setFocusedDomain, openDetailPanel, closeDetailPanel, setSetupWizardOpen, setGlobalState
-
-AgentStore:
-- messages: ChatMessage[], isStreaming, currentToolCalls
-- addMessage, updateMessage, setStreaming, addToolCall, updateToolCall
+Creating them all upfront ensures no component fails to animate.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. All keyframe names compile without CSS errors
+2. Test element with animation: pulseGlow 2s infinite renders correctly
+3. Reduced motion media query disables all animations
 
 ## Subtasks
 
-### 3.1. Create src/lib/types.ts with all interfaces and type unions
+### 3.1. Add all 13 @keyframes definitions to globals.css
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 3.2. Create project-store.ts with localStorage persistence
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 3.3. Create domain-store.ts with 8 domain initialization
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 3.4. Create ui-store.ts with global state machine
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 3.5. Create agent-store.ts with message and tool call management
+### 3.2. Verify each keyframe is syntactically correct
 
 **Status:** pending  
 **Dependencies:** None  

@@ -1,73 +1,61 @@
 # Task ID: 22
 
-**Title:** SVG Asset Creation: Pipeline Icons + Domain Icons
+**Title:** File Upload Component
 
 **Status:** pending
 
-**Dependencies:** None
+**Dependencies:** 2, 4
 
 **Priority:** low
 
-**Description:** Create all SVG icon assets.
+**Description:** Reusable drag-and-drop file upload zone.
 
-Directory: public/eval-icons/
+File: src/components/ui/file-upload.tsx
 
-5 Pipeline Stage Icons (24x24):
-- intake.svg: inbox/funnel shape
-- probe.svg: magnifying glass with target
-- scaffold.svg: building blocks
-- validate.svg: shield with checkmark
-- publish.svg: rocket/share
+Dropzone:
+- Dashed border (2px fg-10), radius-lg, padding 24px
+- Upload icon (20px fg-30) + 'Drop files here or browse' + hint text
+- Hover: border fg-20, bg fg-5
+- Dragging: border fg-40, bg fg-5, box-shadow ring
+- Accept: .json, .jsonl, .csv, .yaml, .yml, .py, .txt, .md
+- Max 50MB per file
 
-8 Domain Icons (24x24):
-- instruction.svg: document with arrow
-- reasoning.svg: brain/logic gate
-- safety.svg: shield
-- knowledge.svg: book/database
-- multilingual.svg: globe with text
-- code.svg: code brackets
-- creativity.svg: sparkle/star
-- multimodal.svg: image+text layers
+Upload Item List:
+- Per-file row: icon + name + size + progress bar + remove button
+- Progress bar: 60px × 3px, fg-40 fill
+- States: uploading (progress), complete (green Check), error (red bg)
 
-All icons: stroke-based, 1.5px stroke, currentColor, no fill, round linecap/linejoin
+Uses design tokens throughout. No hardcoded colors.
 
 **Details:**
 
-Create all SVG icon assets.
+This component is used by the Files tab (Task 19) and could be used by the chat composer attach button.
 
-Directory: public/eval-icons/
+File validation: check extension against accept list, check size against maxSizeMB.
 
-5 Pipeline Stage Icons (24x24):
-- intake.svg: inbox/funnel shape
-- probe.svg: magnifying glass with target
-- scaffold.svg: building blocks
-- validate.svg: shield with checkmark
-- publish.svg: rocket/share
-
-8 Domain Icons (24x24):
-- instruction.svg: document with arrow
-- reasoning.svg: brain/logic gate
-- safety.svg: shield
-- knowledge.svg: book/database
-- multilingual.svg: globe with text
-- code.svg: code brackets
-- creativity.svg: sparkle/star
-- multimodal.svg: image+text layers
-
-All icons: stroke-based, 1.5px stroke, currentColor, no fill, round linecap/linejoin
+Upload is simulated in MVP (no backend). Progress uses setInterval with random increments.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Drag-drop zone highlights on drag over
+2. Files appear in list after drop
+3. Progress bar animates
+4. Remove button removes file from list
+5. Oversized files show error state
 
 ## Subtasks
 
-### 22.1. Create 5 pipeline stage SVG icons
+### 22.1. Dropzone with drag/hover/active states
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 22.2. Create 8 domain SVG icons
+### 22.2. Upload item list with progress bars
+
+**Status:** pending  
+**Dependencies:** None  
+
+### 22.3. File validation (type + size)
 
 **Status:** pending  
 **Dependencies:** None  

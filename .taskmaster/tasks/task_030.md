@@ -1,50 +1,52 @@
 # Task ID: 30
 
-**Title:** TypeScript Strict Mode + Build Verification
+**Title:** Global Error Boundary + Loading States
 
 **Status:** pending
 
-**Dependencies:** 1, 2, 3, 4, 5
+**Dependencies:** 4, 27
 
-**Priority:** high
+**Priority:** medium
 
-**Description:** Ensure TypeScript strict mode passes with zero errors across entire codebase.
+**Description:** React error boundary and global loading handling.
 
-- tsconfig.json: strict: true, noUnusedLocals, noUnusedParameters
-- All components properly typed (no any, no type assertions unless justified)
-- All store actions typed with proper parameter/return types
-- All event handlers typed (React.MouseEvent, React.KeyboardEvent, etc.)
-- Verify: npx tsc --noEmit returns 0 errors
-- Add to CI/CD as gate
+File: src/components/layout/error-boundary.tsx
+- Catches unhandled React errors
+- Renders ErrorState (from Task 27) with retry button
+- Retry resets error state and re-renders children
+
+File: src/app/loading.tsx
+- Next.js loading state file
+- Shows centered Spinner from UI primitives
+
+File: src/app/error.tsx
+- Next.js error boundary file
+- Shows ErrorState with 'Try again' button
 
 **Details:**
 
-Ensure TypeScript strict mode passes with zero errors across entire codebase.
-
-- tsconfig.json: strict: true, noUnusedLocals, noUnusedParameters
-- All components properly typed (no any, no type assertions unless justified)
-- All store actions typed with proper parameter/return types
-- All event handlers typed (React.MouseEvent, React.KeyboardEvent, etc.)
-- Verify: npx tsc --noEmit returns 0 errors
-- Add to CI/CD as gate
+These catch-all components prevent the app from showing a white screen on errors. They use the same design language as the rest of the app (ErrorState from Task 27, Spinner from Task 4).
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Throwing error in a component shows ErrorState
+2. Retry button recovers from error
+3. Loading state shows Spinner
+4. Error boundary doesn't break on nested errors
 
 ## Subtasks
 
-### 30.1. Configure tsconfig.json strict mode
+### 30.1. React error boundary component with ErrorState fallback
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 30.2. Fix all type errors across codebase
+### 30.2. Next.js loading.tsx with Spinner
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 30.3. Verify npx tsc --noEmit passes clean
+### 30.3. Next.js error.tsx with ErrorState + retry
 
 **Status:** pending  
 **Dependencies:** None  

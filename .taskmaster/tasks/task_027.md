@@ -1,77 +1,53 @@
 # Task ID: 27
 
-**Title:** Onboarding → Canvas Transition
+**Title:** Error State Components
 
 **Status:** pending
 
-**Dependencies:** 4, 5
+**Dependencies:** 2, 4
 
-**Priority:** medium
+**Priority:** low
 
-**Description:** Smooth transition from onboarding completion to the main canvas.
+**Description:** 3 error display variants for different contexts.
 
-Flow:
-1. User clicks 'Accept & Start Probing' on Step 5
-2. SetupWizard closes with fade-out (300ms)
-3. Canvas fades in with radial ring
-4. Primary domain node pulses (probing state)
-5. GlobalState transitions: onboarding → canvas_idle
-6. Agent tab receives first message from system
+File: src/components/ui/error-states.tsx
 
-Animation:
-- Wizard overlay: opacity 1 → 0, 300ms
-- Canvas: opacity 0 → 1, 400ms, with 200ms delay
-- Primary domain node: starts pulsing after canvas visible
+1. ErrorState (full-area): Icon circle (48px, red-50 bg, red icon) + title (Figtree 500 16px) + description (Figtree 400 13px fg-40) + retry Button (secondary).
+   5 kinds: network (WifiOff), auth (Ban), rate-limit, server, generic (AlertTriangle).
 
-State updates:
-- ProjectStore: set project with name, model, workflow
-- DomainStore: initialize all 8 domains, set primary to probe_queued
-- UIStore: close wizard, set globalState to canvas_idle
+2. ErrorBanner (inline): Red-50 bg, red-200 border, AlertTriangle + message + dismiss Button (ghost).
+
+3. ChatError (chat bubble): Red-50 bg, radius-md, 12px text + 'Retry' link.
+
+All use Button primitive for actions. All use design token colors.
 
 **Details:**
 
-Smooth transition from onboarding completion to the main canvas.
-
-Flow:
-1. User clicks 'Accept & Start Probing' on Step 5
-2. SetupWizard closes with fade-out (300ms)
-3. Canvas fades in with radial ring
-4. Primary domain node pulses (probing state)
-5. GlobalState transitions: onboarding → canvas_idle
-6. Agent tab receives first message from system
-
-Animation:
-- Wizard overlay: opacity 1 → 0, 300ms
-- Canvas: opacity 0 → 1, 400ms, with 200ms delay
-- Primary domain node: starts pulsing after canvas visible
-
-State updates:
-- ProjectStore: set project with name, model, workflow
-- DomainStore: initialize all 8 domains, set primary to probe_queued
-- UIStore: close wizard, set globalState to canvas_idle
+These are used as fallbacks throughout the app:
+- ErrorState: canvas area when API fails
+- ErrorBanner: inside panel sections
+- ChatError: inline in agent message list
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Each variant renders with correct styling
+2. Retry button fires callback
+3. Dismiss button hides banner
+4. All colors use design tokens
 
 ## Subtasks
 
-### 27.1. Wizard fade-out animation
+### 27.1. ErrorState with 5 kinds and retry Button
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 27.2. Canvas fade-in with delay
+### 27.2. ErrorBanner with dismiss
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 27.3. State store initialization on wizard complete
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 27.4. Primary domain pulse activation
+### 27.3. ChatError with retry link
 
 **Status:** pending  
 **Dependencies:** None  

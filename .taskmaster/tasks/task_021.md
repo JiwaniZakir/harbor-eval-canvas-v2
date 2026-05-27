@@ -1,72 +1,46 @@
 # Task ID: 21
 
-**Title:** File Upload Component
+**Title:** Panel Tab Routing: Wire Detail Panel to All 5 Tab Components
 
 **Status:** pending
 
-**Dependencies:** 1
+**Dependencies:** 15, 16, 18, 19, 20
 
-**Priority:** low
+**Priority:** high
 
-**Description:** Reusable drag-and-drop file upload zone.
+**Description:** Update detail-panel.tsx to route UIStore.activeTab to real tab components.
 
-File: src/components/ui/file-upload.tsx
+Routing:
+- 'home' → <HomeTab />
+- 'agent' → <AgentTab />
+- 'project' → <ProjectTab />
+- 'files' → <FilesTab />
+- 'sweeps' → <SweepsTab />
 
-Dropzone:
-- Dashed border (2px fg-10), radius-lg, padding 24px
-- Upload icon (20px fg-30) + text + hint
-- Hover: border fg-20, bg fg-5
-- Dragging: border fg-40, bg fg-5, box-shadow
-- Accept: .json, .jsonl, .csv, .yaml, .yml, .py, .txt, .md
-- Max 50MB per file
-
-Upload List:
-- Per-file row: icon + name + size + progress bar + remove button
-- Status: uploading (progress bar), complete (green check), error (red bg)
-- Progress bar: 60px width, 3px height, fg-40 fill
-- Simulated upload progress with intervals
-
-Integration: Used by Files tab and chat composer attach button
+Suspense boundaries with tab-specific skeleton fallbacks.
+Domain context: when focusedDomainId is set, tabs show domain-scoped data.
 
 **Details:**
 
-Reusable drag-and-drop file upload zone.
+This is the integration task that connects all 5 tab implementations to the panel shell.
 
-File: src/components/ui/file-upload.tsx
-
-Dropzone:
-- Dashed border (2px fg-10), radius-lg, padding 24px
-- Upload icon (20px fg-30) + text + hint
-- Hover: border fg-20, bg fg-5
-- Dragging: border fg-40, bg fg-5, box-shadow
-- Accept: .json, .jsonl, .csv, .yaml, .yml, .py, .txt, .md
-- Max 50MB per file
-
-Upload List:
-- Per-file row: icon + name + size + progress bar + remove button
-- Status: uploading (progress bar), complete (green check), error (red bg)
-- Progress bar: 60px width, 3px height, fg-40 fill
-- Simulated upload progress with intervals
-
-Integration: Used by Files tab and chat composer attach button
+Each tab should be wrapped in React.lazy() for code splitting, with Suspense fallback showing the appropriate skeleton layout.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. All 5 tabs render when selected
+2. Tab switching is instant (no flash)
+3. Skeleton shows briefly on first load
+4. Tab content updates when domain changes
 
 ## Subtasks
 
-### 21.1. Dropzone with drag/hover/active visual states
+### 21.1. Tab routing switch in detail-panel.tsx
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 21.2. Upload item list with progress bars
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 21.3. File validation (type, size)
+### 21.2. Suspense boundaries with skeleton fallbacks
 
 **Status:** pending  
 **Dependencies:** None  

@@ -1,108 +1,69 @@
 # Task ID: 15
 
-**Title:** Chat Card Components: Tool, Probe, Approval, Iteration, Sweep
+**Title:** Home Tab: Greeting + Progress Ring + Suggested Actions + Activity
 
 **Status:** pending
 
-**Dependencies:** 3, 11
+**Dependencies:** 4, 5, 7
 
 **Priority:** medium
 
-**Description:** 5 specialized card components embedded in agent chat messages.
+**Description:** Home tab content in the right panel.
 
-File: src/components/panel/chat-cards.tsx
+File: src/components/panel/home-tab.tsx
 
-1. ToolCallCard (spec §6.2.4):
-- 32px inline card, clickable to expand
-- Running: Loader2 spinning 12px + 'Running: tool_name'
-- Complete: Check green 12px + 'Completed: summary'
-- Expandable detail: monospace output, max-height 200px, bg-l200
+Greeting:
+- Time-based: 'Good morning/afternoon/evening, Zakir' (Mondwest 600 22px fg-80)
+- Project name below (Figtree 400 13px fg-40)
 
-2. ProbeSummaryCard (spec §6.2.5):
-- Header: domain name + taxonomy badge
-- 5 variant bars: horizontal tracks with fill percentage
-- Fill colors: good (green, >60%), mediocre (amber, 30-60%), bad (red, <30%)
-- Mean + verdict row
-- Actions: 'View Details' outlined + 'Accept & Scaffold →' dark CTA
+Progress Card:
+- SVG ring: 56px diameter, 3px stroke, fg-5 base, fg-40 progress fill
+- Center: percentage (Departure 600 20px fg-80)
+- Label: 'domains evaluated' (Figtree 400 11px fg-40)
+- Linear progress bar: 4px height, radius-full, fg-5 track, fg-40 fill
+- Progress = count of published domains / 8
 
-3. ApprovalGateCard (spec §6.2.6):
-- Amber border (2px #FDE68A), amber-50/30 bg
-- AlertTriangle icon + title
-- Body text with bullet list
-- 'Reject' red outlined + 'Approve & Validate →' dark CTA
+Suggested Next Cards (2-3):
+- Uses Card primitive (interactive)
+- Accent dot (6px, domain color) + action text (Figtree 500 13px fg-60) + ArrowRight
+- Click navigates to relevant domain
 
-4. IterationCard (spec §6.2.7):
-- File header: monospace filename + line ref
-- Diff block: removed lines (red bg, '- ' prefix) + added lines (green bg, '+ ' prefix)
-- Rationale: italic 12px
-- 'Dismiss' + 'Apply Edit →'
-
-5. SweepResultCard (spec §6.2.8):
-- pass@k headline (Departure 700 20px)
-- Trial rows with pass/fail badges
+Activity Feed:
+- Time labels (Departure 11px fg-30, relative: '2m ago')
+- Action descriptions (Figtree 400 13px fg-50)
+- Dividers between items
 
 **Details:**
 
-5 specialized card components embedded in agent chat messages.
-
-File: src/components/panel/chat-cards.tsx
-
-1. ToolCallCard (spec §6.2.4):
-- 32px inline card, clickable to expand
-- Running: Loader2 spinning 12px + 'Running: tool_name'
-- Complete: Check green 12px + 'Completed: summary'
-- Expandable detail: monospace output, max-height 200px, bg-l200
-
-2. ProbeSummaryCard (spec §6.2.5):
-- Header: domain name + taxonomy badge
-- 5 variant bars: horizontal tracks with fill percentage
-- Fill colors: good (green, >60%), mediocre (amber, 30-60%), bad (red, <30%)
-- Mean + verdict row
-- Actions: 'View Details' outlined + 'Accept & Scaffold →' dark CTA
-
-3. ApprovalGateCard (spec §6.2.6):
-- Amber border (2px #FDE68A), amber-50/30 bg
-- AlertTriangle icon + title
-- Body text with bullet list
-- 'Reject' red outlined + 'Approve & Validate →' dark CTA
-
-4. IterationCard (spec §6.2.7):
-- File header: monospace filename + line ref
-- Diff block: removed lines (red bg, '- ' prefix) + added lines (green bg, '+ ' prefix)
-- Rationale: italic 12px
-- 'Dismiss' + 'Apply Edit →'
-
-5. SweepResultCard (spec §6.2.8):
-- pass@k headline (Departure 700 20px)
-- Trial rows with pass/fail badges
+Progress data comes from DomainStore - count domains with published status.
+Suggested actions come from domains with actionable status (probe_queued, scaffold_queued, etc.).
+Activity feed is mock data in MVP.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Greeting changes based on time of day
+2. Progress ring fills correctly
+3. Suggested cards show for actionable domains
+4. Activity timestamps are relative
 
 ## Subtasks
 
-### 15.1. ToolCallCard with expand/collapse and 3 states
+### 15.1. Time-of-day greeting with Mondwest font
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 15.2. ProbeSummaryCard with variant bars and verdict
+### 15.2. SVG progress ring with animated dashoffset + linear bar
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 15.3. ApprovalGateCard with amber styling and action buttons
+### 15.3. Suggested next action Cards with accent dots
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 15.4. IterationCard with diff view (removed/added lines)
-
-**Status:** pending  
-**Dependencies:** None  
-
-### 15.5. SweepResultCard with pass@k and trial rows
+### 15.4. Activity feed with relative timestamps
 
 **Status:** pending  
 **Dependencies:** None  

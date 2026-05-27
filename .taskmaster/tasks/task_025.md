@@ -1,85 +1,67 @@
 # Task ID: 25
 
-**Title:** Responsive Layout: Mobile + Tablet + Touch + Safe Areas
+**Title:** Command Palette (Cmd+K)
 
 **Status:** pending
 
-**Dependencies:** 1, 2
+**Dependencies:** 4, 5, 7
 
 **Priority:** low
 
-**Description:** Full responsive design implementation.
+**Description:** Global command palette for quick navigation.
 
-Mobile (<768px):
-- Hide right panel entirely
-- Full-width workspace plate
-- Smaller progress ring (48px)
-- Stack fan-out cards vertically
-- Canvas scales down
+File: src/components/studio/command-palette-modal.tsx
 
-Tablet (768-1023px):
-- Narrow panel (300px instead of 360px)
-- Adjusted canvas scale
-- Compact fan-out grid
+Trigger: Cmd+K / Ctrl+K
 
-Touch (pointer: coarse):
-- 44px minimum touch targets on all interactive elements
-- Tree items, option cards, command palette items, trial rows
+Dialog (uses Dialog primitive base):
+- 480px width, centered
+- Search Input (uses Input primitive, full width, 44px)
+- Search icon (Lucide Search, 16px)
 
-iOS Safe Areas:
-- Bottom nav: padding-bottom env(safe-area-inset-bottom)
-- Toast stack: bottom offset includes safe area
+Results:
+- Grouped: 'Actions' section + 'Navigation' section
+- Item: 36px, icon 16px + label (Figtree 400 13px fg-70) + shortcut (Departure 11px fg-30)
+- Keyboard nav: ↑↓ move selection, Enter activates, ESC closes
+- Active: bg fg-5, fg-80 text
 
-CSS breakpoints in globals.css as @media queries
+Actions: New Project, Reset Canvas, Export Data
+Navigation: Home, Agent, Project, Files, Sweeps + 8 domain names
+
+Uses Dialog and Input primitives for visual consistency.
 
 **Details:**
 
-Full responsive design implementation.
+The command palette is a power-user feature. It must feel snappy - results filter instantly on keystroke.
 
-Mobile (<768px):
-- Hide right panel entirely
-- Full-width workspace plate
-- Smaller progress ring (48px)
-- Stack fan-out cards vertically
-- Canvas scales down
-
-Tablet (768-1023px):
-- Narrow panel (300px instead of 360px)
-- Adjusted canvas scale
-- Compact fan-out grid
-
-Touch (pointer: coarse):
-- 44px minimum touch targets on all interactive elements
-- Tree items, option cards, command palette items, trial rows
-
-iOS Safe Areas:
-- Bottom nav: padding-bottom env(safe-area-inset-bottom)
-- Toast stack: bottom offset includes safe area
-
-CSS breakpoints in globals.css as @media queries
+Implement with useEffect keydown listener for Cmd+K. UIStore.commandPaletteOpen drives visibility.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Cmd+K opens palette
+2. Typing filters results
+3. Arrow keys navigate, Enter activates
+4. ESC closes
+5. Selecting 'Home' switches to home tab
 
 ## Subtasks
 
-### 25.1. Mobile breakpoint: hide panel, full-width plate, stack cards
+### 25.1. Cmd+K listener and Dialog rendering
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 25.2. Tablet breakpoint: narrow panel, compact grid
+### 25.2. Search Input with instant filtering
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 25.3. Touch targets: 44px minimums on all interactive elements
+### 25.3. Grouped results with keyboard navigation
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 25.4. iOS safe area insets on bottom nav and toast
+### 25.4. Action handlers (navigate, create, reset)
 
 **Status:** pending  
 **Dependencies:** None  

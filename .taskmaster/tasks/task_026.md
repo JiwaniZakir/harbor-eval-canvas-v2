@@ -1,57 +1,65 @@
 # Task ID: 26
 
-**Title:** Panel Tab Routing: Detail Panel Routes to Real Tab Components
+**Title:** Streaming Text + Markdown Renderer
 
 **Status:** pending
 
-**Dependencies:** 2, 10, 11, 12, 13, 14
+**Dependencies:** 2, 3
 
-**Priority:** high
+**Priority:** medium
 
-**Description:** Wire the detail panel shell to render actual tab content components.
+**Description:** Character-by-character streaming and markdown for agent messages.
 
-Update src/components/layout/detail-panel.tsx:
-- Read UIStore.activeTab
-- Route to: HomeTab, AgentTab, ProjectTab, FilesTab, SweepsTab
-- Lazy load tab contents with Suspense + skeleton fallbacks
-- Handle domain-specific context (when focusedDomainId is set, tabs show domain-scoped data)
+File: src/components/ui/streaming-text.tsx
 
-Tab content rendering:
-- home → <HomeTab />
-- agent → <AgentTab />
-- project → <ProjectTab />
-- files → <FilesTab />
-- sweeps → <SweepsTab />
+StreamingText:
+- rAF-based character reveal, speed prop (12ms default)
+- Blinking cursor: 2px × 1em, fg-40, cursorBlink keyframe
+- Respects prefers-reduced-motion
+
+StreamingMarkdown:
+- Renders blocks as they arrive
+- Auto-scrolls during streaming
+
+Markdown renderer (zero deps):
+- Code blocks → <pre class='md-code-block'>
+- Inline code → <code class='md-inline-code'>
+- Bold, italic, headers, lists
+
+CSS in globals.css:
+- .agent-prose: Figtree 400 14px/1.6 fg-80
+- .md-code-block: fg-5 bg, fg-10 border, mono 12px
+- .md-inline-code: fg-5 bg, radius-xs, padding 2px 5px
 
 **Details:**
 
-Wire the detail panel shell to render actual tab content components.
-
-Update src/components/layout/detail-panel.tsx:
-- Read UIStore.activeTab
-- Route to: HomeTab, AgentTab, ProjectTab, FilesTab, SweepsTab
-- Lazy load tab contents with Suspense + skeleton fallbacks
-- Handle domain-specific context (when focusedDomainId is set, tabs show domain-scoped data)
-
-Tab content rendering:
-- home → <HomeTab />
-- agent → <AgentTab />
-- project → <ProjectTab />
-- files → <FilesTab />
-- sweeps → <SweepsTab />
+Used in the Agent tab for rendering agent responses. The streaming effect creates a premium feel.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Text reveals character by character
+2. Cursor blinks at end
+3. Markdown renders correctly (bold, code, headers)
+4. Reduced motion shows all text immediately
 
 ## Subtasks
 
-### 26.1. Tab routing switch in detail panel
+### 26.1. StreamingText with rAF character reveal and cursor
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 26.2. Suspense boundaries with tab-specific skeletons
+### 26.2. StreamingMarkdown with auto-scroll
+
+**Status:** pending  
+**Dependencies:** None  
+
+### 26.3. simpleMarkdown renderer (no deps)
+
+**Status:** pending  
+**Dependencies:** None  
+
+### 26.4. CSS for prose, code blocks, inline code
 
 **Status:** pending  
 **Dependencies:** None  

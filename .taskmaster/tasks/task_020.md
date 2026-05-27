@@ -1,78 +1,69 @@
 # Task ID: 20
 
-**Title:** Error State Components
+**Title:** Sweeps Tab: Pass@k + Trial Rows + Trajectory + Comparison
 
 **Status:** pending
 
-**Dependencies:** 1
+**Dependencies:** 4, 5, 7
 
-**Priority:** low
+**Priority:** medium
 
-**Description:** Contextual error displays for different failure scenarios.
+**Description:** Sweep results tab.
 
-File: src/components/ui/error-states.tsx
+File: src/components/panel/sweeps-tab.tsx
 
-3 Error Variants:
+Latest Sweep Card (uses Card primitive):
+- pass@3 headline: Departure 700 24px, color by result
+  - good (model fails = good eval): green
+  - bad (model passes = bad eval): red
+  - partial: amber
+- Sweep name + timestamp
 
-1. ErrorState (full-area):
-- Centered flex column, padding 48px 24px
-- Icon circle: 48px, rounded-full, red-50 bg, red icon
-- Title: Figtree 500 16px fg-80
-- Description: Figtree 400 13px fg-40, max-width 280px
-- Retry button: inline-flex, gap 6px, border fg-10, bg-l200, Figtree 500 13px fg-60
-- 5 error kinds: network (WifiOff), auth (Ban), rate-limit (AlertTriangle), server, generic
+Trial Rows:
+- Badge (success/error) for pass/fail
+- Summary: Figtree 400 13px fg-60
+- Expandable: click shows trajectory
+- Separator: border-bottom fg-5
 
-2. ErrorBanner (inline):
-- Flex row, padding 10px 14px, red-50 bg, red-200 border
-- AlertTriangle icon + message text (Figtree 400 13px, red-800) + dismiss button
+Trajectory Viewer (expandable):
+- Timeline with dot markers (green/red/gray)
+- Step descriptions
 
-3. ChatError (chat bubble):
-- Inline in message list
-- Red-50 bg, red-200 border, radius-md
-- AlertTriangle 12px + message + 'Retry' underlined link
+Comparison Table:
+- Colored bars (percentage width, domain accent color)
+- Labels left, bars right
 
 **Details:**
 
-Contextual error displays for different failure scenarios.
+Data from DomainStore.domainStates[id].sweepSummary.
 
-File: src/components/ui/error-states.tsx
-
-3 Error Variants:
-
-1. ErrorState (full-area):
-- Centered flex column, padding 48px 24px
-- Icon circle: 48px, rounded-full, red-50 bg, red icon
-- Title: Figtree 500 16px fg-80
-- Description: Figtree 400 13px fg-40, max-width 280px
-- Retry button: inline-flex, gap 6px, border fg-10, bg-l200, Figtree 500 13px fg-60
-- 5 error kinds: network (WifiOff), auth (Ban), rate-limit (AlertTriangle), server, generic
-
-2. ErrorBanner (inline):
-- Flex row, padding 10px 14px, red-50 bg, red-200 border
-- AlertTriangle icon + message text (Figtree 400 13px, red-800) + dismiss button
-
-3. ChatError (chat bubble):
-- Inline in message list
-- Red-50 bg, red-200 border, radius-md
-- AlertTriangle 12px + message + 'Retry' underlined link
+Uses Badge for trial status, Card for sweep container.
 
 **Test Strategy:**
 
-Verify TypeScript compiles (npx tsc --noEmit), dev server renders (curl localhost:3000), and visual output matches spec.
+1. Pass@k shows correct color based on value
+2. Trial badges show pass/fail correctly
+3. Expandable trajectory works
+4. Comparison bars fill proportionally
 
 ## Subtasks
 
-### 20.1. ErrorState with 5 error kinds and retry button
+### 20.1. Sweep Card with pass@k headline
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 20.2. ErrorBanner inline with dismiss
+### 20.2. Trial rows with Badge + expand for trajectory
 
 **Status:** pending  
 **Dependencies:** None  
 
-### 20.3. ChatError bubble with retry link
+### 20.3. Trajectory viewer with timeline dots
+
+**Status:** pending  
+**Dependencies:** None  
+
+### 20.4. Comparison table with colored bars
 
 **Status:** pending  
 **Dependencies:** None  
