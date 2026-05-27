@@ -9,7 +9,6 @@ import type {
   Artifact,
   ScaffoldAgent,
   ValidationGate,
-  ALL_DOMAIN_IDS,
 } from '../types';
 
 // Re-import as value (not type-only)

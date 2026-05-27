@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import type { ActivityItem } from '../types';
 import { uid } from '../utils';
 
 interface ToastItem {

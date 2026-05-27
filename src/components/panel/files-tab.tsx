@@ -4,20 +4,20 @@ import { useState, useMemo } from 'react';
 import { ChevronRight, Folder, Braces, Code, Settings, FileText, Table } from 'lucide-react';
 import { useDomainStore } from '@/lib/stores/domain-store';
 import { useUIStore } from '@/lib/stores/ui-store';
-import { ALL_DOMAIN_IDS, DOMAIN_META } from '@/lib/types';
+import { ALL_DOMAIN_IDS, DOMAIN_META, FILE_TYPE_COLORS } from '@/lib/types';
 import type { Artifact } from '@/lib/types';
 import { FileUpload } from '@/components/ui/file-upload';
 import { formatFileSize } from '@/lib/utils';
 
 const FILE_ICONS: Record<string, { icon: typeof Braces; color: string }> = {
-  json: { icon: Braces, color: '#3B82F6' },
-  jsonl: { icon: Braces, color: '#3B82F6' },
-  py: { icon: Code, color: '#16A34A' },
-  yaml: { icon: Settings, color: '#8B5CF6' },
-  yml: { icon: Settings, color: '#8B5CF6' },
-  md: { icon: FileText, color: 'var(--fg-40)' },
-  csv: { icon: Table, color: '#D97706' },
-  txt: { icon: FileText, color: 'var(--fg-40)' },
+  json: { icon: Braces, color: FILE_TYPE_COLORS.json },
+  jsonl: { icon: Braces, color: FILE_TYPE_COLORS.jsonl },
+  py: { icon: Code, color: FILE_TYPE_COLORS.py },
+  yaml: { icon: Settings, color: FILE_TYPE_COLORS.yaml },
+  yml: { icon: Settings, color: FILE_TYPE_COLORS.yml },
+  md: { icon: FileText, color: FILE_TYPE_COLORS.md },
+  csv: { icon: Table, color: FILE_TYPE_COLORS.csv },
+  txt: { icon: FileText, color: FILE_TYPE_COLORS.txt },
 };
 
 export function FilesTab() {

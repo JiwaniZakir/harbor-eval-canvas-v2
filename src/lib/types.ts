@@ -242,6 +242,28 @@ export const FAILURE_MODES = [
 
 // --- Model Options ---
 
+// --- Provider Brand Colors ---
+
+export const PROVIDER_COLORS: Record<Provider, string> = {
+  google: '#4285F4',
+  anthropic: '#D4A574',
+  openai: '#10A37F',
+  meta: '#0064E0',
+};
+
+// --- File Type Colors ---
+
+export const FILE_TYPE_COLORS: Record<string, string> = {
+  json: '#3B82F6',
+  jsonl: '#3B82F6',
+  py: '#16A34A',
+  yaml: '#8B5CF6',
+  yml: '#8B5CF6',
+  md: 'var(--fg-40)',
+  csv: '#D97706',
+  txt: 'var(--fg-40)',
+};
+
 export const MODEL_OPTIONS: TargetModel[] = [
   { provider: 'google', modelSlug: 'gemini-2.5-pro', modelName: 'Gemini 2.5 Pro' },
   { provider: 'anthropic', modelSlug: 'claude-sonnet-4', modelName: 'Claude Sonnet 4' },

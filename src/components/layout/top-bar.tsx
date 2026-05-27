@@ -4,15 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, ChevronRight, Settings, Plus, LogOut } from 'lucide-react';
 import { useProjectStore } from '@/lib/stores/project-store';
 import { useUIStore } from '@/lib/stores/ui-store';
-import { DOMAIN_META } from '@/lib/types';
+import { DOMAIN_META, PROVIDER_COLORS } from '@/lib/types';
 import type { Provider } from '@/lib/types';
-
-const PROVIDER_COLORS: Record<Provider, string> = {
-  google: '#4285F4',
-  anthropic: '#D4A574',
-  openai: '#10A37F',
-  meta: '#0064E0',
-};
 
 export function TopBar() {
   const project = useProjectStore((s) => s.project);

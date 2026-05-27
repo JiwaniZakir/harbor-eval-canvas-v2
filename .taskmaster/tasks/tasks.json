@@ -2,549 +2,1390 @@
   "master": {
     "tasks": [
       {
-        "id": 1,
+        "id": "1",
         "title": "Project Scaffolding: Next.js Config, Tailwind v4, ESLint, tsconfig",
         "description": "Configure the foundational build toolchain for production quality.\n\nFiles to modify/create:\n- next.config.ts: Enable strict mode, configure image domains, set output standalone for production\n- tsconfig.json: strict: true, noUnusedLocals: true, noUnusedParameters: true, paths alias @/ → src/\n- eslint.config.mjs: Next.js recommended + React hooks rules\n- postcss.config.mjs: Tailwind v4 plugin\n- tailwind.config.ts: Extend theme with design tokens (or use CSS-only approach for Tailwind v4)\n- .env.example: Document all env vars (ANTHROPIC_API_KEY, etc.)\n- src/app/layout.tsx: HTML lang='en', viewport meta, OG tags, font preloading\n- src/lib/utils.ts: cn() utility (clsx + tailwind-merge or simple template literal helper)\n\nThe goal is that after this task, `npm run dev` starts clean, `npx tsc --noEmit` passes, and the app renders a blank page with correct HTML structure.",
         "details": "This task establishes the build pipeline. Every subsequent task depends on TypeScript compiling and the dev server running.\n\nSpecific configs:\n- next.config.ts: reactStrictMode: true\n- tsconfig paths: '@/*' → './src/*'\n- Tailwind v4 uses CSS-based config with @theme directive, NOT tailwind.config.ts\n- Create src/lib/utils.ts with cn() function for conditional class merging\n- Create src/app/layout.tsx with <html lang='en'>, viewport meta tag, basic <body> structure",
         "testStrategy": "1. npm run dev starts without errors\n2. npx tsc --noEmit exits 0\n3. curl localhost:3000 returns 200\n4. Browser shows blank page with correct <html lang='en'>",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
         "dependencies": [],
         "subtasks": [
-          {"id": 1, "title": "Configure next.config.ts with strict mode", "status": "pending"},
-          {"id": 2, "title": "Set up tsconfig.json with strict + path aliases", "status": "pending"},
-          {"id": 3, "title": "Configure Tailwind v4 with CSS-based approach", "status": "pending"},
-          {"id": 4, "title": "Create src/lib/utils.ts with cn() utility", "status": "pending"},
-          {"id": 5, "title": "Create .env.example documenting all env vars", "status": "pending"},
-          {"id": 6, "title": "Set up src/app/layout.tsx with HTML shell, viewport, OG tags", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Configure next.config.ts with strict mode",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Set up tsconfig.json with strict + path aliases",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Configure Tailwind v4 with CSS-based approach",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create src/lib/utils.ts with cn() utility",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create .env.example documenting all env vars",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Set up src/app/layout.tsx with HTML shell, viewport, OG tags",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:11:48.367Z"
       },
       {
-        "id": 2,
+        "id": "2",
         "title": "Design Tokens: CSS Custom Properties + Font Loading",
         "description": "The design system foundation. Every visual element in the app references these tokens. This is the SINGLE SOURCE OF TRUTH for the entire visual language.\n\nCreate src/app/globals.css with ALL tokens:\n\nBackgrounds (warm off-white scale):\n--bg-l0: #FAFAF9 (page background)\n--bg-l50: #F5F5F4 (subtle surface)\n--bg-l100: #EFEEEC (panels, cards)\n--bg-l200: #E7E5E4 (inputs, bubbles)\n--bg-l-neg-50: #FEFEFD (elevated surfaces)\n\nForeground opacity scale (base #1a1a1a):\n--fg-5: rgba(26,26,26,0.05) through --fg-100: rgba(26,26,26,1)\nALL intermediates: fg-8, fg-10, fg-15, fg-20, fg-25, fg-30, fg-40, fg-50, fg-55, fg-60, fg-70, fg-80, fg-90, fg-100\n\nTypography:\n--font-figtree: 'Figtree', system-ui, sans-serif (UI text)\n--font-mondwest: 'Mondwest', serif (display headings)\n--font-departure: 'Departure Mono', monospace (data/metrics)\n--font-garamond: 'EB Garamond', serif (editorial/quotes)\n--font-mono: 'Departure Mono', 'SF Mono', monospace (code)\n\nSpacing:\n--topbar-height: 48px\n--panel-width: 360px\n--bottom-height: 56px\n\nRadius:\n--radius-xs: 4px, --radius-sm: 6px, --radius-md: 8px, --radius-lg: 12px, --radius-xl: 16px, --radius-full: 9999px\n\nShadows:\n--shadow-inset-025: inset 0 0.5px 1px rgba(0,0,0,0.025)\n--shadow-inset-050: inset 0 1px 2px rgba(0,0,0,0.05)\n--shadow-inset-200: inset 0 2px 6px rgba(0,0,0,0.08)\n--shadow-outset-050: 0 1px 3px rgba(0,0,0,0.05)\n--shadow-outset-150: 0 4px 16px rgba(0,0,0,0.08)\n--shadow-input-focus: 0 0 0 3px rgba(26,26,26,0.06)\n\nEasing:\n--ease-smooth: cubic-bezier(0.4, 0, 0.2, 1)\n--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1)\n\n8 Domain Accent Colors with data-attribute selectors:\n[data-domain='instruction_following'] { --domain-accent: #6366F1; }\n[data-domain='reasoning_logic'] { --domain-accent: #8B5CF6; }\n[data-domain='safety_alignment'] { --domain-accent: #EC4899; }\n[data-domain='knowledge_factuality'] { --domain-accent: #F59E0B; }\n[data-domain='calibration_uncertainty'] { --domain-accent: #10B981; }\n[data-domain='multilinguality'] { --domain-accent: #06B6D4; }\n[data-domain='long_context'] { --domain-accent: #3B82F6; }\n[data-domain='tool_use_agency'] { --domain-accent: #EF4444; }\n\nStatus colors: --status-success: #16A34A, --status-warning: #D97706, --status-error: #DC2626, --status-info: var(--fg-40)\n\nFont loading in layout.tsx:\n- Google Fonts: Figtree (300,400,500,600,700), EB Garamond (400 italic, 600)\n- Local @font-face: Mondwest-Regular.woff2, DepartureMono-Regular.woff2\n- Font display: swap for all\n\nGlobal resets:\n- *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }\n- body { font-family: var(--font-figtree); background: var(--bg-l0); color: var(--fg-80); -webkit-font-smoothing: antialiased }\n- Focus ring: *:focus-visible { outline: 2px solid var(--fg-20); outline-offset: 2px }\n- Mouse clicks excluded from focus ring: :focus:not(:focus-visible) { outline: none }\n- Scrollbar: 6px, fg-10 thumb, transparent track, Firefox scrollbar-width: thin\n- Reduced motion: @media (prefers-reduced-motion: reduce) { all animations/transitions → 0.01ms }",
         "details": "This is the most critical task. Every component references these tokens. If these are wrong, EVERYTHING looks wrong.\n\nThe fg opacity scale must be mathematically correct:\n- fg-5 = rgba(26,26,26,0.05)\n- fg-10 = rgba(26,26,26,0.10)\n- fg-15 = rgba(26,26,26,0.15)\n- fg-20 = rgba(26,26,26,0.20)\n- fg-25 = rgba(26,26,26,0.25)\n- fg-30 = rgba(26,26,26,0.30)\n- fg-40 = rgba(26,26,26,0.40)\n- fg-50 = rgba(26,26,26,0.50)\n- fg-55 = rgba(26,26,26,0.55)\n- fg-60 = rgba(26,26,26,0.60)\n- fg-70 = rgba(26,26,26,0.70)\n- fg-80 = rgba(26,26,26,0.80)\n- fg-90 = rgba(26,26,26,0.90)\n- fg-100 = rgba(26,26,26,1)\n\nFont files must be placed in public/fonts/ and referenced via @font-face with correct paths.",
         "testStrategy": "1. All CSS variables resolve (no 'undefined' in computed styles)\n2. Body renders with correct background (#FAFAF9) and text color\n3. Figtree font loads and renders\n4. Focus ring appears on Tab navigation but NOT on mouse click\n5. Scrollbar is 6px thin\n6. Domain accent colors change when data-domain attribute is set",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
-        "dependencies": [1],
+        "dependencies": [
+          "1"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Create CSS custom properties: all backgrounds, foregrounds (15 values), typography, spacing, radius, shadows, easing", "status": "pending"},
-          {"id": 2, "title": "Add 8 domain accent colors with [data-domain] attribute selectors + status colors", "status": "pending"},
-          {"id": 3, "title": "Set up Google Fonts (Figtree, EB Garamond) + local @font-face (Mondwest, Departure)", "status": "pending"},
-          {"id": 4, "title": "Create public/fonts/ with Mondwest and Departure woff2 files", "status": "pending"},
-          {"id": 5, "title": "Add global resets: box-sizing, body styles, focus ring, scrollbar, reduced motion", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Create CSS custom properties: all backgrounds, foregrounds (15 values), typography, spacing, radius, shadows, easing",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Add 8 domain accent colors with [data-domain] attribute selectors + status colors",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Set up Google Fonts (Figtree, EB Garamond) + local @font-face (Mondwest, Departure)",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create public/fonts/ with Mondwest and Departure woff2 files",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add global resets: box-sizing, body styles, focus ring, scrollbar, reduced motion",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:11:51.824Z"
       },
       {
-        "id": 3,
+        "id": "3",
         "title": "Animation Keyframes Library",
         "description": "All CSS keyframes used throughout the app. Created early so every component can reference them.\n\nAdd to globals.css AFTER design tokens:\n\n@keyframes pulseGlow { 0%,100% { box-shadow: 0 0 0 0 transparent; } 50% { box-shadow: 0 0 12px 0 var(--domain-accent, rgba(99,102,241,0.2)); } }\n@keyframes dotPulse { 0%,100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.3); opacity: 1; } }\n@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }\n@keyframes sd-slideUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }\n@keyframes sd-fadeIn { from { opacity: 0; } to { opacity: 1; } }\n@keyframes cursorBlink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }\n@keyframes typingBounce { 0%,60%,100% { transform: translateY(0); opacity: 0.3; } 30% { transform: translateY(-4px); opacity: 1; } }\n@keyframes dashScroll { to { stroke-dashoffset: -9; } }\n@keyframes spin { to { transform: rotate(360deg); } }\n@keyframes progress-fill { from { width: 0; } }\n@keyframes toast-countdown { from { width: 100%; } to { width: 0; } }\n@keyframes fanout-entrance { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }\n@keyframes skeleton-shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }",
         "details": "These keyframes are referenced by: radial ring nodes (pulseGlow, dotPulse), onboarding (shimmer), dropdowns/modals (sd-slideUp, sd-fadeIn), streaming text (cursorBlink), agent chat (typingBounce), connection lines (dashScroll), loaders (spin), progress bars (progress-fill), toasts (toast-countdown), fan-out cards (fanout-entrance), skeletons (skeleton-shimmer).\n\nCreating them all upfront ensures no component fails to animate.",
         "testStrategy": "1. All keyframe names compile without CSS errors\n2. Test element with animation: pulseGlow 2s infinite renders correctly\n3. Reduced motion media query disables all animations",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
-        "dependencies": [2],
+        "dependencies": [
+          "2"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Add all 13 @keyframes definitions to globals.css", "status": "pending"},
-          {"id": 2, "title": "Verify each keyframe is syntactically correct", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Add all 13 @keyframes definitions to globals.css",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Verify each keyframe is syntactically correct",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:11:54.654Z"
       },
       {
-        "id": 4,
+        "id": "4",
         "title": "UI Primitives: Button, Input, Badge, Card, Dialog, Spinner",
         "description": "Shared UI primitive components that enforce consistent design language across the ENTIRE platform. Every interactive element must use these primitives.\n\nFiles to create:\n- src/components/ui/button.tsx: Primary (bg-fg-90, white text), Secondary (border fg-10, fg-60 text), Ghost (no border, fg-50), Danger (red). All sizes: sm(28px), md(36px), lg(44px). All have: radius-md, Figtree font, hover/active/disabled states, focus ring.\n- src/components/ui/input.tsx: Text input with fg-5 border, bg-l200, Figtree 400 14px, placeholder fg-30. Focus: shadow-input-focus, border fg-10. Sizes: sm(32px), md(40px), lg(48px).\n- src/components/ui/badge.tsx: Inline pill with radius-full, padding 2px 8px, Departure 11px. Variants: default(fg-5 bg), accent(domain-accent bg), success(green), warning(amber), error(red).\n- src/components/ui/card.tsx: Container with bg-l200, border fg-10, radius-lg, padding 16px. Variants: default, elevated(shadow-outset-050), interactive(hover bg-fg-5).\n- src/components/ui/dialog.tsx: Modal overlay (bg-fg-100 at 20%, blur 4px) + centered content (bg-l200, radius-lg, shadow-outset-150, max-width 400px). Close on ESC, close on backdrop click.\n- src/components/ui/spinner.tsx: Loader2 icon with spin animation. Sizes: sm(14px), md(18px), lg(24px). Color inherits.\n- src/components/ui/textarea.tsx: Multi-line input matching input.tsx styles but with auto-resize capability.\n- src/components/ui/switch.tsx: Toggle switch, 36x20px, bg-fg-10 off, bg-fg-90 on, circle thumb.\n\nDESIGN CONSISTENCY RULE: All components use ONLY CSS custom properties from Task 2. No hardcoded colors, no Tailwind color classes. Every radius is var(--radius-*), every shadow is var(--shadow-*), every color is var(--fg-*) or var(--bg-*).",
         "details": "These primitives are the building blocks. The onboarding wizard uses Button and Input. The project tab uses Card and Dialog. The command palette uses Input. The chat uses Textarea. Badges appear in sweeps, status indicators, and pipeline stages.\n\nBy building these FIRST with consistent tokens, every downstream component automatically has the same look and feel.",
         "testStrategy": "1. Render each component in isolation, verify it uses design tokens (inspect computed styles)\n2. Verify hover/active/disabled states work\n3. Verify focus ring appears on keyboard nav\n4. Verify all sizes render correctly\n5. Dialog closes on ESC and backdrop click",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
-        "dependencies": [2, 3],
+        "dependencies": [
+          "2",
+          "3"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Build Button with 4 variants (primary/secondary/ghost/danger) and 3 sizes", "status": "pending"},
-          {"id": 2, "title": "Build Input with focus states and 3 sizes", "status": "pending"},
-          {"id": 3, "title": "Build Badge with 5 variants (default/accent/success/warning/error)", "status": "pending"},
-          {"id": 4, "title": "Build Card with 3 variants (default/elevated/interactive)", "status": "pending"},
-          {"id": 5, "title": "Build Dialog with overlay, ESC close, backdrop close", "status": "pending"},
-          {"id": 6, "title": "Build Spinner, Textarea (auto-resize), Switch", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Build Button with 4 variants (primary/secondary/ghost/danger) and 3 sizes",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Build Input with focus states and 3 sizes",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Build Badge with 5 variants (default/accent/success/warning/error)",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Build Card with 3 variants (default/elevated/interactive)",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Build Dialog with overlay, ESC close, backdrop close",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Build Spinner, Textarea (auto-resize), Switch",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:11:57.515Z"
       },
       {
-        "id": 5,
+        "id": "5",
         "title": "TypeScript Types + Zustand State Stores",
         "description": "All TypeScript interfaces and 4 Zustand stores. This defines the data model for the entire app.\n\nFile: src/lib/types.ts\n- DomainId: 'instruction_following' | 'reasoning_logic' | 'safety_alignment' | 'knowledge_factuality' | 'calibration_uncertainty' | 'multilinguality' | 'long_context' | 'tool_use_agency'\n- DomainStatus: 22-state union type (untested | probe_queued | probing | probe_complete | promoted | redesign | rejected | scaffold_queued | scaffolding | scaffold_complete | validation_gate | gate_passed | gate_failed | target_sweep | sweep_complete | iterating | published | ready_to_publish | calibrating | needs_review | blocked | archived)\n- GlobalState: 'empty' | 'onboarding' | 'canvas_idle' | 'probing' | 'scaffolding' | 'validating' | 'calibrating' | 'published'\n- TabId: 'home' | 'agent' | 'project' | 'files' | 'sweeps'\n- ToolName: string union of all tool names\n- ToolCallStatus: 'queued' | 'running' | 'succeeded' | 'failed'\n- ToolCall: { id, name, args, status, result?, summary?, startedAt, finishedAt? }\n- PlanStep: { id, label, status }\n- ChatMessage: { id, role, content, timestamp, toolCalls? }\n- ProbeSummary: { weaknessTitle, variants[], aggregateFailureRate?, verdict }\n- SweepTrial: { idx, reward, status, summary }\n- SweepSummary: { taskSlug, passAt3, trials[] }\n- DomainState: { id, status, artifacts[], probeSummary?, sweepSummary?, progress }\n- Project: { name, targetModel, globalProgress, createdAt }\n- TargetModel: { provider, modelSlug, modelName }\n\nFile: src/lib/stores/project-store.ts\n- State: { project: Project | null }\n- Actions: setProject, updateProgress, setTargetModel, resetProject\n- Persist: localStorage with 'harbor-project' key\n\nFile: src/lib/stores/domain-store.ts\n- State: { domainStates: Record<DomainId, DomainState> }\n- Actions: setDomainStatus, addArtifact, setProbeSummary, setSweepSummary, initializeDomains, resetDomains\n- Initialize: all 8 domains with status 'untested'\n- Persist: localStorage with 'harbor-domains' key\n\nFile: src/lib/stores/ui-store.ts\n- State: { activeTab: TabId, focusedDomainId: DomainId | null, detailPanel: {open, kind, domainId?}, setupWizardOpen: boolean, globalState: GlobalState, commandPaletteOpen: boolean }\n- Actions: setActiveTab, setFocusedDomain, openDetailPanel, closeDetailPanel, setSetupWizardOpen, setGlobalState, toggleCommandPalette\n- Computed: panelShouldShow (based on globalState)\n\nFile: src/lib/stores/agent-store.ts\n- State: { messages: ChatMessage[], isStreaming: boolean, currentToolCalls: ToolCall[] }\n- Actions: addMessage, updateMessage, setStreaming, addToolCall, updateToolCall, clearMessages",
         "details": "The stores use Zustand with persist middleware for project-store and domain-store. UI store does NOT persist (tab state resets on page load). Agent store does NOT persist (messages are session-only in MVP).\n\nAll store actions must be properly typed. Use TypeScript generics with Zustand's create<State>() pattern.",
         "testStrategy": "1. Import all types - no TypeScript errors\n2. All stores initialize with correct defaults\n3. project-store persists to localStorage and rehydrates\n4. domain-store initializes 8 domains with 'untested' status\n5. ui-store.setActiveTab updates and bottom nav reflects change",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
-        "dependencies": [1],
+        "dependencies": [
+          "1"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Create src/lib/types.ts with ALL interfaces and type unions", "status": "pending"},
-          {"id": 2, "title": "Create project-store.ts with localStorage persistence", "status": "pending"},
-          {"id": 3, "title": "Create domain-store.ts with 8 domain initialization and persistence", "status": "pending"},
-          {"id": 4, "title": "Create ui-store.ts with global state machine and tab management", "status": "pending"},
-          {"id": 5, "title": "Create agent-store.ts with message and tool call management", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Create src/lib/types.ts with ALL interfaces and type unions",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Create project-store.ts with localStorage persistence",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create domain-store.ts with 8 domain initialization and persistence",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create ui-store.ts with global state machine and tab management",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create agent-store.ts with message and tool call management",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:00.484Z"
       },
       {
-        "id": 6,
+        "id": "6",
         "title": "SVG Assets: Pipeline Icons + Domain Icons",
         "description": "Create all SVG icon assets before any component that references them.\n\nDirectory: public/eval-icons/\n\n5 Pipeline Stage Icons (24x24, stroke-based, 1.5px, currentColor, round caps):\n- intake.svg: Inbox/funnel shape\n- probe.svg: Magnifying glass with crosshair\n- scaffold.svg: Building blocks / layers\n- validate.svg: Shield with checkmark\n- publish.svg: Rocket / share arrow\n\n8 Domain Icons (24x24, same style):\n- instruction.svg: Document with arrow\n- reasoning.svg: Brain / logic gate\n- safety.svg: Shield\n- knowledge.svg: Book / database\n- multilingual.svg: Globe with text\n- code.svg: Code brackets <>\n- creativity.svg: Sparkle / star\n- multimodal.svg: Image + text layers",
         "details": "All icons must be:\n- Exactly 24x24 viewBox\n- stroke='currentColor' (inherits color from parent)\n- strokeWidth='1.5'\n- strokeLinecap='round' strokeLinejoin='round'\n- fill='none'\n- No embedded styles or classes\n\nThis ensures icons adapt to any color context via CSS color property.",
         "testStrategy": "1. All 13 SVGs render at 24px in browser\n2. Icons change color when parent color CSS changes\n3. No rendering artifacts at small sizes (16px, 12px)",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
         "dependencies": [],
         "subtasks": [
-          {"id": 1, "title": "Create 5 pipeline stage SVGs in public/eval-icons/", "status": "pending"},
-          {"id": 2, "title": "Create 8 domain SVGs in public/eval-icons/", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Create 5 pipeline stage SVGs in public/eval-icons/",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Create 8 domain SVGs in public/eval-icons/",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:03.354Z"
       },
       {
-        "id": 7,
+        "id": "7",
         "title": "Page Layout: Top Bar + Canvas Area + Right Panel + Bottom Nav",
         "description": "The root page layout with all 4 spatial zones. Uses design tokens from Task 2 and primitives from Task 4.\n\nFiles:\n- src/app/page.tsx: Root page composing all zones\n- src/components/layout/top-bar.tsx: Fixed 48px header\n- src/components/layout/bottom-nav.tsx: Fixed 56px footer\n- src/components/layout/detail-panel.tsx: Fixed 360px right panel\n- src/components/canvas/canvas-shell.tsx: Flex-1 center area\n\nTop Bar (spec §0.2):\n- 28px avatar circle (bg-l0, fg-5 border, Figtree 600 11px initials 'ZJ')\n- Project name dropdown (Figtree 500 14px fg-80, ChevronDown 10px)\n- Dropdown menu (240px, bg-l200, radius-lg, shadow-outset-150, sd-slideUp animation)\n- Breadcrumb when domain focused: ChevronRight + domain name (Figtree 500 13px fg-50) + stage (Figtree 400 12px fg-30)\n- Right: Model pill (Departure 12px, provider dot 6px) + Settings gear (32px, 18px icon)\n\nBottom Nav (spec §0.3):\n- 5 tabs: Home(House), Agent(MessageCircle), Project(FolderKanban), Files(FileCode2), Sweeps(BarChart3)\n- Tab: 44px touch target, 20px icon, Figtree 400 10px label\n- Active: fg-80 + 2px accent underline. Inactive: fg-40\n- Badge dot on Sweeps: 6px accent circle\n- Reads UIStore.activeTab, writes UIStore.setActiveTab\n\nDetail Panel (spec §0.4):\n- 360px width, bg-l100, border-left fg-5\n- Tab strip: 36px height, 5 text labels, active underline matching bottom nav\n- Scrollable content area, 16px padding\n- Reads UIStore.activeTab for content routing\n\nCanvas Shell:\n- Flex-1 remaining space, centered content, bg-l0\n- Contains either: empty state, onboarding wizard, or radial ring",
         "details": "CRITICAL: Bottom nav and panel tab strip MUST share UIStore.activeTab. Clicking bottom nav tab OR panel tab updates the same state. This is the primary navigation mechanism.\n\nAll CSS must use design tokens from Task 2. No hardcoded colors.\n\nThe top bar model pill uses Departure font for the model name, with a 6px dot colored by provider:\n- google: #4285F4\n- anthropic: #D4A574\n- openai: #10A37F",
         "testStrategy": "1. All 4 zones render at correct positions and sizes\n2. Bottom nav tab click updates panel content\n3. Panel tab click updates bottom nav active state\n4. Top bar dropdown opens/closes correctly\n5. Model pill shows correct provider dot color\n6. Mobile: panel hidden, full-width canvas\n7. Breadcrumb appears when domain is focused",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
-        "dependencies": [2, 4, 5],
+        "dependencies": [
+          "2",
+          "4",
+          "5"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Build top-bar.tsx with avatar, project dropdown, model pill, settings, breadcrumb", "status": "pending"},
-          {"id": 2, "title": "Build bottom-nav.tsx with 5 tabs synced to UIStore.activeTab", "status": "pending"},
-          {"id": 3, "title": "Build detail-panel.tsx shell with tab strip header", "status": "pending"},
-          {"id": 4, "title": "Build canvas-shell.tsx as centered flex container", "status": "pending"},
-          {"id": 5, "title": "Compose all zones in page.tsx with correct CSS grid/flex", "status": "pending"},
-          {"id": 6, "title": "Add CSS for all layout components to globals.css", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Build top-bar.tsx with avatar, project dropdown, model pill, settings, breadcrumb",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Build bottom-nav.tsx with 5 tabs synced to UIStore.activeTab",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Build detail-panel.tsx shell with tab strip header",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Build canvas-shell.tsx as centered flex container",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Compose all zones in page.tsx with correct CSS grid/flex",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Add CSS for all layout components to globals.css",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:06.496Z"
       },
       {
-        "id": 8,
+        "id": "8",
         "title": "Onboarding Wizard: 5-Step Setup Flow",
         "description": "Full 5-step onboarding wizard with premium animations. This is the FIRST thing users see.\n\nFile: src/components/studio/project-setup.tsx (~650 lines)\n\nWizard Shell:\n- Full-viewport overlay, bg-l0\n- Centered card: max-width 560px, bg-l100, radius-xl, shadow-outset-150\n- Radial glow: 500x500px gradient, domain-accent at 15% opacity to transparent\n- Step dots: 5 circles (8px, gap 6px), active=fg-60, inactive=fg-15\n- Transitions: 300ms translateX + opacity between steps\n\nStep 1 - Project Name:\n- Heading: 'What should we call this evaluation?' (Mondwest 600 22px fg-90)\n- Subtext (Figtree 400 14px fg-40)\n- Input: uses UI primitive Input (lg size, 48px)\n- Continue: uses UI primitive Button (primary, lg, full-width)\n- Disabled until input >= 3 chars\n\nStep 2 - Model Selection:\n- 4 provider cards: Google/Gemini, Anthropic/Claude, OpenAI/GPT, Meta/Llama\n- Card: uses UI primitive Card (interactive variant)\n- Provider logo 24px + name (Figtree 500 14px) + model slug (Departure 12px fg-40)\n- Selected: uses Card with accent border + checkmark\n\nStep 3 - Workflow Description:\n- Textarea: uses UI primitive Textarea (160px min-height)\n- 8 failure mode chips: Authority Ambiguity, False Recency, Instruction Drift, Schema Hallucination, Safety Boundary, Context Window, Tool Misuse, Calibration Collapse\n- Chip: uses Badge component (interactive, radius-full)\n- Chip click populates textarea\n\nStep 4 - Clarifying Questions:\n- 5 AI questions in chat-style layout\n- Agent message: left-aligned, 24px avatar, bg-l200 bubble\n- 3-4 option cards per question (uses Card interactive)\n- Radio button selection\n- 'Decide all' shortcut: uses Button (secondary)\n- Answered questions collapse with checkmark\n\nStep 5 - Hypothesis Review:\n- Shimmer loading bar (1.5s, uses shimmer keyframe)\n- Taxonomy badge (uses Badge component)\n- Hypothesis text: EB Garamond italic 16px fg-70\n- 'Bad Heuristic' + 'Authority Invariant' sections\n- 'Accept & Start Probing': uses Button (primary, lg) with ArrowRight icon\n\nDESIGN CONSISTENCY: Every button is the Button primitive. Every input is the Input primitive. Every card is the Card primitive. This ensures the onboarding matches the rest of the app pixel-perfectly.",
         "details": "The onboarding is the user's first impression. It must feel premium - smooth animations, immediate feedback, clear hierarchy.\n\nOn completion (Step 5 accept):\n1. ProjectStore.setProject() with name, model, workflow\n2. DomainStore.initializeDomains() - all 8 set to 'untested'\n3. UIStore.setSetupWizardOpen(false)\n4. UIStore.setGlobalState('canvas_idle')\n5. Primary domain set to 'probe_queued'",
         "testStrategy": "1. Wizard opens on first visit (no project in store)\n2. Step transitions animate smoothly (300ms)\n3. Input validation prevents empty project name\n4. Model selection persists through steps\n5. Chip click populates textarea correctly\n6. 'Decide all' selects defaults for all questions\n7. Completion stores project and transitions to canvas\n8. All buttons/inputs use UI primitives (inspect class names)",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
-        "dependencies": [2, 4, 5, 7],
+        "dependencies": [
+          "2",
+          "4",
+          "5",
+          "7"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Wizard shell with overlay, glow effect, step dots, step transitions", "status": "pending"},
-          {"id": 2, "title": "Step 1: Project name with Input primitive + validation", "status": "pending"},
-          {"id": 3, "title": "Step 2: Model selection cards with Card primitive", "status": "pending"},
-          {"id": 4, "title": "Step 3: Workflow Textarea + 8 failure mode Badge chips", "status": "pending"},
-          {"id": 5, "title": "Step 4: Chat-style questions with option Card selections", "status": "pending"},
-          {"id": 6, "title": "Step 5: Hypothesis card with shimmer + Badge + Button CTA", "status": "pending"},
-          {"id": 7, "title": "Wire completion to stores: ProjectStore, DomainStore, UIStore", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Wizard shell with overlay, glow effect, step dots, step transitions",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Step 1: Project name with Input primitive + validation",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Step 2: Model selection cards with Card primitive",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Step 3: Workflow Textarea + 8 failure mode Badge chips",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Step 4: Chat-style questions with option Card selections",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Step 5: Hypothesis card with shimmer + Badge + Button CTA",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Wire completion to stores: ProjectStore, DomainStore, UIStore",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:09.345Z"
       },
       {
-        "id": 9,
+        "id": "9",
         "title": "Radial Ring Canvas: SVG Ring + 8 Domain Nodes + Center Hub",
         "description": "The main canvas visualization. Pure CSS/SVG positioning, no React Flow.\n\nFiles:\n- src/components/canvas/radial-ring.tsx (~240 lines)\n- src/components/canvas/empty-canvas.tsx (~110 lines)\n\nFixed 600x600 container, centered via flexbox.\n\nSVG Ring:\n- Base circle: center (300,300), r=257, 1px stroke fg-10\n- Progress circle: same, 2px stroke fg-30, dasharray=2π×257≈1614.6, dashoffset=circ×(1-progress/100), rotate(-90), 600ms ease-smooth transition\n\n8 Domain Nodes at 225px radius, 45° apart:\n- Outer: 98px, 1px border fg-10, radius-md, bg-l100\n- Inner: bg-l200, radius-sm, padding 8px 10px\n- Status dot: 6px circle + label (Figtree 500 12px fg-60)\n- Click → UIStore.setFocusedDomain toggle\n\nState-to-Visual Mapping (spec §9.3):\ngetVisualMapping(status) returns: nodeClass, dotClass, connectionClass, dimOthers\n- untested: border fg-10, dot idle, dashed connection\n- probing: 2px accent border + pulseGlow, accent dot + dotPulse, animated dashes, dim others 0.5\n- probe_complete: 2px accent border, solid accent dot\n- promoted/gate_passed: 2px green border, green dot\n- scaffolding: 2px blue border + pulseGlow, blue dot + dotPulse\n- scaffold_complete: 2px blue border, blue dot\n- validation_gate: 2px purple border, purple dot\n- published: 2px green border + left green bar, green dot with glow\n- rejected: 2px red border, 0.7 opacity\n- redesign: 2px amber border, amber dot\n- iterating: 2px dashed amber border, amber pulse dot\n\nConnection Lines:\n- SVG from 30px from center to 15px from each node\n- Style matches domain state (dashed/solid/animated, color)\n\nCenter Hub:\n- 98px, compass SVG 28px, 'Harbor Eval' wordmark (Figtree 400 10px fg-40)\n- Click deselects focused domain\n\nEmpty Canvas (before onboarding):\n- Centered illustration + heading + 'Get Started' Button (primary)",
         "details": "The radial ring reads from DomainStore.domainStates and UIStore.focusedDomainId.\n\nPerformance: use useMemo for visual mapping calculations. Only re-render nodes whose state changed.\n\nAll CSS for nodes, connections, hub, and 14 visual states goes in globals.css under a '/* Canvas */'' section.",
         "testStrategy": "1. 8 nodes render at correct positions (check x,y coords)\n2. Progress ring fills proportionally to globalProgress\n3. Clicking node toggles focusedDomainId\n4. Active node gets accent border + shadow\n5. When one node is probing, others dim to 0.5 opacity\n6. Connection lines match node state colors\n7. Center hub click deselects focused domain\n8. Empty canvas shows when no project exists",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
-        "dependencies": [2, 5, 7],
+        "dependencies": [
+          "2",
+          "5",
+          "7"
+        ],
         "subtasks": [
-          {"id": 1, "title": "SVG ring with base and animated progress circles", "status": "pending"},
-          {"id": 2, "title": "8 domain nodes at 225px radius, 45° spacing with click handlers", "status": "pending"},
-          {"id": 3, "title": "getVisualMapping function mapping 14+ states to CSS classes", "status": "pending"},
-          {"id": 4, "title": "Connection lines SVG with state-based styling", "status": "pending"},
-          {"id": 5, "title": "Center hub with compass icon and wordmark", "status": "pending"},
-          {"id": 6, "title": "Empty canvas state with CTA Button", "status": "pending"},
-          {"id": 7, "title": "CSS for all canvas elements + 14 visual states in globals.css", "status": "pending"},
-          {"id": 8, "title": "Opacity dimming logic when active domain dims others", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "SVG ring with base and animated progress circles",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "8 domain nodes at 225px radius, 45° spacing with click handlers",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "getVisualMapping function mapping 14+ states to CSS classes",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Connection lines SVG with state-based styling",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Center hub with compass icon and wordmark",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Empty canvas state with CTA Button",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "CSS for all canvas elements + 14 visual states in globals.css",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 8,
+            "title": "Opacity dimming logic when active domain dims others",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:12.188Z"
       },
       {
-        "id": 10,
+        "id": "10",
         "title": "Onboarding → Canvas Transition",
         "description": "Smooth animated transition from onboarding wizard completion to the main canvas.\n\n1. User clicks 'Accept & Start Probing'\n2. Wizard overlay fades out (300ms opacity 1→0)\n3. Canvas fades in (400ms opacity 0→1, 200ms delay)\n4. Primary domain node starts pulsing (probe_queued status)\n5. Agent tab gets first system message\n6. UIStore.globalState → 'canvas_idle'\n\nState updates on completion:\n- ProjectStore: project with name, model, workflow description\n- DomainStore: all 8 initialized, primary → probe_queued\n- UIStore: wizardOpen=false, globalState='canvas_idle'\n- AgentStore: add welcome system message",
         "details": "This is a critical UX moment - the transition must feel seamless. The canvas should not flash or jump. Use CSS transitions, not JS animation libraries.",
         "testStrategy": "1. Wizard fades out smoothly\n2. Canvas appears with ring visible\n3. Primary domain node has pulsing border\n4. Agent tab shows welcome message\n5. No layout shift during transition",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [8, 9],
+        "dependencies": [
+          "8",
+          "9"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Wizard fade-out animation", "status": "pending"},
-          {"id": 2, "title": "Canvas fade-in with staggered delay", "status": "pending"},
-          {"id": 3, "title": "Store initialization on wizard complete", "status": "pending"},
-          {"id": 4, "title": "Primary domain pulse activation + welcome message", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Wizard fade-out animation",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Canvas fade-in with staggered delay",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Store initialization on wizard complete",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Primary domain pulse activation + welcome message",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:14.980Z"
       },
       {
-        "id": 11,
+        "id": "11",
         "title": "Workspace Plate: Container + Pipeline Roadmap Strip",
         "description": "Overlay plate that opens when a domain is clicked, showing the pipeline workflow.\n\nFile: src/components/canvas/workspace-plate.tsx (~270 lines)\n\nPlate Container:\n- 680px max-width, centered, bg-l-neg-50, shadow-inset-200, radius-xl\n- Header: accent dot (8px) + domain name (Figtree 600 16px fg-80) + status Badge + X close button\n- Status badges use the Badge primitive with state-specific variants\n\nPipeline Roadmap Strip:\n- 5 stages: Intake → Probe → Scaffold → Validate → Publish\n- Each: 72px Card with icon (from SVG assets) + label\n- States: locked (fg-10 bg, fg-30), available (fg-5 bg, fg-60), active (fg-10 bg, fg-80, Spinner), complete (green bg, white Check)\n- Connectors: 24px × 2px lines between cards, color by state\n\nOpen/Close:\n- sd-slideUp animation on open\n- ESC key closes\n- X button closes\n- UIStore.focusedDomainId drives show/hide",
         "details": "The workspace plate replaces the radial ring view when a domain is active. Content inside depends on domain status (probe/scaffold/validate fan-outs are separate tasks).\n\nUses Badge primitive for status labels. Uses Card primitive for stage cards. Uses Spinner for active stage.",
         "testStrategy": "1. Plate opens with slide animation when domain clicked\n2. Header shows correct domain name with accent dot\n3. Pipeline strip shows 5 stages with correct states\n4. ESC key closes plate\n5. Status badge matches domain state",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
-        "dependencies": [4, 5, 6, 9],
+        "dependencies": [
+          "4",
+          "5",
+          "6",
+          "9"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Plate container with header (accent dot, name, Badge, close)", "status": "pending"},
-          {"id": 2, "title": "Pipeline roadmap strip with 5 stage Cards and connectors", "status": "pending"},
-          {"id": 3, "title": "Stage state rendering (locked/available/active/complete)", "status": "pending"},
-          {"id": 4, "title": "Open/close animations and ESC handler", "status": "pending"},
-          {"id": 5, "title": "CSS for plate, roadmap, stages, connectors", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Plate container with header (accent dot, name, Badge, close)",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Pipeline roadmap strip with 5 stage Cards and connectors",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Stage state rendering (locked/available/active/complete)",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Open/close animations and ESC handler",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "CSS for plate, roadmap, stages, connectors",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:17.947Z"
       },
       {
-        "id": 12,
+        "id": "12",
         "title": "Probe Fan-out: 5 Variant Cards",
         "description": "Grid of 5 probe variant cards inside the workspace plate.\n\nVariants: Plain, Prior Work, Schema Hint, Audit Trail, Speed Run\n\nEach card uses the Card primitive (interactive variant) with additions:\n- Idle: default Card border\n- Running: 2px accent border + pulseGlow animation, Spinner icon\n- Complete: green-50 bg, green Check icon, failure rate (Departure 600 14px)\n- Failed: red-50 bg, X icon\n\nStagger entrance: each card delays 80ms (CSS animation-delay: calc(var(--i) * 80ms))\n\nBelow cards:\n- Mean failure rate (Departure 600 16px)\n- Verdict Badge: 'promote' (success), 'redesign' (warning), 'reject' (error)",
         "details": "Cards are rendered in a CSS grid (repeat(auto-fill, minmax(140px, 1fr))).\n\nThe stagger entrance uses the fanout-entrance keyframe from Task 3.\n\nVariant data comes from DomainStore.domainStates[focusedDomainId].probeSummary.variants",
         "testStrategy": "1. 5 cards render in grid\n2. Stagger animation visible (each card appears 80ms after previous)\n3. Running state shows pulsing border + spinner\n4. Complete state shows green with percentage\n5. Verdict badge shows correct color",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [4, 11],
+        "dependencies": [
+          "4",
+          "11"
+        ],
         "subtasks": [
-          {"id": 1, "title": "5 variant Cards with 4 visual states", "status": "pending"},
-          {"id": 2, "title": "Stagger entrance animation with CSS delay", "status": "pending"},
-          {"id": 3, "title": "Mean failure rate + verdict Badge display", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "5 variant Cards with 4 visual states",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Stagger entrance animation with CSS delay",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Mean failure rate + verdict Badge display",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:20.729Z"
       },
       {
-        "id": 13,
+        "id": "13",
         "title": "Scaffold Fan-out + Validation Gates",
         "description": "Scaffold agent cards and validation gate cards inside workspace plate.\n\nScaffold Fan-out (5 cards):\n- Agents: Fixtures, Environment, Verifier, Instruction, Contamination\n- Same Card primitive as probe variants\n- Each shows: agent name, artifact label, generation status\n- Stagger entrance animation\n\nValidation Gates (3 cards):\n- Oracle Sweep, Nop Sweep, Spoiler Lint\n- States: pending (fg-20 dot), running (shimmer animation on border), passed (green Check, green-50 bg), failed (red X, red-50 bg)\n- Shimmer uses skeleton-shimmer keyframe on border",
         "details": "These sections show conditionally based on domain status:\n- scaffold_queued/scaffolding → scaffold fan-out\n- validation_gate → validation gates\n\nBoth use the same Card primitive to maintain visual consistency with probe fan-out.",
         "testStrategy": "1. Scaffold cards render when domain is in scaffolding state\n2. Validation gates render when domain is in validation state\n3. Shimmer animation visible on running gates\n4. Pass/fail states show correct colors",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [4, 11],
+        "dependencies": [
+          "4",
+          "11"
+        ],
         "subtasks": [
-          {"id": 1, "title": "5 scaffold agent Cards with artifact labels", "status": "pending"},
-          {"id": 2, "title": "3 validation gate Cards with 4 states including shimmer", "status": "pending"},
-          {"id": 3, "title": "Conditional rendering based on domain status", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "5 scaffold agent Cards with artifact labels",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "3 validation gate Cards with 4 states including shimmer",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Conditional rendering based on domain status",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:23.703Z"
       },
       {
-        "id": 14,
+        "id": "14",
         "title": "Domain Click → Workspace Plate Transition",
         "description": "Wire domain node clicks to open the workspace plate with correct content.\n\n1. User clicks domain node on radial ring\n2. UIStore.focusedDomainId set to domain\n3. Workspace plate slides in (sd-slideUp)\n4. Fan-out content rendered based on status:\n   - untested/probe_queued/probing/probe_complete → probe fan-out\n   - scaffold_queued/scaffolding/scaffold_complete → scaffold fan-out\n   - validation_gate/gate_passed/gate_failed → validation gates\n   - target_sweep/sweep_complete → sweep results\n   - published → published summary\n5. Pipeline roadmap highlights current stage\n6. Clicking different domain: content cross-fades\n7. ESC or X: plate closes, focusedDomainId → null\n8. Ring nodes dim except active one",
         "details": "The workspace plate is the primary work surface. Its content is entirely driven by DomainStore state.\n\nCross-fade between domains: 200ms opacity transition on content area.",
         "testStrategy": "1. Click domain → plate opens with correct fan-out\n2. Click different domain → content changes without plate closing\n3. ESC closes plate and clears focusedDomainId\n4. Ring nodes dim correctly\n5. Pipeline roadmap highlights correct stage",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [9, 11, 12, 13],
+        "dependencies": [
+          "9",
+          "11",
+          "12",
+          "13"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Domain click → workspace open with slide animation", "status": "pending"},
-          {"id": 2, "title": "Content routing switch based on domain status", "status": "pending"},
-          {"id": 3, "title": "Cross-fade on domain switch", "status": "pending"},
-          {"id": 4, "title": "Close on ESC/X with ring restore", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Domain click → workspace open with slide animation",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Content routing switch based on domain status",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Cross-fade on domain switch",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Close on ESC/X with ring restore",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:26.855Z"
       },
       {
-        "id": 15,
+        "id": "15",
         "title": "Home Tab: Greeting + Progress Ring + Suggested Actions + Activity",
         "description": "Home tab content in the right panel.\n\nFile: src/components/panel/home-tab.tsx\n\nGreeting:\n- Time-based: 'Good morning/afternoon/evening, Zakir' (Mondwest 600 22px fg-80)\n- Project name below (Figtree 400 13px fg-40)\n\nProgress Card:\n- SVG ring: 56px diameter, 3px stroke, fg-5 base, fg-40 progress fill\n- Center: percentage (Departure 600 20px fg-80)\n- Label: 'domains evaluated' (Figtree 400 11px fg-40)\n- Linear progress bar: 4px height, radius-full, fg-5 track, fg-40 fill\n- Progress = count of published domains / 8\n\nSuggested Next Cards (2-3):\n- Uses Card primitive (interactive)\n- Accent dot (6px, domain color) + action text (Figtree 500 13px fg-60) + ArrowRight\n- Click navigates to relevant domain\n\nActivity Feed:\n- Time labels (Departure 11px fg-30, relative: '2m ago')\n- Action descriptions (Figtree 400 13px fg-50)\n- Dividers between items",
         "details": "Progress data comes from DomainStore - count domains with published status.\nSuggested actions come from domains with actionable status (probe_queued, scaffold_queued, etc.).\nActivity feed is mock data in MVP.",
         "testStrategy": "1. Greeting changes based on time of day\n2. Progress ring fills correctly\n3. Suggested cards show for actionable domains\n4. Activity timestamps are relative",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [4, 5, 7],
+        "dependencies": [
+          "4",
+          "5",
+          "7"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Time-of-day greeting with Mondwest font", "status": "pending"},
-          {"id": 2, "title": "SVG progress ring with animated dashoffset + linear bar", "status": "pending"},
-          {"id": 3, "title": "Suggested next action Cards with accent dots", "status": "pending"},
-          {"id": 4, "title": "Activity feed with relative timestamps", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Time-of-day greeting with Mondwest font",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "SVG progress ring with animated dashoffset + linear bar",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Suggested next action Cards with accent dots",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Activity feed with relative timestamps",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:29.833Z"
       },
       {
-        "id": 16,
+        "id": "16",
         "title": "Agent Tab: Message List + Composer + Typing Indicator",
         "description": "The agent chat tab - primary interaction surface.\n\nFile: src/components/panel/agent-tab.tsx\n\nMessage List:\n- Auto-scroll to bottom on new messages\n- Agent messages: left-aligned, 24px avatar circle, bg-l200 bubble, max 90% width\n- User messages: right-aligned, accent-tinted bubble, max 85% width\n- Message text: Figtree 400 14px/1.6 fg-80\n- Timestamp: Departure 11px fg-30\n\nTool Call Indicators (inline):\n- 32px height bar, bg-fg-5, border fg-10, radius-md\n- Running: Loader2 12px spinning (Spinner component) + 'Running: tool_name' (Figtree 400 12px fg-40)\n- Complete: Check 12px green + 'Completed: summary'\n- Failed: AlertTriangle 12px red\n\nTyping Indicator:\n- 3 dots with typingBounce animation (from Task 3), staggered 0.2s delays\n\nChat Composer:\n- Uses Textarea primitive (auto-resize, min 44px, max 140px)\n- Wrapper: bg-l200, radius-sm, border 0.5px fg-5, shadow-inset-025\n- Focus: shadow-input-focus\n- Send button: Button (primary, sm) with ArrowUp icon, disabled when empty\n- Attach button: Button (ghost, sm) with Paperclip icon\n- Enter sends, Shift+Enter newline",
         "details": "Messages come from AgentStore. The composer calls AgentStore.addMessage().\n\nAll interactive elements use UI primitives:\n- Send = Button (primary)\n- Attach = Button (ghost)\n- Input = Textarea\n\nThis ensures the chat looks consistent with the rest of the app.",
         "testStrategy": "1. Messages render with correct alignment (agent left, user right)\n2. Auto-scroll works on new message\n3. Tool call indicators show correct state icons\n4. Typing dots bounce with stagger\n5. Composer auto-resizes\n6. Enter sends message, Shift+Enter adds newline\n7. Send button disabled when textarea empty",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [4, 5, 7],
+        "dependencies": [
+          "4",
+          "5",
+          "7"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Message list with agent/user bubbles and auto-scroll", "status": "pending"},
-          {"id": 2, "title": "Tool call indicators (running/complete/failed)", "status": "pending"},
-          {"id": 3, "title": "Typing indicator with bouncing dots", "status": "pending"},
-          {"id": 4, "title": "Chat composer with Textarea, Button send/attach, keyboard handling", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Message list with agent/user bubbles and auto-scroll",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Tool call indicators (running/complete/failed)",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Typing indicator with bouncing dots",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Chat composer with Textarea, Button send/attach, keyboard handling",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:32.646Z"
       },
       {
-        "id": 17,
+        "id": "17",
         "title": "Chat Card Components: Tool, Probe, Approval, Iteration, Sweep",
         "description": "5 specialized card types embedded in agent chat messages.\n\nFile: src/components/panel/chat-cards.tsx\n\n1. ToolCallCard: Expandable 32px inline card. Uses Spinner when running.\n2. ProbeSummaryCard: Variant bars + verdict Badge + Button CTAs.\n3. ApprovalGateCard: Amber border card with AlertTriangle + approve/reject Buttons.\n4. IterationCard: Diff view (removed=red, added=green lines) + apply/dismiss Buttons.\n5. SweepResultCard: pass@k (Departure 700 20px) + trial rows with Badges.\n\nDESIGN CONSISTENCY: All CTAs use Button primitive. All badges use Badge primitive. All containers use Card primitive styles. Colors use CSS variables only.",
         "details": "These cards appear inline in the Agent tab message flow. They are rendered based on ChatMessage.toolCalls and special message types.\n\nThe ProbeSummaryCard variant bars use fg-5 track + green/amber/red fill matching status colors from design tokens.\n\nThe diff view in IterationCard uses hardcoded semantic colors (red for removed, green for added) which is acceptable for code diffs.",
         "testStrategy": "1. Each card renders correctly with mock data\n2. Expandable ToolCallCard opens/closes\n3. Variant bars fill proportionally\n4. Approve/reject buttons fire callbacks\n5. Diff lines show correct colors and prefixes",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [4, 5, 16],
+        "dependencies": [
+          "4",
+          "5",
+          "16"
+        ],
         "subtasks": [
-          {"id": 1, "title": "ToolCallCard with expand/collapse + Spinner", "status": "pending"},
-          {"id": 2, "title": "ProbeSummaryCard with variant bars + verdict Badge + Buttons", "status": "pending"},
-          {"id": 3, "title": "ApprovalGateCard with amber styling + approve/reject Buttons", "status": "pending"},
-          {"id": 4, "title": "IterationCard with diff view + apply/dismiss Buttons", "status": "pending"},
-          {"id": 5, "title": "SweepResultCard with pass@k headline + trial Badges", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "ToolCallCard with expand/collapse + Spinner",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "ProbeSummaryCard with variant bars + verdict Badge + Buttons",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "ApprovalGateCard with amber styling + approve/reject Buttons",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "IterationCard with diff view + apply/dismiss Buttons",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "SweepResultCard with pass@k headline + trial Badges",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:35.601Z"
       },
       {
-        "id": 18,
+        "id": "18",
         "title": "Project Tab: Settings + Model Chips + Danger Zone",
         "description": "Project settings tab.\n\nFile: src/components/panel/project-tab.tsx\n\nSettings Sections:\n- Section header: Figtree 600 13px fg-60, uppercase, letter-spacing 0.04em\n- Key-value rows: label (Figtree 400 13px fg-50) + value (Figtree 500 13px fg-80)\n\nModel Chips:\n- Primary: Badge (accent) with star icon\n- Secondary: Badge (default)\n- Add: dashed border Badge with Plus icon\n\nDanger Zone:\n- Red text links for 'Reset Project', 'Delete All Data'\n- Click opens Dialog (from UI primitives) with:\n  - Warning text\n  - 'Cancel' Button (secondary) + 'Confirm' Button (danger)\n  - Overlay with blur\n\nDESIGN CONSISTENCY: Uses Badge for chips, Dialog for confirmation, Button for actions.",
         "details": "Settings data comes from ProjectStore. Model changes update ProjectStore.setTargetModel().\n\nThe danger zone confirmation Dialog uses the Dialog primitive with red CTA Button (danger variant).",
         "testStrategy": "1. Settings show correct project data\n2. Model chips display with correct styling\n3. Danger link opens confirmation Dialog\n4. Cancel closes dialog without action\n5. Confirm executes destructive action and closes",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [4, 5, 7],
+        "dependencies": [
+          "4",
+          "5",
+          "7"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Settings sections with key-value rows", "status": "pending"},
-          {"id": 2, "title": "Model chips using Badge primitive", "status": "pending"},
-          {"id": 3, "title": "Danger zone with Dialog confirmation", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Settings sections with key-value rows",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Model chips using Badge primitive",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Danger zone with Dialog confirmation",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:38.541Z"
       },
       {
-        "id": 19,
+        "id": "19",
         "title": "Files Tab: File Tree + Editor Preview + Upload Zone",
         "description": "Files tab showing generated artifacts.\n\nFile: src/components/panel/files-tab.tsx\n\nFile Tree:\n- Recursive builder from DomainStore artifacts\n- Folder: ChevronRight (rotates 90° on expand) + folder icon + name\n- File: type-specific icon with color + name + size\n- Indent: 16px per depth level\n- Click: opens inline preview\n- Item: 32px height, hover bg fg-5, radius-sm\n\nFile Type Icons (Lucide):\n- .json/.jsonl: Braces, blue\n- .py: Code, green\n- .yaml/.yml: Settings, purple\n- .md: FileText, gray\n- .csv: Table, amber\n\nInline Preview:\n- Code view: monospace, line numbers\n- Toggle: Code/Preview tabs (uses same tab pattern as panel)\n- File header with filename + close button\n\nUpload Zone (uses File Upload component from Task 22):\n- Drag-drop area at bottom of tree\n- Only shown when tree is non-empty or as empty state",
         "details": "The file tree is purely client-side. Artifacts are stored in DomainStore as file metadata objects.\n\nIn MVP, file content is mock/placeholder. The upload zone stores files in-memory only.",
         "testStrategy": "1. File tree renders with correct icons and indentation\n2. Folders expand/collapse with chevron animation\n3. File click shows inline preview\n4. Upload zone accepts drag-drop\n5. File type icons match file extension",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [4, 5, 7, 22],
+        "dependencies": [
+          "4",
+          "5",
+          "7",
+          "22"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Recursive file tree with expand/collapse", "status": "pending"},
-          {"id": 2, "title": "File type icons with extension-based colors", "status": "pending"},
-          {"id": 3, "title": "Inline editor preview with code/preview toggle", "status": "pending"},
-          {"id": 4, "title": "Integration with upload zone component", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Recursive file tree with expand/collapse",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "File type icons with extension-based colors",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Inline editor preview with code/preview toggle",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Integration with upload zone component",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:41.632Z"
       },
       {
-        "id": 20,
+        "id": "20",
         "title": "Sweeps Tab: Pass@k + Trial Rows + Trajectory + Comparison",
         "description": "Sweep results tab.\n\nFile: src/components/panel/sweeps-tab.tsx\n\nLatest Sweep Card (uses Card primitive):\n- pass@3 headline: Departure 700 24px, color by result\n  - good (model fails = good eval): green\n  - bad (model passes = bad eval): red\n  - partial: amber\n- Sweep name + timestamp\n\nTrial Rows:\n- Badge (success/error) for pass/fail\n- Summary: Figtree 400 13px fg-60\n- Expandable: click shows trajectory\n- Separator: border-bottom fg-5\n\nTrajectory Viewer (expandable):\n- Timeline with dot markers (green/red/gray)\n- Step descriptions\n\nComparison Table:\n- Colored bars (percentage width, domain accent color)\n- Labels left, bars right",
         "details": "Data from DomainStore.domainStates[id].sweepSummary.\n\nUses Badge for trial status, Card for sweep container.",
         "testStrategy": "1. Pass@k shows correct color based on value\n2. Trial badges show pass/fail correctly\n3. Expandable trajectory works\n4. Comparison bars fill proportionally",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [4, 5, 7],
+        "dependencies": [
+          "4",
+          "5",
+          "7"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Sweep Card with pass@k headline", "status": "pending"},
-          {"id": 2, "title": "Trial rows with Badge + expand for trajectory", "status": "pending"},
-          {"id": 3, "title": "Trajectory viewer with timeline dots", "status": "pending"},
-          {"id": 4, "title": "Comparison table with colored bars", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Sweep Card with pass@k headline",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Trial rows with Badge + expand for trajectory",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Trajectory viewer with timeline dots",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Comparison table with colored bars",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:44.493Z"
       },
       {
-        "id": 21,
+        "id": "21",
         "title": "Panel Tab Routing: Wire Detail Panel to All 5 Tab Components",
         "description": "Update detail-panel.tsx to route UIStore.activeTab to real tab components.\n\nRouting:\n- 'home' → <HomeTab />\n- 'agent' → <AgentTab />\n- 'project' → <ProjectTab />\n- 'files' → <FilesTab />\n- 'sweeps' → <SweepsTab />\n\nSuspense boundaries with tab-specific skeleton fallbacks.\nDomain context: when focusedDomainId is set, tabs show domain-scoped data.",
         "details": "This is the integration task that connects all 5 tab implementations to the panel shell.\n\nEach tab should be wrapped in React.lazy() for code splitting, with Suspense fallback showing the appropriate skeleton layout.",
         "testStrategy": "1. All 5 tabs render when selected\n2. Tab switching is instant (no flash)\n3. Skeleton shows briefly on first load\n4. Tab content updates when domain changes",
-        "status": "pending",
+        "status": "done",
         "priority": "high",
-        "dependencies": [15, 16, 18, 19, 20],
+        "dependencies": [
+          "15",
+          "16",
+          "18",
+          "19",
+          "20"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Tab routing switch in detail-panel.tsx", "status": "pending"},
-          {"id": 2, "title": "Suspense boundaries with skeleton fallbacks", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Tab routing switch in detail-panel.tsx",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Suspense boundaries with skeleton fallbacks",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:47.326Z"
       },
       {
-        "id": 22,
+        "id": "22",
         "title": "File Upload Component",
         "description": "Reusable drag-and-drop file upload zone.\n\nFile: src/components/ui/file-upload.tsx\n\nDropzone:\n- Dashed border (2px fg-10), radius-lg, padding 24px\n- Upload icon (20px fg-30) + 'Drop files here or browse' + hint text\n- Hover: border fg-20, bg fg-5\n- Dragging: border fg-40, bg fg-5, box-shadow ring\n- Accept: .json, .jsonl, .csv, .yaml, .yml, .py, .txt, .md\n- Max 50MB per file\n\nUpload Item List:\n- Per-file row: icon + name + size + progress bar + remove button\n- Progress bar: 60px × 3px, fg-40 fill\n- States: uploading (progress), complete (green Check), error (red bg)\n\nUses design tokens throughout. No hardcoded colors.",
         "details": "This component is used by the Files tab (Task 19) and could be used by the chat composer attach button.\n\nFile validation: check extension against accept list, check size against maxSizeMB.\n\nUpload is simulated in MVP (no backend). Progress uses setInterval with random increments.",
         "testStrategy": "1. Drag-drop zone highlights on drag over\n2. Files appear in list after drop\n3. Progress bar animates\n4. Remove button removes file from list\n5. Oversized files show error state",
-        "status": "pending",
+        "status": "done",
         "priority": "low",
-        "dependencies": [2, 4],
+        "dependencies": [
+          "2",
+          "4"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Dropzone with drag/hover/active states", "status": "pending"},
-          {"id": 2, "title": "Upload item list with progress bars", "status": "pending"},
-          {"id": 3, "title": "File validation (type + size)", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Dropzone with drag/hover/active states",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Upload item list with progress bars",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "File validation (type + size)",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:50.105Z"
       },
       {
-        "id": 23,
+        "id": "23",
         "title": "Toast Notification System",
         "description": "Global toast notifications.\n\nFile: src/components/layout/toast-stack.tsx\n\n- Fixed bottom-right (24px inset)\n- Stack with 8px gap, max 3 visible\n- Toast: bg-l200, radius-md, shadow-outset-050, padding 12px 16px\n- Color dot: 6px circle (info=fg-40, success=#16A34A, warning=#D97706, error=#DC2626)\n- Message: Figtree 400 13px fg-70\n- Auto-dismiss: 5s default, CSS countdown bar (toast-countdown keyframe)\n- Entrance: sd-slideUp from Task 3\n- Exit: slide right + fade\n\nToast state: simple array in a lightweight store or UIStore extension.\nAPI: addToast(message, type?, duration?), removeToast(id)\n\nUses design tokens for all colors. Uses keyframes from Task 3.",
         "details": "Toast component rendered in layout.tsx (above all content).\n\nThe countdown progress bar is 2px height at bottom of toast, using toast-countdown keyframe with linear timing matching the duration.",
         "testStrategy": "1. Toast appears with slide-up animation\n2. Auto-dismisses after 5s\n3. Color dot matches type\n4. Countdown bar animates\n5. Max 3 visible, oldest removed first",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [2, 3],
+        "dependencies": [
+          "2",
+          "3"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Toast component with dot, message, countdown bar", "status": "pending"},
-          {"id": 2, "title": "Toast stack with max limit and slide animations", "status": "pending"},
-          {"id": 3, "title": "Toast API (addToast/removeToast)", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Toast component with dot, message, countdown bar",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Toast stack with max limit and slide animations",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Toast API (addToast/removeToast)",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:52.889Z"
       },
       {
-        "id": 24,
+        "id": "24",
         "title": "Skeleton Loading States",
         "description": "Shimmer skeleton placeholders matching real content shapes.\n\nFile: src/components/ui/skeleton-loading.tsx\n\n6 Base Variants:\n- SkeletonLine: 100% × 12px, radius-sm\n- SkeletonTitle: 60% × 20px, radius-sm\n- SkeletonCircle: configurable diameter, radius-full\n- SkeletonCard: 100% × 80px, radius-md\n- SkeletonStat: 48px × 32px\n- SkeletonAvatar: 24px circle\n\nShimmer: skeleton-shimmer keyframe from Task 3.\nBackground: linear-gradient(90deg, fg-5 25%, fg-10 50%, fg-5 75%), bg-size 200% 100%.\n\n5 Tab-Specific Layouts:\n- HomeTabSkeleton: greeting line + ring circle + 2 card skeletons\n- AgentTabSkeleton: 3 message bubbles alternating sides\n- ProjectTabSkeleton: section header + 4 key-value rows\n- FilesTabSkeleton: 6 indented tree items\n- SweepsTabSkeleton: headline stat + 3 trial rows\n\nUsed as Suspense fallbacks in Task 21.",
         "details": "Skeletons must match the exact layout dimensions of their real counterparts. This prevents layout shift when content loads.",
         "testStrategy": "1. Shimmer animation is visible and smooth\n2. Each tab skeleton matches real tab layout shape\n3. No layout shift when real content replaces skeleton",
-        "status": "pending",
+        "status": "done",
         "priority": "low",
-        "dependencies": [2, 3],
+        "dependencies": [
+          "2",
+          "3"
+        ],
         "subtasks": [
-          {"id": 1, "title": "6 base skeleton variants with shimmer", "status": "pending"},
-          {"id": 2, "title": "5 tab-specific skeleton layouts", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "6 base skeleton variants with shimmer",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "5 tab-specific skeleton layouts",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:55.670Z"
       },
       {
-        "id": 25,
+        "id": "25",
         "title": "Command Palette (Cmd+K)",
         "description": "Global command palette for quick navigation.\n\nFile: src/components/studio/command-palette-modal.tsx\n\nTrigger: Cmd+K / Ctrl+K\n\nDialog (uses Dialog primitive base):\n- 480px width, centered\n- Search Input (uses Input primitive, full width, 44px)\n- Search icon (Lucide Search, 16px)\n\nResults:\n- Grouped: 'Actions' section + 'Navigation' section\n- Item: 36px, icon 16px + label (Figtree 400 13px fg-70) + shortcut (Departure 11px fg-30)\n- Keyboard nav: ↑↓ move selection, Enter activates, ESC closes\n- Active: bg fg-5, fg-80 text\n\nActions: New Project, Reset Canvas, Export Data\nNavigation: Home, Agent, Project, Files, Sweeps + 8 domain names\n\nUses Dialog and Input primitives for visual consistency.",
         "details": "The command palette is a power-user feature. It must feel snappy - results filter instantly on keystroke.\n\nImplement with useEffect keydown listener for Cmd+K. UIStore.commandPaletteOpen drives visibility.",
         "testStrategy": "1. Cmd+K opens palette\n2. Typing filters results\n3. Arrow keys navigate, Enter activates\n4. ESC closes\n5. Selecting 'Home' switches to home tab",
-        "status": "pending",
+        "status": "done",
         "priority": "low",
-        "dependencies": [4, 5, 7],
+        "dependencies": [
+          "4",
+          "5",
+          "7"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Cmd+K listener and Dialog rendering", "status": "pending"},
-          {"id": 2, "title": "Search Input with instant filtering", "status": "pending"},
-          {"id": 3, "title": "Grouped results with keyboard navigation", "status": "pending"},
-          {"id": 4, "title": "Action handlers (navigate, create, reset)", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Cmd+K listener and Dialog rendering",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Search Input with instant filtering",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Grouped results with keyboard navigation",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Action handlers (navigate, create, reset)",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:12:58.473Z"
       },
       {
-        "id": 26,
+        "id": "26",
         "title": "Streaming Text + Markdown Renderer",
         "description": "Character-by-character streaming and markdown for agent messages.\n\nFile: src/components/ui/streaming-text.tsx\n\nStreamingText:\n- rAF-based character reveal, speed prop (12ms default)\n- Blinking cursor: 2px × 1em, fg-40, cursorBlink keyframe\n- Respects prefers-reduced-motion\n\nStreamingMarkdown:\n- Renders blocks as they arrive\n- Auto-scrolls during streaming\n\nMarkdown renderer (zero deps):\n- Code blocks → <pre class='md-code-block'>\n- Inline code → <code class='md-inline-code'>\n- Bold, italic, headers, lists\n\nCSS in globals.css:\n- .agent-prose: Figtree 400 14px/1.6 fg-80\n- .md-code-block: fg-5 bg, fg-10 border, mono 12px\n- .md-inline-code: fg-5 bg, radius-xs, padding 2px 5px",
         "details": "Used in the Agent tab for rendering agent responses. The streaming effect creates a premium feel.",
         "testStrategy": "1. Text reveals character by character\n2. Cursor blinks at end\n3. Markdown renders correctly (bold, code, headers)\n4. Reduced motion shows all text immediately",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [2, 3],
+        "dependencies": [
+          "2",
+          "3"
+        ],
         "subtasks": [
-          {"id": 1, "title": "StreamingText with rAF character reveal and cursor", "status": "pending"},
-          {"id": 2, "title": "StreamingMarkdown with auto-scroll", "status": "pending"},
-          {"id": 3, "title": "simpleMarkdown renderer (no deps)", "status": "pending"},
-          {"id": 4, "title": "CSS for prose, code blocks, inline code", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "StreamingText with rAF character reveal and cursor",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "StreamingMarkdown with auto-scroll",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "simpleMarkdown renderer (no deps)",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "CSS for prose, code blocks, inline code",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:13:01.265Z"
       },
       {
-        "id": 27,
+        "id": "27",
         "title": "Error State Components",
         "description": "3 error display variants for different contexts.\n\nFile: src/components/ui/error-states.tsx\n\n1. ErrorState (full-area): Icon circle (48px, red-50 bg, red icon) + title (Figtree 500 16px) + description (Figtree 400 13px fg-40) + retry Button (secondary).\n   5 kinds: network (WifiOff), auth (Ban), rate-limit, server, generic (AlertTriangle).\n\n2. ErrorBanner (inline): Red-50 bg, red-200 border, AlertTriangle + message + dismiss Button (ghost).\n\n3. ChatError (chat bubble): Red-50 bg, radius-md, 12px text + 'Retry' link.\n\nAll use Button primitive for actions. All use design token colors.",
         "details": "These are used as fallbacks throughout the app:\n- ErrorState: canvas area when API fails\n- ErrorBanner: inside panel sections\n- ChatError: inline in agent message list",
         "testStrategy": "1. Each variant renders with correct styling\n2. Retry button fires callback\n3. Dismiss button hides banner\n4. All colors use design tokens",
-        "status": "pending",
+        "status": "done",
         "priority": "low",
-        "dependencies": [2, 4],
+        "dependencies": [
+          "2",
+          "4"
+        ],
         "subtasks": [
-          {"id": 1, "title": "ErrorState with 5 kinds and retry Button", "status": "pending"},
-          {"id": 2, "title": "ErrorBanner with dismiss", "status": "pending"},
-          {"id": 3, "title": "ChatError with retry link", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "ErrorState with 5 kinds and retry Button",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "ErrorBanner with dismiss",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "ChatError with retry link",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:13:04.061Z"
       },
       {
-        "id": 28,
+        "id": "28",
         "title": "Keyboard Shortcuts: Tab Switch + Escape Cascade + Enter Context",
         "description": "Global keyboard shortcut handling.\n\nImplement in top-bar.tsx or dedicated useKeyboardShortcuts hook:\n\n- 1-5: Switch to tab (Home, Agent, Project, Files, Sweeps)\n- ESC: Close in priority order: command palette → workspace plate → modal/dialog → dropdown\n- Enter: Submit onboarding input / Send chat message (when focused)\n- Cmd+K: Command palette (handled by Task 25)\n- Cmd+/: Focus chat composer\n\nGuard: Don't fire number keys when typing in input/textarea.\n\nAccessibility: Add aria-keyshortcuts attributes to targets.",
         "details": "Escape cascade is important: ESC should close the MOST RECENT thing opened, not everything at once. Check UIStore state in order: commandPaletteOpen → focusedDomainId (plate) → any open dialog → any open dropdown.",
         "testStrategy": "1. Press 1 → Home tab active\n2. Press 3 → Project tab active\n3. ESC closes workspace plate when open\n4. ESC closes command palette when open\n5. Number keys don't fire when typing in input\n6. Cmd+/ focuses chat composer",
-        "status": "pending",
+        "status": "done",
         "priority": "low",
-        "dependencies": [7, 5, 25],
+        "dependencies": [
+          "7",
+          "5",
+          "25"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Number key (1-5) tab switching with input guard", "status": "pending"},
-          {"id": 2, "title": "Escape cascade (palette → plate → dialog → dropdown)", "status": "pending"},
-          {"id": 3, "title": "Enter context handling", "status": "pending"},
-          {"id": 4, "title": "Cmd+/ focus chat composer", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Number key (1-5) tab switching with input guard",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Escape cascade (palette → plate → dialog → dropdown)",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Enter context handling",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Cmd+/ focus chat composer",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:13:06.867Z"
       },
       {
-        "id": 29,
+        "id": "29",
         "title": "Responsive Layout: Mobile + Tablet + Touch + iOS Safe Areas",
         "description": "Full responsive design.\n\nMobile (<768px):\n- Hide right panel\n- Full-width workspace plate\n- Smaller progress ring (48px)\n- Stack fan-out cards vertically\n- Canvas scales down via CSS transform\n\nTablet (768-1023px):\n- Narrow panel: 300px\n- Compact fan-out grid\n\nTouch (pointer: coarse):\n- 44px minimum touch targets: buttons, tree items, trial rows, command items\n\niOS Safe Areas:\n- Bottom nav: padding-bottom env(safe-area-inset-bottom)\n- Toast stack: bottom offset includes safe area\n\nAll breakpoints in globals.css as @media queries.",
         "details": "CRITICAL: Test on actual mobile viewport. The bottom nav must be usable with thumb reach. The panel must not overlap the canvas on tablet.\n\nTouch targets: Apply to ALL interactive elements that are < 44px in desktop mode.",
         "testStrategy": "1. Mobile (375px): panel hidden, canvas centered, nav usable\n2. Tablet (768px): panel narrows to 300px\n3. Touch targets all ≥ 44px on touch devices\n4. iOS safe area prevents bottom nav from being under home indicator",
-        "status": "pending",
+        "status": "done",
         "priority": "low",
-        "dependencies": [2, 7],
+        "dependencies": [
+          "2",
+          "7"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Mobile breakpoint: hide panel, full-width plate, scale canvas", "status": "pending"},
-          {"id": 2, "title": "Tablet breakpoint: narrow panel, compact grid", "status": "pending"},
-          {"id": 3, "title": "Touch: 44px minimum targets on all interactive elements", "status": "pending"},
-          {"id": 4, "title": "iOS safe area insets", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "Mobile breakpoint: hide panel, full-width plate, scale canvas",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Tablet breakpoint: narrow panel, compact grid",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Touch: 44px minimum targets on all interactive elements",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "iOS safe area insets",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:13:09.678Z"
       },
       {
-        "id": 30,
+        "id": "30",
         "title": "Global Error Boundary + Loading States",
         "description": "React error boundary and global loading handling.\n\nFile: src/components/layout/error-boundary.tsx\n- Catches unhandled React errors\n- Renders ErrorState (from Task 27) with retry button\n- Retry resets error state and re-renders children\n\nFile: src/app/loading.tsx\n- Next.js loading state file\n- Shows centered Spinner from UI primitives\n\nFile: src/app/error.tsx\n- Next.js error boundary file\n- Shows ErrorState with 'Try again' button",
         "details": "These catch-all components prevent the app from showing a white screen on errors. They use the same design language as the rest of the app (ErrorState from Task 27, Spinner from Task 4).",
         "testStrategy": "1. Throwing error in a component shows ErrorState\n2. Retry button recovers from error\n3. Loading state shows Spinner\n4. Error boundary doesn't break on nested errors",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
-        "dependencies": [4, 27],
+        "dependencies": [
+          "4",
+          "27"
+        ],
         "subtasks": [
-          {"id": 1, "title": "React error boundary component with ErrorState fallback", "status": "pending"},
-          {"id": 2, "title": "Next.js loading.tsx with Spinner", "status": "pending"},
-          {"id": 3, "title": "Next.js error.tsx with ErrorState + retry", "status": "pending"}
-        ]
+          {
+            "id": 1,
+            "title": "React error boundary component with ErrorState fallback",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Next.js loading.tsx with Spinner",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Next.js error.tsx with ErrorState + retry",
+            "status": "pending",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2026-05-27T21:13:12.480Z"
       },
       {
-        "id": 31,
+        "id": "31",
         "title": "Design Consistency Audit: Visual Regression Check",
         "description": "Systematic audit of every component to verify consistent use of design tokens.\n\nCheck ALL components for:\n- Every color is a CSS variable (no hex codes except in token definitions)\n- Every border-radius uses --radius-* tokens\n- Every shadow uses --shadow-* tokens\n- Every font uses --font-* tokens with correct weight/size\n- Every interactive element uses UI primitives (Button, Input, Badge, Card, Dialog)\n- Every animation uses keyframes from Task 3\n- Focus ring works on every interactive element\n- Hover/active states exist on every clickable element\n- No orphaned CSS classes\n- No duplicate style definitions\n\nFix any inconsistencies found.",
         "details": "This is a VERIFICATION task, not a build task. Run it as a manual audit:\n1. grep -r '#[0-9a-fA-F]' in component files (should only be in globals.css)\n2. grep for hardcoded px values that should be tokens\n3. Verify every Button instance uses the Button primitive\n4. Check that Badge, Card, Dialog are used consistently\n\nDocument findings and fix all issues.",
         "testStrategy": "1. Zero hardcoded colors in component files\n2. Zero hardcoded border-radius outside globals.css\n3. All interactive elements have focus ring\n4. All clickable elements have hover state\n5. npx tsc --noEmit passes clean",
         "status": "pending",
         "priority": "high",
-        "dependencies": [8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+        "dependencies": [
+          "8",
+          "9",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20",
+          "21"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Audit all components for hardcoded colors/values", "status": "pending"},
-          {"id": 2, "title": "Verify UI primitive usage across all components", "status": "pending"},
-          {"id": 3, "title": "Fix all inconsistencies found", "status": "pending"},
-          {"id": 4, "title": "Verify focus ring on every interactive element", "status": "pending"}
+          {
+            "id": 1,
+            "title": "Audit all components for hardcoded colors/values",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Verify UI primitive usage across all components",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Fix all inconsistencies found",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Verify focus ring on every interactive element",
+            "status": "pending",
+            "parentId": "undefined"
+          }
         ]
       },
       {
-        "id": 32,
+        "id": "32",
         "title": "TypeScript Strict Verification + Build Check",
         "description": "Final TypeScript and build verification gate.\n\n1. npx tsc --noEmit: Zero errors\n2. npm run build: Clean production build\n3. No unused exports/imports\n4. No 'any' types (except justified exceptions)\n5. All event handlers properly typed\n6. All store actions properly typed\n7. All component props properly typed",
         "details": "This is the quality gate. Nothing ships unless this passes.\n\nAlso verify:\n- No console.log statements\n- No TODO comments (or document them)\n- No commented-out code blocks",
         "testStrategy": "1. npx tsc --noEmit exits 0\n2. npm run build exits 0\n3. grep -r 'console.log' returns 0 results in src/\n4. grep -r ': any' returns only justified uses",
         "status": "pending",
         "priority": "high",
-        "dependencies": [31],
+        "dependencies": [
+          "31"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Fix all TypeScript errors", "status": "pending"},
-          {"id": 2, "title": "Clean production build verification", "status": "pending"},
-          {"id": 3, "title": "Remove console.logs and dead code", "status": "pending"}
+          {
+            "id": 1,
+            "title": "Fix all TypeScript errors",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Clean production build verification",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Remove console.logs and dead code",
+            "status": "pending",
+            "parentId": "undefined"
+          }
         ]
       },
       {
-        "id": 33,
+        "id": "33",
         "title": "Production README + CLAUDE.md + Meta Tags",
         "description": "Production documentation and SEO.\n\nREADME.md:\n- Hero description + screenshot\n- Tech stack badges\n- Getting started (clone, npm install, npm run dev)\n- Architecture overview\n- Design system reference (token table)\n- Component index\n- Deployment\n\nCLAUDE.md (agent context):\n- File structure\n- Design token convention\n- Component patterns (always use primitives)\n- State store patterns\n- CSS organization guide\n\nMeta tags in layout.tsx:\n- title: 'Harbor Eval Canvas'\n- description: 'Visual AI evaluation creation platform'\n- OG image, Twitter card\n- viewport with initial-scale=1, maximum-scale=1",
         "details": "CLAUDE.md is especially important - it guides future AI agents to maintain the design consistency we've established.",
         "testStrategy": "1. README renders correctly on GitHub\n2. Meta tags appear in page source\n3. OG preview shows correct image/title",
         "status": "pending",
         "priority": "low",
-        "dependencies": [32],
+        "dependencies": [
+          "32"
+        ],
         "subtasks": [
-          {"id": 1, "title": "Production README with all sections", "status": "pending"},
-          {"id": 2, "title": "CLAUDE.md with coding conventions", "status": "pending"},
-          {"id": 3, "title": "Meta tags + OG image in layout.tsx", "status": "pending"}
+          {
+            "id": 1,
+            "title": "Production README with all sections",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "CLAUDE.md with coding conventions",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Meta tags + OG image in layout.tsx",
+            "status": "pending",
+            "parentId": "undefined"
+          }
         ]
       },
       {
-        "id": 34,
+        "id": "34",
         "title": "Vercel Deployment + Production Verification",
         "description": "Deploy to Vercel and verify production.\n\n1. npm run build passes clean\n2. Deploy to Vercel (vercel CLI or GitHub integration)\n3. Verify production URL:\n   - Page loads < 1.5s FCP\n   - All fonts load correctly\n   - Onboarding wizard appears\n   - Canvas renders after onboarding\n   - All 5 tabs work\n   - Mobile layout works\n   - No console errors\n4. Add deployment URL to README",
         "details": "Final production deployment. The app should be publicly accessible and fully functional.\n\nVercel config: default Next.js settings should work. No special vercel.json needed unless issues arise.",
         "testStrategy": "1. Production URL returns 200\n2. Lighthouse score > 90 performance\n3. All interactive flows work end-to-end\n4. Mobile responsive works on real device",
         "status": "pending",
         "priority": "medium",
-        "dependencies": [32, 33],
+        "dependencies": [
+          "32",
+          "33"
+        ],
         "subtasks": [
-          {"id": 1, "title": "npm run build clean", "status": "pending"},
-          {"id": 2, "title": "Deploy to Vercel", "status": "pending"},
-          {"id": 3, "title": "Production verification on live URL", "status": "pending"},
-          {"id": 4, "title": "Add URL to README", "status": "pending"}
+          {
+            "id": 1,
+            "title": "npm run build clean",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Deploy to Vercel",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Production verification on live URL",
+            "status": "pending",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Add URL to README",
+            "status": "pending",
+            "parentId": "undefined"
+          }
         ]
       }
-    ]
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-05-27T21:13:12.480Z",
+      "taskCount": 34,
+      "completedCount": 30,
+      "tags": [
+        "master"
+      ]
+    }
   }
 }

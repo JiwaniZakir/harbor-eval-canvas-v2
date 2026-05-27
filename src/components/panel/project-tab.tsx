@@ -4,17 +4,11 @@ import { useState } from 'react';
 import { Star, Plus } from 'lucide-react';
 import { useProjectStore } from '@/lib/stores/project-store';
 import { useDomainStore } from '@/lib/stores/domain-store';
+import { PROVIDER_COLORS } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import type { Provider } from '@/lib/types';
-
-const PROVIDER_COLORS: Record<Provider, string> = {
-  google: '#4285F4',
-  anthropic: '#D4A574',
-  openai: '#10A37F',
-  meta: '#0064E0',
-};
 
 export function ProjectTab() {
   const project = useProjectStore((s) => s.project);
