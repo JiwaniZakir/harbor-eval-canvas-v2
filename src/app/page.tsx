@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { TopBar } from '@/components/layout/top-bar';
 import { BottomNav } from '@/components/layout/bottom-nav';
 import { DetailPanel } from '@/components/layout/detail-panel';
@@ -22,20 +22,27 @@ const TAB_KEYS: Record<string, TabId> = {
 };
 
 export default function Home() {
+  const [hydrated, setHydrated] = useState(false);
   const project = useProjectStore((s) => s.project);
   const globalState = useUIStore((s) => s.globalState);
   const setGlobalState = useUIStore((s) => s.setGlobalState);
   const setSetupWizardOpen = useUIStore((s) => s.setSetupWizardOpen);
   const setActiveTab = useUIStore((s) => s.setActiveTab);
 
+  // Hydration guard: wait for client-side stores to rehydrate from localStorage
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
   // Initialize state based on project presence
   useEffect(() => {
+    if (!hydrated) return;
     if (project) {
       setGlobalState('canvas_idle');
     } else {
       setGlobalState('empty');
     }
-  }, [project, setGlobalState]);
+  }, [project, setGlobalState, hydrated]);
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -57,9 +64,21 @@ export default function Home() {
     return () => document.removeEventListener('keydown', handler);
   }, [setActiveTab]);
 
+  // Prevent SSR/CSR mismatch flash: show skeleton until hydrated
+  if (!hydrated) {
+    return (
+      <div className="app-layout" style={{ opacity: 0 }}>
+        <div style={{ gridArea: 'topbar', height: 'var(--topbar-height)' }} />
+        <div style={{ gridArea: 'canvas' }} />
+        <div style={{ gridArea: 'panel' }} />
+        <div style={{ gridArea: 'bottomnav', height: 'var(--bottom-height)' }} />
+      </div>
+    );
+  }
+
   return (
     <ErrorBoundary>
-      <div className="app-layout">
+      <div className="app-layout" style={{ animation: 'sd-fadeIn 300ms var(--ease-smooth)' }}>
         <TopBar />
         <CanvasShell />
         <DetailPanel />

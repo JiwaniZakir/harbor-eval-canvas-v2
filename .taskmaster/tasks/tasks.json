@@ -1314,7 +1314,7 @@
         "description": "Production documentation and SEO.\n\nREADME.md:\n- Hero description + screenshot\n- Tech stack badges\n- Getting started (clone, npm install, npm run dev)\n- Architecture overview\n- Design system reference (token table)\n- Component index\n- Deployment\n\nCLAUDE.md (agent context):\n- File structure\n- Design token convention\n- Component patterns (always use primitives)\n- State store patterns\n- CSS organization guide\n\nMeta tags in layout.tsx:\n- title: 'Harbor Eval Canvas'\n- description: 'Visual AI evaluation creation platform'\n- OG image, Twitter card\n- viewport with initial-scale=1, maximum-scale=1",
         "details": "CLAUDE.md is especially important - it guides future AI agents to maintain the design consistency we've established.",
         "testStrategy": "1. README renders correctly on GitHub\n2. Meta tags appear in page source\n3. OG preview shows correct image/title",
-        "status": "pending",
+        "status": "done",
         "priority": "low",
         "dependencies": [
           "32"
@@ -1338,7 +1338,8 @@
             "status": "pending",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-05-27T21:15:44.816Z"
       },
       {
         "id": "34",
@@ -1346,7 +1347,7 @@
         "description": "Deploy to Vercel and verify production.\n\n1. npm run build passes clean\n2. Deploy to Vercel (vercel CLI or GitHub integration)\n3. Verify production URL:\n   - Page loads < 1.5s FCP\n   - All fonts load correctly\n   - Onboarding wizard appears\n   - Canvas renders after onboarding\n   - All 5 tabs work\n   - Mobile layout works\n   - No console errors\n4. Add deployment URL to README",
         "details": "Final production deployment. The app should be publicly accessible and fully functional.\n\nVercel config: default Next.js settings should work. No special vercel.json needed unless issues arise.",
         "testStrategy": "1. Production URL returns 200\n2. Lighthouse score > 90 performance\n3. All interactive flows work end-to-end\n4. Mobile responsive works on real device",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
         "dependencies": [
           "32",
@@ -1377,14 +1378,15 @@
             "status": "pending",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "updatedAt": "2026-05-27T21:15:47.621Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2026-05-27T21:14:45.504Z",
+      "lastModified": "2026-05-27T21:15:47.621Z",
       "taskCount": 34,
-      "completedCount": 32,
+      "completedCount": 34,
       "tags": [
         "master"
       ]
