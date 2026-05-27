@@ -113,6 +113,30 @@ export const useDomainStore = create<DomainStoreState>()(
     }),
     {
       name: 'harbor-domains',
+      version: 1,
+      migrate: (persisted: unknown, version: number) => {
+        if (version === 0 || !version) {
+          // Normalize any invalid domain statuses from old schema
+          const state = persisted as DomainStoreState;
+          const validStatuses = new Set<string>([
+            'untested', 'probe_queued', 'probing', 'probe_complete', 'promoted',
+            'redesign', 'rejected', 'scaffold_queued', 'scaffolding', 'scaffold_complete',
+            'validation_gate', 'gate_passed', 'gate_failed', 'target_sweep',
+            'sweep_complete', 'iterating', 'published', 'ready_to_publish',
+            'calibrating', 'needs_review', 'blocked', 'archived',
+          ]);
+          if (state?.domainStates) {
+            for (const id of DOMAIN_IDS) {
+              const domain = state.domainStates[id];
+              if (domain && !validStatuses.has(domain.status)) {
+                domain.status = 'untested';
+              }
+            }
+          }
+          return state;
+        }
+        return persisted as DomainStoreState;
+      },
     }
   )
 );
