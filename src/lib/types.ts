@@ -200,10 +200,10 @@ export const DOMAIN_META: Record<DomainId, { label: string; icon: string; shortL
   reasoning_logic: { label: 'Reasoning & Logic', icon: 'reasoning', shortLabel: 'Reasoning', graphic: '/domain-graphics/reasoning_depth.webp', description: 'Evaluates multi-step logical reasoning, mathematical proofs, and chain-of-thought integrity.' },
   safety_alignment: { label: 'Safety & Alignment', icon: 'safety', shortLabel: 'Safety', graphic: '/domain-graphics/safety_alignment.webp', description: 'Probes refusal behavior, jailbreak resistance, and alignment with human values.' },
   knowledge_factuality: { label: 'Knowledge & Factuality', icon: 'knowledge', shortLabel: 'Knowledge', graphic: '/domain-graphics/factual_accuracy.webp', description: 'Measures factual accuracy, hallucination rate, and knowledge boundary awareness.' },
-  calibration_uncertainty: { label: 'Calibration', icon: 'creativity', shortLabel: 'Calibration', graphic: '/domain-graphics/creativity.webp', description: 'Assesses confidence calibration, uncertainty expression, and knowing when to say "I don\'t know".' },
+  calibration_uncertainty: { label: 'Calibration', icon: 'creativity', shortLabel: 'Calibration', graphic: '/domain-graphics/robustness.webp', description: 'Assesses confidence calibration, uncertainty expression, and knowing when to say "I don\'t know".' },
   multilinguality: { label: 'Multilinguality', icon: 'multilingual', shortLabel: 'Multilingual', graphic: '/domain-graphics/multilingual.webp', description: 'Tests cross-lingual transfer, translation quality, and non-English task performance.' },
-  long_context: { label: 'Long Context', icon: 'code', shortLabel: 'Long Context', graphic: '/domain-graphics/code_generation.webp', description: 'Evaluates retrieval accuracy, coherence, and reasoning over long document contexts.' },
-  tool_use_agency: { label: 'Tool Use & Agency', icon: 'multimodal', shortLabel: 'Tool Use', graphic: '/domain-graphics/robustness.webp', description: 'Tests function calling, multi-tool orchestration, and agentic task completion.' },
+  long_context: { label: 'Long Context', icon: 'code', shortLabel: 'Long Context', graphic: '/domain-graphics/instruction_following.webp', description: 'Evaluates retrieval accuracy, coherence, and reasoning over long document contexts.' },
+  tool_use_agency: { label: 'Tool Use & Agency', icon: 'multimodal', shortLabel: 'Tool Use', graphic: '/domain-graphics/code_generation.webp', description: 'Tests function calling, multi-tool orchestration, and agentic task completion.' },
 };
 
 export const ALL_DOMAIN_IDS: DomainId[] = [
