@@ -1,19 +1,31 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { ChevronDown, ChevronRight, Settings, Plus, LogOut } from 'lucide-react';
 import { useProjectStore } from '@/lib/stores/project-store';
 import { useUIStore } from '@/lib/stores/ui-store';
 import { DOMAIN_META, PROVIDER_COLORS } from '@/lib/types';
-import type { Provider } from '@/lib/types';
+import { createClient } from '@/lib/supabase/client';
 
 export function TopBar() {
+  const router = useRouter();
   const project = useProjectStore((s) => s.project);
   const focusedDomainId = useUIStore((s) => s.focusedDomainId);
   const dropdownOpen = useUIStore((s) => s.projectDropdownOpen);
   const setDropdownOpen = useUIStore((s) => s.setProjectDropdownOpen);
   const setSetupWizardOpen = useUIStore((s) => s.setSetupWizardOpen);
+  const [signingOut, setSigningOut] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setDropdownOpen(false);
+    router.replace('/login');
+    router.refresh();
+  }
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -62,9 +74,13 @@ export function TopBar() {
                 <Settings size={14} />
                 Settings
               </button>
-              <button className="dropdown-item">
+              <button
+                className="dropdown-item"
+                onClick={handleSignOut}
+                disabled={signingOut}
+              >
                 <LogOut size={14} />
-                Sign Out
+                {signingOut ? 'Signing out…' : 'Sign Out'}
               </button>
             </div>
           )}
