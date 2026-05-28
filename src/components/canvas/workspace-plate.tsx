@@ -238,7 +238,16 @@ export function WorkspacePlate() {
                         {state === 'complete' && <Check size={14} style={{ color: 'var(--status-success)' }} />}
                       </div>
                       {rate !== undefined && (
-                        <span className="fanout-card-rate tabular-nums">{(rate * 100).toFixed(0)}%</span>
+                        <span
+                          className="fanout-card-rate tabular-nums"
+                          style={{
+                            color: rate < 0.3 ? 'var(--status-success)' :
+                              rate < 0.5 ? 'var(--status-warning)' :
+                              'var(--status-error)',
+                          }}
+                        >
+                          {(rate * 100).toFixed(0)}%
+                        </span>
                       )}
                     </div>
                   </Card>
