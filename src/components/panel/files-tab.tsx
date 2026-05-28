@@ -53,7 +53,7 @@ export function FilesTab() {
       {isEmpty ? (
         <div style={{ marginTop: 24 }}>
           <p style={{
-            fontFamily: 'var(--font-figtree)',
+            fontFamily: 'var(--font-inter)',
             fontSize: 13,
             color: 'var(--fg-40)',
             textAlign: 'center',

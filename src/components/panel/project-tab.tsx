@@ -76,7 +76,7 @@ export function ProjectTab() {
       {project?.workflowDescription && (
         <>
           <div className="project-section-header">Workflow</div>
-          <p style={{ fontFamily: 'var(--font-figtree)', fontSize: 13, color: 'var(--fg-60)', lineHeight: 1.5 }}>
+          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: 'var(--fg-60)', lineHeight: 1.5 }}>
             {project.workflowDescription}
           </p>
         </>

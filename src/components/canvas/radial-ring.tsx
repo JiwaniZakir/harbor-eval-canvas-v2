@@ -114,6 +114,19 @@ export function RadialRing() {
             onClick={() => setFocusedDomain(isFocused ? null : domainId)}
           >
             <div className="domain-node-outer">
+              <div className="domain-node-thumb">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={meta.graphic}
+                  alt={meta.label}
+                  className="domain-node-thumb-img"
+                  loading="lazy"
+                  decoding="async"
+                  width={328}
+                  height={195}
+                />
+                <span className="domain-node-thumb-overlay" />
+              </div>
               <div className="domain-node-inner">
                 <NodeStatusIcon status={state.status} />
                 <span className="domain-node-label">{meta.shortLabel}</span>

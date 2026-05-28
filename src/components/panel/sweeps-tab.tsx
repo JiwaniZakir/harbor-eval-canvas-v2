@@ -32,10 +32,10 @@ export function SweepsTab() {
   if (!sweep) {
     return (
       <div style={{ textAlign: 'center', padding: '40px 0' }}>
-        <p style={{ fontFamily: 'var(--font-figtree)', fontSize: 14, color: 'var(--fg-40)' }}>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 14, color: 'var(--fg-40)' }}>
           No sweep results yet
         </p>
-        <p style={{ fontFamily: 'var(--font-figtree)', fontSize: 12, color: 'var(--fg-30)', marginTop: 4 }}>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: 'var(--fg-30)', marginTop: 4 }}>
           Complete validation to see sweep data
         </p>
       </div>

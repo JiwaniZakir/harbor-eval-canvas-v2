@@ -105,7 +105,7 @@ export function AgentTab() {
               textAlign: 'center',
             }}>
               <Bot size={24} style={{ color: 'var(--fg-20)' }} />
-              <p style={{ fontFamily: 'var(--font-figtree)', fontSize: 13, color: 'var(--fg-40)', maxWidth: 260 }}>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: 'var(--fg-40)', maxWidth: 260 }}>
                 {project
                   ? `Ask me anything about evaluating ${project.targetModel.modelName}, or click a domain node to start probing.`
                   : 'Create a project to start chatting with the evaluation agent.'}

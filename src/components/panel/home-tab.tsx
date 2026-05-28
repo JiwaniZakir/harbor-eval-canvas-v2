@@ -109,7 +109,7 @@ export function HomeTab() {
                   cursor: 'pointer',
                   transition: 'background 150ms',
                   fontSize: 12,
-                  fontFamily: 'var(--font-figtree)',
+                  fontFamily: 'var(--font-inter)',
                 }}
                 className="home-domain-item"
               >

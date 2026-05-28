@@ -311,7 +311,7 @@ export function ProjectSetup() {
                             }
                             className=""
                           >
-                            <span style={{ fontSize: 12, fontFamily: 'var(--font-figtree)' }}>
+                            <span style={{ fontSize: 12, fontFamily: 'var(--font-inter)' }}>
                               {opt}
                             </span>
                           </Card>
@@ -345,7 +345,7 @@ export function ProjectSetup() {
               {generatingHypothesis ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: '32px 0' }}>
                   <Spinner size="lg" />
-                  <p style={{ fontFamily: 'var(--font-figtree)', fontSize: 13, color: 'var(--fg-40)' }}>
+                  <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: 'var(--fg-40)' }}>
                     Generating evaluation hypothesis with AI...
                   </p>
                   <div className="wizard-shimmer" />
@@ -357,16 +357,16 @@ export function ProjectSetup() {
                     {hypothesis.hypothesis}
                   </p>
                   <div style={{ marginTop: 12, marginBottom: 12, padding: '12px 16px', background: 'var(--fg-5)', borderRadius: 'var(--radius-md)' }}>
-                    <div style={{ fontFamily: 'var(--font-figtree)', fontWeight: 600, fontSize: 12, color: 'var(--fg-50)', marginBottom: 4 }}>
+                    <div style={{ fontFamily: 'var(--font-inter)', fontWeight: 600, fontSize: 12, color: 'var(--fg-50)', marginBottom: 4 }}>
                       Bad Heuristic
                     </div>
-                    <div style={{ fontFamily: 'var(--font-figtree)', fontSize: 13, color: 'var(--fg-70)', marginBottom: 12 }}>
+                    <div style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: 'var(--fg-70)', marginBottom: 12 }}>
                       {hypothesis.badHeuristic}
                     </div>
-                    <div style={{ fontFamily: 'var(--font-figtree)', fontWeight: 600, fontSize: 12, color: 'var(--fg-50)', marginBottom: 4 }}>
+                    <div style={{ fontFamily: 'var(--font-inter)', fontWeight: 600, fontSize: 12, color: 'var(--fg-50)', marginBottom: 4 }}>
                       Authority Invariant
                     </div>
-                    <div style={{ fontFamily: 'var(--font-figtree)', fontSize: 13, color: 'var(--fg-70)' }}>
+                    <div style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: 'var(--fg-70)' }}>
                       {hypothesis.authorityInvariant}
                     </div>
                   </div>
@@ -380,7 +380,7 @@ export function ProjectSetup() {
                 </>
               ) : (
                 <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                  <p style={{ fontFamily: 'var(--font-figtree)', fontSize: 13, color: 'var(--fg-40)' }}>
+                  <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: 'var(--fg-40)' }}>
                     Could not generate hypothesis. You can still proceed.
                   </p>
                   <Button variant="primary" size="lg" full onClick={handleComplete} style={{ marginTop: 16 }}>

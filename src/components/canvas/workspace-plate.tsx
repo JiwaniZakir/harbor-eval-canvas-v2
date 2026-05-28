@@ -232,7 +232,7 @@ export function WorkspacePlate() {
         {/* Probe Results */}
         {hasProbeResults && (
           <div>
-            <h3 style={{ fontFamily: 'var(--font-figtree)', fontWeight: 600, fontSize: 13, color: 'var(--fg-60)', marginBottom: 8 }}>
+            <h3 style={{ fontFamily: 'var(--font-inter)', fontWeight: 600, fontSize: 13, color: 'var(--fg-60)', marginBottom: 8 }}>
               Probe Results: {domain.probeSummary?.weaknessTitle}
             </h3>
             <div className="fanout-grid">
@@ -298,7 +298,7 @@ export function WorkspacePlate() {
         {/* Scaffold Agents */}
         {domain.scaffoldAgents && domain.scaffoldAgents.length > 0 && (
           <div style={{ marginTop: 16 }}>
-            <h3 style={{ fontFamily: 'var(--font-figtree)', fontWeight: 600, fontSize: 13, color: 'var(--fg-60)', marginBottom: 8 }}>
+            <h3 style={{ fontFamily: 'var(--font-inter)', fontWeight: 600, fontSize: 13, color: 'var(--fg-60)', marginBottom: 8 }}>
               Scaffold Artifacts
             </h3>
             <div className="fanout-grid">
@@ -327,7 +327,7 @@ export function WorkspacePlate() {
         {/* Validation Gates */}
         {domain.validationGates && domain.validationGates.length > 0 && (
           <div style={{ marginTop: 16 }}>
-            <h3 style={{ fontFamily: 'var(--font-figtree)', fontWeight: 600, fontSize: 13, color: 'var(--fg-60)', marginBottom: 8 }}>
+            <h3 style={{ fontFamily: 'var(--font-inter)', fontWeight: 600, fontSize: 13, color: 'var(--fg-60)', marginBottom: 8 }}>
               Validation Gates
             </h3>
             <div className="fanout-grid">
@@ -354,7 +354,7 @@ export function WorkspacePlate() {
         {/* Sweep Results */}
         {domain.sweepSummary && (
           <div style={{ marginTop: 16 }}>
-            <h3 style={{ fontFamily: 'var(--font-figtree)', fontWeight: 600, fontSize: 13, color: 'var(--fg-60)', marginBottom: 8 }}>
+            <h3 style={{ fontFamily: 'var(--font-inter)', fontWeight: 600, fontSize: 13, color: 'var(--fg-60)', marginBottom: 8 }}>
               Sweep Results
             </h3>
             <div style={{ textAlign: 'center', marginBottom: 12 }}>

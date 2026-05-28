@@ -1,21 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Figtree, Inter, JetBrains_Mono, Instrument_Serif, EB_Garamond } from "next/font/google";
+import { Inter, JetBrains_Mono, Space_Grotesk, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-const figtree = Figtree({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-figtree",
-  display: "swap",
-});
-
+// Primary sans (body, UI) — Inter, matching Cofounder's font-sans.
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-inter",
   display: "swap",
 });
 
+// Display / brand font — Space Grotesk, the closest free analog to
+// Cofounder's proprietary TT Neoris geometric display face.
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+// Monospace — JetBrains Mono for code, metrics, terminal-style UI.
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
@@ -23,19 +27,12 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+// Editorial serif — Instrument Serif, used sparingly for accents.
 const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
   weight: ["400"],
   style: ["normal", "italic"],
   variable: "--font-serif",
-  display: "swap",
-});
-
-const ebGaramond = EB_Garamond({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  style: ["normal", "italic"],
-  variable: "--font-garamond",
   display: "swap",
 });
 
@@ -67,23 +64,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${figtree.variable} ${inter.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} ${ebGaramond.variable}`}>
-      <head>
-        <link
-          rel="preload"
-          href="/fonts/Mondwest-Regular.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="/fonts/DepartureMono-Regular.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-      </head>
+    <html
+      lang="en"
+      className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable}`}
+    >
       <body>{children}</body>
     </html>
   );

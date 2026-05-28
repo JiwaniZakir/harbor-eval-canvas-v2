@@ -55,7 +55,7 @@ interface ProbeSummaryCardProps {
 export function ProbeSummaryCard({ summary, onPromote, onRedesign }: ProbeSummaryCardProps) {
   return (
     <div className="chat-card probe-summary-card">
-      <div style={{ fontFamily: 'var(--font-figtree)', fontWeight: 500, fontSize: 13, color: 'var(--fg-70)', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'var(--font-inter)', fontWeight: 500, fontSize: 13, color: 'var(--fg-70)', marginBottom: 10 }}>
         {summary.weaknessTitle}
       </div>
 
@@ -152,7 +152,7 @@ interface IterationCardProps {
 export function IterationCard({ title, diff, onApply, onDismiss }: IterationCardProps) {
   return (
     <div className="chat-card iteration-card">
-      <div style={{ fontFamily: 'var(--font-figtree)', fontWeight: 500, fontSize: 13, color: 'var(--fg-70)', marginBottom: 8 }}>
+      <div style={{ fontFamily: 'var(--font-inter)', fontWeight: 500, fontSize: 13, color: 'var(--fg-70)', marginBottom: 8 }}>
         {title}
       </div>
       <div className="diff-view">
@@ -197,7 +197,7 @@ export function SweepResultCard({ passAtK, taskSlug, trials }: SweepResultCardPr
       <div className="sweep-result-headline" data-result={result}>
         pass@3: {pct}%
       </div>
-      <div style={{ fontFamily: 'var(--font-figtree)', fontSize: 12, color: 'var(--fg-40)', marginBottom: 8 }}>
+      <div style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: 'var(--fg-40)', marginBottom: 8 }}>
         {taskSlug}
       </div>
       {trials.map((t) => (
