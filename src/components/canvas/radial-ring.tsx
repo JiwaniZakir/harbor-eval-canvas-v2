@@ -1,12 +1,12 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Compass, ChevronRight } from 'lucide-react';
+import { Compass } from 'lucide-react';
 import { useDomainStore } from '@/lib/stores/domain-store';
 import { useUIStore } from '@/lib/stores/ui-store';
 import { useProjectStore } from '@/lib/stores/project-store';
 import { ALL_DOMAIN_IDS, DOMAIN_META } from '@/lib/types';
-import type { DomainId, DomainStatus } from '@/lib/types';
+import type { DomainStatus } from '@/lib/types';
 
 const RING_RADIUS = 225;
 const RING_CENTER = 300;
@@ -33,25 +33,6 @@ function getConnectionState(status: DomainStatus): string {
   if (activeStates.includes(status)) return 'animated';
   if (completedStates.includes(status)) return 'active';
   return 'dashed';
-}
-
-function getStatusText(status: DomainStatus): string {
-  switch (status) {
-    case 'untested': return 'Ready';
-    case 'probing': case 'probe_queued': return 'Probing...';
-    case 'probe_complete': return 'Probed';
-    case 'promoted': return 'Promoted';
-    case 'scaffolding': case 'scaffold_queued': return 'Building...';
-    case 'scaffold_complete': return 'Built';
-    case 'validation_gate': return 'Validating';
-    case 'gate_passed': return 'Passed';
-    case 'published': return 'Published';
-    case 'rejected': return 'Failed';
-    case 'redesign': return 'Redesign';
-    case 'iterating': return 'Iterating';
-    case 'target_sweep': case 'sweep_complete': return 'Swept';
-    default: return 'Ready';
-  }
 }
 
 const CIRCUMFERENCE = 2 * Math.PI * 257;
@@ -112,14 +93,13 @@ export function RadialRing() {
         })}
       </svg>
 
-      {/* Domain Nodes - Cofounder-style workspace plates */}
+      {/* Domain Nodes - Cofounder-style pale summary shells */}
       {ALL_DOMAIN_IDS.map((domainId, i) => {
         const pos = getNodePosition(i);
         const state = domainStates[domainId];
         const meta = DOMAIN_META[domainId];
         const isFocused = focusedDomainId === domainId;
         const isDimmed = focusedDomainId !== null && !isFocused;
-        const statusText = getStatusText(state.status);
 
         return (
           <div
@@ -133,16 +113,9 @@ export function RadialRing() {
             onClick={() => setFocusedDomain(isFocused ? null : domainId)}
           >
             <div className="domain-node-outer">
-              {/* Notch bar (dark toolbar) */}
-              <div className="domain-node-notch">
-                <span className="domain-node-notch-dot" />
-                <span className="domain-node-notch-label">{meta.shortLabel}</span>
-                <ChevronRight className="domain-node-notch-caret" />
-              </div>
-
-              {/* Node body with status */}
-              <div className="domain-node-body">
-                <span className="domain-node-status">{statusText}</span>
+              <div className="domain-node-inner">
+                <span className="domain-node-status-dot" />
+                <span className="domain-node-label">{meta.shortLabel}</span>
               </div>
             </div>
           </div>

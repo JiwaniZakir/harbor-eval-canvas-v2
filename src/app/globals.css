@@ -11,14 +11,15 @@
    ---------------------------------------------------------------- */
 
 :root {
-  /* --- Backgrounds (warm off-white scale, matches Cofounder) --- */
+  /* --- Backgrounds (warm off-white scale, pixel-matched to Cofounder) --- */
   --bg-l0: #f1f1ee;
-  --bg-l50: #ebebea;
-  --bg-l100: #e5e5e2;
+  --bg-l50: #f5f5f2;
+  --bg-l100: #fbfbf8;
   --bg-l150: #fcfcf9;
   --bg-l200: #fefefb;
-  --bg-l-neg-50: #fefefd;
-  --bg-screen: #f1f1ee;
+  --bg-l-neg-50: #ecece9;
+  --bg-screen: #f2f2ee;
+  --bg-inverse: #4f4f4f;
 
   /* --- Foreground opacity scale (base #202020, Cofounder convention) --- */
   --fg-3: rgba(32, 32, 32, 0.03);
@@ -87,17 +88,23 @@
   /* Plate shadow */
   --shadow-plate: 0 3px 3px 0 rgba(255,255,255,0.8), 0 -3px 2px 0 rgba(0,0,0,0.03), inset 0 4px 4px 0 rgba(0,0,0,0.015), inset 0 2px 2px 0 rgba(0,0,0,0.005), inset 0 -1px 1px 0 rgba(255,255,255,0.9), inset 0 0 0 1px rgba(0,0,0,0.03);
 
-  /* --- Workspace tokens (Cofounder department-workspace) --- */
-  --ws-glass: rgba(250, 250, 247, 0.75);
+  /* --- Workspace tokens (pixel-matched from Cofounder department-workspace) --- */
+  --ws-glass: #ffffffe6;
   --ws-glass-border: rgba(0, 0, 0, 0.06);
-  --ws-raised: #fefefb;
-  --ws-muted-surface: rgba(241, 241, 238, 0.85);
-  --ws-primary-bg: rgba(238, 238, 232, 0.9);
-  --ws-primary-border: rgba(0, 0, 0, 0.08);
-  --ws-primary-text: rgba(18, 18, 21, 0.92);
+  --ws-raised: #fff;
+  --ws-muted-surface: #ffffffeb;
+  --ws-panel: #fcfcf9fa;
+  --ws-primary-bg: #4f4f4f;
+  --ws-primary-hover: #454545;
+  --ws-primary-border: rgba(0, 0, 0, 0.50);
+  --ws-primary-text: rgba(255, 255, 255, 0.85);
   --ws-accent-soft: rgba(0, 0, 0, 0.04);
-  --ws-grid-line: rgba(0, 0, 0, 0.03);
-  --ws-vignette: radial-gradient(circle at 50% 52%, rgba(241,241,238,0) 0%, rgba(210,210,205,0.15) 65%, rgba(180,180,175,0.25) 100%);
+  --ws-grid-line: #20202009;
+  --ws-vignette: radial-gradient(circle at 50% 52%, #ecece900 0%, #ecece940 39%, #ecece9 90%);
+
+  /* --- Node surface shadow (exact Cofounder match) --- */
+  --shadow-node-surface: 0 0 0 1px rgba(0,0,0,0.05) inset, white 0 -1px 1px 0 inset, 0 2px 2px 0 rgba(0,0,0,0.04) inset, 0 0 0 1px rgba(0,0,0,0.06), white 0 -1px 1px 0, 0 2px 2px rgba(255,255,255,0.8);
+  --shadow-node-surface-hover: 0 0 0 1px rgba(0,0,0,0.05) inset, white 0 -1px 1px 0 inset, 0 2px 2px 0 rgba(0,0,0,0.04) inset, 0 0 0 2px rgba(32,32,32,0.03), 0 8px 18px rgba(32,32,32,0.04);
 
   /* --- Notch bar tokens --- */
   --notch-bg: #3d3d3f;
@@ -109,8 +116,8 @@
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --panel-open-dur: 300ms;
-  --panel-close-dur: 200ms;
+  --panel-open-dur: 400ms;
+  --panel-close-dur: 350ms;
   --panel-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* --- Status Colors --- */
@@ -249,8 +256,8 @@ body::before {
 }
 
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: var(--shadow-node); }
-  50% { box-shadow: var(--shadow-node), 0 0 16px 0 var(--domain-glow, rgba(99, 102, 241, 0.15)); }
+  0%, 100% { box-shadow: var(--shadow-node-surface); }
+  50% { box-shadow: var(--shadow-node-surface), 0 0 0 2px rgba(32,32,32,0.03), 0 8px 18px rgba(32,32,32,0.04); }
 }
 
 @keyframes dotPulse {
@@ -533,13 +540,13 @@ body::before {
 
 .detail-panel {
   grid-area: panel;
-  background: var(--bg-l150);
+  background: var(--bg-l100);
   border-left: 1px solid var(--fg-5);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   box-shadow: inset 1px 0 0 rgba(255,255,255,0.5);
-  animation: panel-slide-in 300ms var(--panel-ease);
+  animation: panel-slide-in var(--panel-open-dur) var(--panel-ease);
 }
 
 /* Panel Tab Strip - Cofounder-style pill switcher */
@@ -552,7 +559,7 @@ body::before {
   gap: 0;
   border-bottom: 1px solid var(--fg-5);
   flex-shrink: 0;
-  background: var(--bg-l150);
+  background: var(--bg-l100);
 }
 
 .panel-tab {
@@ -662,12 +669,12 @@ body::before {
 .btn:active:not(:disabled) { transform: scale(0.98); }
 
 .btn-primary {
-  background: var(--fg-90);
-  color: white;
+  background: var(--bg-inverse);
+  color: var(--ws-primary-text);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-cta-sm);
 }
-.btn-primary:hover:not(:disabled) { background: var(--fg-100); box-shadow: var(--shadow-cta); }
+.btn-primary:hover:not(:disabled) { background: var(--ws-primary-hover); box-shadow: var(--shadow-cta); }
 
 .btn-secondary {
   background: var(--bg-l200);
@@ -966,11 +973,13 @@ body::before {
   filter: drop-shadow(0 0 3px rgba(32,32,32,0.08));
 }
 
-/* --- Domain Nodes: Cofounder-style workspace plates --- */
+/* --- Domain Nodes: Cofounder-style pale summary shells --- */
+/* At canvas zoom, Cofounder nodes are small ~107x33 pale cards with
+   inset shadows, a muted department label, and a tiny status dot.
+   NO dark notch bar at this scale. */
 
 .domain-node {
   position: absolute;
-  width: 108px;
   transform: translate(-50%, -50%);
   cursor: pointer;
   transition: transform 250ms var(--ease-out-expo), opacity 300ms var(--ease-smooth);
@@ -988,7 +997,7 @@ body::before {
 .domain-node:nth-child(10) { animation-delay: 320ms; }
 
 .domain-node:hover {
-  transform: translate(-50%, -50%) translateY(-3px);
+  transform: translate(-50%, -50%) translateY(-2px);
 }
 
 .domain-node:active {
@@ -996,91 +1005,27 @@ body::before {
 }
 
 .domain-node-outer {
-  border-radius: var(--radius-lg);
-  background: var(--bg-l200);
-  overflow: hidden;
-  transition: box-shadow 250ms var(--ease-smooth), transform 200ms var(--ease-smooth);
-  box-shadow: var(--shadow-node);
+  border-radius: var(--radius-md);
+  background: var(--bg-l50);
+  padding: 6px 10px;
+  transition: box-shadow 250ms var(--ease-smooth), background 200ms var(--ease-smooth);
+  box-shadow: var(--shadow-node-surface);
 }
 
 .domain-node:hover .domain-node-outer {
-  box-shadow: var(--shadow-node-hover);
+  box-shadow: var(--shadow-node-surface-hover);
+  background: var(--bg-l100);
 }
 
-/* Notch bar (dark toolbar at top) */
-.domain-node-notch {
+/* Node inner layout */
+.domain-node-inner {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 10px;
-  background: var(--notch-bg);
-  border-bottom: 1px solid var(--notch-border);
-  min-height: 26px;
-}
-
-.domain-node-notch-dot {
-  width: 6px; height: 6px;
-  border-radius: var(--radius-full);
-  flex-shrink: 0;
-  transition: background 300ms var(--ease-smooth);
-}
-
-.domain-node-notch-label {
-  font-weight: 500;
-  font-size: 11px;
-  color: var(--notch-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex: 1;
-  letter-spacing: 0.01em;
-}
-
-.domain-node-notch-caret {
-  width: 14px; height: 14px;
-  color: rgba(255, 255, 255, 0.5);
-  flex-shrink: 0;
-  transition: transform 200ms var(--ease-smooth);
-}
-
-.domain-node:hover .domain-node-notch-caret {
-  transform: translateX(1px);
-}
-
-/* Node body */
-.domain-node-body {
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-height: 42px;
-  background: linear-gradient(180deg, var(--bg-l200) 0%, var(--bg-l150) 100%);
-}
-
-.domain-node-status {
-  font-family: var(--font-departure);
-  font-size: 10px;
-  color: var(--fg-40);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.domain-node-status-icon {
-  width: 10px; height: 10px;
-  flex-shrink: 0;
-}
-
-/* Legacy inner style (for backward compat) */
-.domain-node-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
 }
 
 .domain-node-status-dot {
-  width: 6px; height: 6px;
+  width: 5px; height: 5px;
   border-radius: var(--radius-full);
   background: var(--fg-20);
   flex-shrink: 0;
@@ -1088,19 +1033,30 @@ body::before {
 }
 
 .domain-node-label {
-  font-weight: 500;
+  font-weight: 400;
   font-size: 12px;
-  color: var(--fg-60);
-  text-align: center;
+  color: var(--fg-30);
+  white-space: nowrap;
   line-height: 1.3;
+  transition: color 200ms var(--ease-smooth);
 }
+
+.domain-node:hover .domain-node-label {
+  color: var(--fg-50);
+}
+
+/* Notch bar styles (only used in workspace plate, NOT canvas nodes) */
+.domain-node-notch {
+  display: none;
+}
+.domain-node-notch-dot { display: none; }
+.domain-node-notch-label { display: none; }
+.domain-node-notch-caret { display: none; }
+.domain-node-body { display: none; }
+.domain-node-status { display: none; }
 
 /* --- Domain Node States --- */
 
-.domain-node[data-state='untested'] .domain-node-outer {
-  box-shadow: var(--shadow-node);
-}
-.domain-node[data-state='untested'] .domain-node-notch-dot,
 .domain-node[data-state='untested'] .domain-node-status-dot {
   background: var(--fg-20);
   animation: status-dot-breathe 3s ease-in-out infinite;
@@ -1110,59 +1066,39 @@ body::before {
 .domain-node[data-state='probe_queued'] .domain-node-outer {
   animation: pulseGlow 2.5s ease-in-out infinite;
 }
-.domain-node[data-state='probing'] .domain-node-notch-dot,
-.domain-node[data-state='probe_queued'] .domain-node-notch-dot,
 .domain-node[data-state='probing'] .domain-node-status-dot,
 .domain-node[data-state='probe_queued'] .domain-node-status-dot {
   background: var(--domain-accent);
   animation: dotPulse 1.5s ease-in-out infinite;
 }
 
-.domain-node[data-state='probe_complete'] .domain-node-notch-dot,
 .domain-node[data-state='probe_complete'] .domain-node-status-dot {
   background: var(--domain-accent);
 }
-.domain-node[data-state='probe_complete'] .domain-node-outer {
-  box-shadow: var(--shadow-node), 0 0 0 2px var(--domain-glow);
-}
 
-.domain-node[data-state='promoted'] .domain-node-notch-dot,
 .domain-node[data-state='promoted'] .domain-node-status-dot,
-.domain-node[data-state='gate_passed'] .domain-node-notch-dot,
 .domain-node[data-state='gate_passed'] .domain-node-status-dot {
   background: var(--status-success);
-}
-.domain-node[data-state='promoted'] .domain-node-outer,
-.domain-node[data-state='gate_passed'] .domain-node-outer {
-  box-shadow: var(--shadow-node), 0 0 0 2px rgba(22,163,74,0.12);
 }
 
 .domain-node[data-state='scaffolding'] .domain-node-outer,
 .domain-node[data-state='scaffold_queued'] .domain-node-outer {
   animation: pulseGlow 2.5s ease-in-out infinite;
 }
-.domain-node[data-state='scaffolding'] .domain-node-notch-dot,
-.domain-node[data-state='scaffold_queued'] .domain-node-notch-dot,
 .domain-node[data-state='scaffolding'] .domain-node-status-dot,
 .domain-node[data-state='scaffold_queued'] .domain-node-status-dot {
   background: #3B82F6;
   animation: dotPulse 1.5s ease-in-out infinite;
 }
 
-.domain-node[data-state='scaffold_complete'] .domain-node-notch-dot,
 .domain-node[data-state='scaffold_complete'] .domain-node-status-dot {
   background: #3B82F6;
 }
 
-.domain-node[data-state='validation_gate'] .domain-node-notch-dot,
 .domain-node[data-state='validation_gate'] .domain-node-status-dot {
   background: #8B5CF6;
 }
 
-.domain-node[data-state='published'] .domain-node-outer {
-  box-shadow: var(--shadow-node), 0 0 0 2.5px rgba(34,197,94,0.15), 0 0 12px rgba(34,197,94,0.08);
-}
-.domain-node[data-state='published'] .domain-node-notch-dot,
 .domain-node[data-state='published'] .domain-node-status-dot {
   background: var(--status-success);
   box-shadow: 0 0 6px var(--status-success);
@@ -1170,30 +1106,18 @@ body::before {
 
 .domain-node[data-state='rejected'] .domain-node-outer {
   opacity: 0.7;
-  box-shadow: var(--shadow-node), 0 0 0 2px rgba(220,38,38,0.12);
 }
-.domain-node[data-state='rejected'] .domain-node-notch-dot,
 .domain-node[data-state='rejected'] .domain-node-status-dot {
   background: var(--status-error);
 }
 
-.domain-node[data-state='redesign'] .domain-node-notch-dot,
 .domain-node[data-state='redesign'] .domain-node-status-dot {
   background: var(--status-warning);
 }
 
-.domain-node[data-state='iterating'] .domain-node-outer {
-  border: 2px dashed var(--status-warning);
-}
-.domain-node[data-state='iterating'] .domain-node-notch-dot,
 .domain-node[data-state='iterating'] .domain-node-status-dot {
   background: var(--status-warning);
   animation: dotPulse 1.5s ease-in-out infinite;
-}
-
-.domain-node[data-state='target_sweep'] .domain-node-outer,
-.domain-node[data-state='sweep_complete'] .domain-node-outer {
-  box-shadow: var(--shadow-node), 0 0 0 2px var(--domain-glow);
 }
 
 /* Dimming */
@@ -1201,7 +1125,8 @@ body::before {
 
 /* Focused/selected */
 .domain-node[data-focused='true'] .domain-node-outer {
-  box-shadow: var(--shadow-node), 0 0 0 2.5px color-mix(in srgb, var(--domain-accent, var(--fg-30)) 60%, transparent), 0 0 0 8px color-mix(in srgb, var(--domain-accent, var(--fg-30)) 8%, transparent);
+  box-shadow: var(--shadow-node-surface), 0 0 0 2px rgba(32,32,32,0.03), 0 8px 18px rgba(32,32,32,0.04);
+  background: var(--bg-l100);
 }
 
 /* --- Connection Lines --- */
