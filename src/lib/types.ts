@@ -178,6 +178,8 @@ export interface TargetModel {
 // --- Project ---
 
 export interface Project {
+  /** Postgres row id. Absent for not-yet-persisted projects. */
+  id?: string;
   name: string;
   targetModel: TargetModel;
   workflowDescription?: string;
