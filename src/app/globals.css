@@ -103,8 +103,22 @@
   --ws-vignette: radial-gradient(circle at 50% 52%, #ecece900 0%, #ecece940 39%, #ecece9 90%);
 
   /* --- Node surface shadow (exact Cofounder match) --- */
-  --shadow-node-surface: 0 0 0 1px rgba(0,0,0,0.05) inset, white 0 -1px 1px 0 inset, 0 2px 2px 0 rgba(0,0,0,0.04) inset, 0 0 0 1px rgba(0,0,0,0.06), white 0 -1px 1px 0, 0 2px 2px rgba(255,255,255,0.8);
-  --shadow-node-surface-hover: 0 0 0 1px rgba(0,0,0,0.05) inset, white 0 -1px 1px 0 inset, 0 2px 2px 0 rgba(0,0,0,0.04) inset, 0 0 0 2px rgba(32,32,32,0.03), 0 8px 18px rgba(32,32,32,0.04);
+  /* Pixel-matched from Cofounder canvas departmentNode (2025-05-28 audit) */
+  --shadow-node-surface:
+    rgb(255,255,255) 0 0 0 1px inset,
+    rgba(0,0,0,0.08) 0 0 0 1px,
+    rgba(0,0,0,0.03) 0 0 20px 0,
+    rgba(0,0,0,0.02) 0 36px 28px 0,
+    rgba(0,0,0,0.02) 0 25px 25px 0,
+    rgba(0,0,0,0.02) 0 15px 15px 0;
+  --shadow-node-surface-hover:
+    rgb(255,255,255) 0 0 0 1px inset,
+    rgba(0,0,0,0.10) 0 0 0 1px,
+    rgba(0,0,0,0.05) 0 0 20px 0,
+    rgba(0,0,0,0.03) 0 36px 28px 0,
+    rgba(0,0,0,0.03) 0 25px 25px 0,
+    rgba(0,0,0,0.03) 0 15px 15px 0,
+    rgba(32,32,32,0.04) 0 8px 18px 0;
 
   /* --- Notch bar tokens --- */
   --notch-bg: #3d3d3f;
@@ -1006,7 +1020,7 @@ body::before {
 
 .domain-node-outer {
   border-radius: var(--radius-md);
-  background: var(--bg-l50);
+  background: var(--bg-l100);
   padding: 6px 10px;
   transition: box-shadow 250ms var(--ease-smooth), background 200ms var(--ease-smooth);
   box-shadow: var(--shadow-node-surface);
@@ -1014,7 +1028,7 @@ body::before {
 
 .domain-node:hover .domain-node-outer {
   box-shadow: var(--shadow-node-surface-hover);
-  background: var(--bg-l100);
+  background: var(--bg-l150);
 }
 
 /* Node inner layout */
@@ -1035,14 +1049,31 @@ body::before {
 .domain-node-label {
   font-weight: 400;
   font-size: 12px;
-  color: var(--fg-30);
+  color: var(--fg-30);                     /* inactive/untested = 0.3 */
   white-space: nowrap;
-  line-height: 1.3;
+  line-height: 1.2;
   transition: color 200ms var(--ease-smooth);
 }
 
+/* Active domains (any work started) get foreground-60 like Cofounder */
+.domain-node[data-state='probing'] .domain-node-label,
+.domain-node[data-state='probe_queued'] .domain-node-label,
+.domain-node[data-state='probe_complete'] .domain-node-label,
+.domain-node[data-state='promoted'] .domain-node-label,
+.domain-node[data-state='gate_passed'] .domain-node-label,
+.domain-node[data-state='scaffolding'] .domain-node-label,
+.domain-node[data-state='scaffold_queued'] .domain-node-label,
+.domain-node[data-state='scaffold_complete'] .domain-node-label,
+.domain-node[data-state='validation_gate'] .domain-node-label,
+.domain-node[data-state='published'] .domain-node-label,
+.domain-node[data-state='rejected'] .domain-node-label,
+.domain-node[data-state='redesign'] .domain-node-label,
+.domain-node[data-state='iterating'] .domain-node-label {
+  color: var(--fg-60);
+}
+
 .domain-node:hover .domain-node-label {
-  color: var(--fg-50);
+  color: var(--fg-80);
 }
 
 /* Notch bar styles (only used in workspace plate, NOT canvas nodes) */
@@ -1125,8 +1156,8 @@ body::before {
 
 /* Focused/selected */
 .domain-node[data-focused='true'] .domain-node-outer {
-  box-shadow: var(--shadow-node-surface), 0 0 0 2px rgba(32,32,32,0.03), 0 8px 18px rgba(32,32,32,0.04);
-  background: var(--bg-l100);
+  box-shadow: var(--shadow-node-surface-hover), 0 0 0 2px rgba(32,32,32,0.06);
+  background: var(--bg-l150);
 }
 
 /* --- Connection Lines --- */
