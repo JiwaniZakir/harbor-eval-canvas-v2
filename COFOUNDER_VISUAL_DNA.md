@@ -210,14 +210,29 @@ height: 36px;
 | **PP Mondwest** | Display | 400 | ❌ Need to add |
 | **af** | Brand/custom | 400 | ❌ Need to add |
 
-### Text Styles
-| Context | Font | Size | Weight | Line-height | Color |
-|---------|------|------|--------|-------------|-------|
-| Node label (inactive) | Figtree | 12px | 500 | 1.2 | rgba(32,32,32,0.3) |
-| Node label (active) | Figtree | 12px | 500 | 1.2 | rgba(32,32,32,0.6) |
-| Task title | Figtree | 16px | 500 | 1.3 | #202020 |
-| Button text | Figtree | 14px | 500 | 1.4 | #fff or #202020 |
-| Breadcrumb | Figtree | 12px | 400 | 1.4 | foreground-60 |
+### Text Styles (Complete - 37 unique styles extracted)
+| Context | Font | Size | Weight | Line-height | Letter-spacing | Color |
+|---------|------|------|--------|-------------|----------------|-------|
+| Node label (inactive) | Figtree | 12px | 500 | 1.2 | - | rgba(32,32,32,0.3) |
+| Node label (active) | Figtree | 12px | 500 | 1.2 | - | rgba(32,32,32,0.6) |
+| Task title | Figtree | 16px | 500 | 1.3 | - | #202020 |
+| Button text | Figtree | 14px | 500 | 1.4 | - | #fff or #202020 |
+| Breadcrumb | Figtree | 12px | 400 | 1.4 | - | foreground-60 |
+| Hero heading (login) | ppmondwest | 36px | 400 | 40px | - | - |
+| Section heading | ttNeoris | 24px | 400 | 27.6px | 0.15px | - |
+| Body text | ttNeoris | 15px | 460 | 21px | 0.15px | - |
+| Stage label | departureMono | 9px | 400 | 10.78px | - | - |
+| Counter badge | departureMono | 8px | 500 | 12px | - | - |
+| Inline task name | ttNeoris | 10px | 430 | 10px | 0.1px | - |
+| User task label | ttNeoris | 8px | 400 | 9.4px | 0.08px | - |
+| Code/path | IBM Plex Mono | 9px | 400 | 16px | - | - |
+| Chart axis | IBM Plex Mono | 7px | 400 | 7px | - | - |
+| Tagline | af | 18px | 500 | 28px | - | - |
+| Auth button | af | 12px | 500 | 12px | 0.12px | - |
+| Stat large | ttNeoris | 40px | 400 | 40px | - | - |
+| Percentage delta | departureMono | 8px | 400 | 12px | - | - |
+| Branding footer | ppmondwest | 16px | 500 | 16px | - | - |
+| Terminal text | departureMono | 14.4px | 400 | 20.16px | - | - |
 
 ---
 
@@ -425,3 +440,40 @@ The "notch" is a small floating control at the bottom of each workspace node:
 - **G24**: Brand alignment (Cofounder-specific)
 - **G17**: Review lens component
 - **M1-M8**: Micro polish items
+
+---
+
+## 17. Scrape Coverage & Completeness
+
+### What's Fully Extracted
+| Area | Depth | Data Points |
+|------|-------|-------------|
+| Canvas page DOM | Full computed styles | 2,146 nodes, 277 component variants |
+| Canvas interactions | Hover+click+escape | 5 node sequences filmed |
+| Expanded workspace | Component tree + buttons | 40 elements, 67 buttons |
+| CSS source | Raw text | 583KB main CSS |
+| CSS variables | All declarations | 3,422 vars |
+| Shadow tokens | All | 62 shadow definitions |
+| Animations | Runtime + keyframes | 360 events, 95 @keyframes |
+| Typography | All font faces + usage | 10 families, 37 text styles |
+| Resource tree | All loaded resources | 46 scripts, 13 fonts, 2 images |
+| Login page | Components + styles | 577 components, 37 text styles |
+| HAR capture | Full network | 42MB with embedded content |
+| Playwright trace | DOM snapshot filmstrip | 51MB |
+| Video recording | 30fps interaction | 6.6MB |
+| SSIM baseline | Per-region scoring | 0.9091 overall |
+
+### What's Not Captured (non-blocking)
+| Area | Reason | Impact |
+|------|--------|--------|
+| CofounderNode click | Session expired | Low - setup/onboarding flow |
+| StagingUrlsNode click | Session expired | Low - URL preview only |
+| Task detail view | Session expired | Medium - needed if building task cards |
+| Dropdown menus | Session expired | Low - derivable from CSS vars |
+| Chat/Tasks pages | Different pages entirely | None - not part of canvas |
+
+### Auth Note
+Cofounder uses `_mw_user` httpOnly cookie with ~30 min expiry. Must re-copy from Firefox profile with WAL checkpoint and use `sameSite: "Lax"` in Playwright. Cookie format:
+```json
+{"uid":"...", "os":"done", "slug":"harbor-eval-9fb7cd", "oid":"...", "on":"Harbor Eval", "exp":...}
+```
