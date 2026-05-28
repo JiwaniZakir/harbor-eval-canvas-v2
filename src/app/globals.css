@@ -405,12 +405,11 @@ body::before {
   justify-content: space-between;
   padding: 0 16px;
   height: var(--topbar-height);
-  border-bottom: 1px solid var(--fg-5);
-  background: rgba(241, 241, 238, 0.82);
-  backdrop-filter: blur(16px) saturate(1.2);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid rgba(0,0,0,0.05);  /* #48: --border-5 */
+  background: transparent;  /* #48: transparent like CF */
+  backdrop-filter: blur(12px);  /* #42: T3 blur tier */
+  -webkit-backdrop-filter: blur(12px);
   z-index: 10;
-  box-shadow: var(--shadow-outset-010);
 }
 
 .topbar-left { display: flex; align-items: center; gap: 12px; }
@@ -497,9 +496,17 @@ body::before {
   left: 48px;
   width: 240px;
   background: var(--bg-l200);
-  border: 1px solid var(--fg-8);
+  border: 1px solid rgba(0,0,0,0.05);  /* #55 */
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-outset-150);
+  /* #55: CF --shadow-inset-200 */
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.05) inset,
+    0 -1px 1px 0 #fff inset,
+    0 2px 2px 0 rgba(0,0,0,0.02) inset,
+    0 4px 4px 0 rgba(0,0,0,0.06) inset,
+    0 -3px 2px 0 rgba(0,0,0,0.05),
+    0 3px 3px 0 rgba(255,255,255,0.8);
+  backdrop-filter: blur(12px);  /* #42: glass effect */
+  -webkit-backdrop-filter: blur(12px);
   padding: 4px;
   z-index: 50;
   animation: sd-slideUp 200ms var(--ease-smooth);
@@ -559,6 +566,8 @@ body::before {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  border-radius: 22px 0 0 22px;  /* #54: CF workspace radius */
+  margin: 8px 0 8px 0;  /* breathing room like CF */
   box-shadow: inset 1px 0 0 rgba(255,255,255,0.5);
   animation: panel-slide-in var(--panel-open-dur) var(--panel-ease);
 }
@@ -995,8 +1004,8 @@ body::before {
 .domain-node {
   position: absolute;
   transform: translate(-50%, -50%);
-  cursor: pointer;
-  transition: transform 250ms var(--ease-out-expo), opacity 300ms var(--ease-smooth);
+  cursor: default;  /* inactive by default — #36, #19 */
+  transition: filter 0.22s ease-out, opacity 0.22s ease-out;  /* #66 exact CF timing */
   z-index: 2;
   animation: node-enter 400ms var(--ease-out-expo) backwards;
 }
@@ -1010,26 +1019,20 @@ body::before {
 .domain-node:nth-child(9) { animation-delay: 280ms; }
 .domain-node:nth-child(10) { animation-delay: 320ms; }
 
-.domain-node:hover {
-  transform: translate(-50%, -50%) translateY(-2px);
-}
-
-.domain-node:active {
-  transform: translate(-50%, -50%) translateY(-1px) scale(0.98);
-}
+/* NO hover transforms — Cofounder has zero hover state changes (#37, #8) */
+/* NO :active transforms */
 
 .domain-node-outer {
   border-radius: var(--radius-md);
-  background: var(--bg-l100);
+  background: var(--bg-l50);  /* inactive default: #f5f5f2 (#36) */
   padding: 6px 10px;
-  transition: box-shadow 250ms var(--ease-smooth), background 200ms var(--ease-smooth);
-  box-shadow: var(--shadow-node-surface);
+  transition: box-shadow 0.22s ease-out, background 0.22s ease-out;
+  /* Inactive: flat inset-only shadow (#36) */
+  box-shadow: rgba(0,0,0,0.05) 0px 0px 0px 1px inset,
+    rgb(255,255,255) 0px 0px 0px 0px;
 }
 
-.domain-node:hover .domain-node-outer {
-  box-shadow: var(--shadow-node-surface-hover);
-  background: var(--bg-l150);
-}
+/* NO hover shadow/bg change (#37) */
 
 /* Node inner layout */
 .domain-node-inner {
@@ -1047,15 +1050,55 @@ body::before {
 }
 
 .domain-node-label {
-  font-weight: 400;
+  font-weight: 500;  /* #49: CF uses 500, not 400 */
   font-size: 12px;
   color: var(--fg-30);                     /* inactive/untested = 0.3 */
   white-space: nowrap;
   line-height: 1.2;
-  transition: color 200ms var(--ease-smooth);
+  transition: color 0.22s ease-out;
 }
 
-/* Active domains (any work started) get foreground-60 like Cofounder */
+/* Active domains: elevated shadow, pointer cursor, brighter bg, 0.6 label (#36) */
+.domain-node[data-state='probing'],
+.domain-node[data-state='probe_queued'],
+.domain-node[data-state='probe_complete'],
+.domain-node[data-state='promoted'],
+.domain-node[data-state='gate_passed'],
+.domain-node[data-state='scaffolding'],
+.domain-node[data-state='scaffold_queued'],
+.domain-node[data-state='scaffold_complete'],
+.domain-node[data-state='validation_gate'],
+.domain-node[data-state='published'],
+.domain-node[data-state='rejected'],
+.domain-node[data-state='redesign'],
+.domain-node[data-state='iterating'] {
+  cursor: pointer;  /* active nodes are clickable (#19) */
+}
+
+.domain-node[data-state='probing'] .domain-node-outer,
+.domain-node[data-state='probe_queued'] .domain-node-outer,
+.domain-node[data-state='probe_complete'] .domain-node-outer,
+.domain-node[data-state='promoted'] .domain-node-outer,
+.domain-node[data-state='gate_passed'] .domain-node-outer,
+.domain-node[data-state='scaffolding'] .domain-node-outer,
+.domain-node[data-state='scaffold_queued'] .domain-node-outer,
+.domain-node[data-state='scaffold_complete'] .domain-node-outer,
+.domain-node[data-state='validation_gate'] .domain-node-outer,
+.domain-node[data-state='published'] .domain-node-outer,
+.domain-node[data-state='rejected'] .domain-node-outer,
+.domain-node[data-state='redesign'] .domain-node-outer,
+.domain-node[data-state='iterating'] .domain-node-outer {
+  background: var(--bg-l100);  /* active: #fbfbf8 */
+  /* Active: elevated 6-layer Cofounder shadow (#36) */
+  box-shadow: rgb(255,255,255) 0px 0px 0px 0px,
+    rgba(32,32,32,0.15) 0px 0px 0px 1px,
+    rgba(32,32,32,0.04) 0px 0px 20px 0px,
+    rgba(32,32,32,0.03) 0px 65px 45px 0px,
+    rgba(32,32,32,0.03) 0px 50px 35px 0px,
+    rgba(32,32,32,0.01) 0px 40px 25px 0px;
+}
+
+/* Active domains label: 0.6 opacity (#36) */
 .domain-node[data-state='probing'] .domain-node-label,
 .domain-node[data-state='probe_queued'] .domain-node-label,
 .domain-node[data-state='probe_complete'] .domain-node-label,
@@ -1072,9 +1115,7 @@ body::before {
   color: var(--fg-60);
 }
 
-.domain-node:hover .domain-node-label {
-  color: var(--fg-80);
-}
+/* NO hover label change (#37) */
 
 /* Notch bar styles (only used in workspace plate, NOT canvas nodes) */
 .domain-node-notch {
