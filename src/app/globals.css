@@ -41,10 +41,12 @@
 
   /* --- Typography --- */
   --font-figtree: 'Figtree', system-ui, -apple-system, sans-serif;
+  --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  --font-serif: 'Instrument Serif', Georgia, serif;
   --font-mondwest: 'Mondwest', Georgia, serif;
   --font-departure: 'Departure Mono', 'SF Mono', 'Fira Code', monospace;
   --font-garamond: 'EB Garamond', Georgia, serif;
-  --font-mono: 'Departure Mono', 'SF Mono', 'Fira Code', monospace;
 
   /* --- Layout Spacing --- */
   --topbar-height: 48px;
@@ -1042,11 +1044,18 @@ body::before {
 }
 
 .domain-node-status-dot {
-  width: 5px; height: 5px;
-  border-radius: var(--radius-full);
-  background: var(--fg-20);
+  display: none;  /* replaced by node-status-icon SVG (#38) */
+}
+
+.node-status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
-  transition: background 300ms var(--ease-smooth), box-shadow 300ms var(--ease-smooth);
+  color: var(--fg-30);
+  transition: color 0.22s ease-out;
 }
 
 .domain-node-label {
@@ -1129,8 +1138,8 @@ body::before {
 
 /* --- Domain Node States --- */
 
-.domain-node[data-state='untested'] .domain-node-status-dot {
-  background: var(--fg-20);
+.domain-node[data-state='untested'] .node-status-icon {
+  color: var(--fg-20);
   animation: status-dot-breathe 3s ease-in-out infinite;
 }
 
@@ -1138,58 +1147,55 @@ body::before {
 .domain-node[data-state='probe_queued'] .domain-node-outer {
   animation: pulseGlow 2.5s ease-in-out infinite;
 }
-.domain-node[data-state='probing'] .domain-node-status-dot,
-.domain-node[data-state='probe_queued'] .domain-node-status-dot {
-  background: var(--domain-accent);
-  animation: dotPulse 1.5s ease-in-out infinite;
+.domain-node[data-state='probing'] .node-status-icon,
+.domain-node[data-state='probe_queued'] .node-status-icon {
+  color: var(--domain-accent);
 }
 
-.domain-node[data-state='probe_complete'] .domain-node-status-dot {
-  background: var(--domain-accent);
+.domain-node[data-state='probe_complete'] .node-status-icon {
+  color: var(--domain-accent);
 }
 
-.domain-node[data-state='promoted'] .domain-node-status-dot,
-.domain-node[data-state='gate_passed'] .domain-node-status-dot {
-  background: var(--status-success);
+.domain-node[data-state='promoted'] .node-status-icon,
+.domain-node[data-state='gate_passed'] .node-status-icon {
+  color: var(--status-success);
 }
 
 .domain-node[data-state='scaffolding'] .domain-node-outer,
 .domain-node[data-state='scaffold_queued'] .domain-node-outer {
   animation: pulseGlow 2.5s ease-in-out infinite;
 }
-.domain-node[data-state='scaffolding'] .domain-node-status-dot,
-.domain-node[data-state='scaffold_queued'] .domain-node-status-dot {
-  background: #3B82F6;
-  animation: dotPulse 1.5s ease-in-out infinite;
+.domain-node[data-state='scaffolding'] .node-status-icon,
+.domain-node[data-state='scaffold_queued'] .node-status-icon {
+  color: #3B82F6;
 }
 
-.domain-node[data-state='scaffold_complete'] .domain-node-status-dot {
-  background: #3B82F6;
+.domain-node[data-state='scaffold_complete'] .node-status-icon {
+  color: #3B82F6;
 }
 
-.domain-node[data-state='validation_gate'] .domain-node-status-dot {
-  background: #8B5CF6;
+.domain-node[data-state='validation_gate'] .node-status-icon {
+  color: #8B5CF6;
 }
 
-.domain-node[data-state='published'] .domain-node-status-dot {
-  background: var(--status-success);
-  box-shadow: 0 0 6px var(--status-success);
+.domain-node[data-state='published'] .node-status-icon {
+  color: var(--status-success);
+  filter: drop-shadow(0 0 4px var(--status-success));
 }
 
 .domain-node[data-state='rejected'] .domain-node-outer {
   opacity: 0.7;
 }
-.domain-node[data-state='rejected'] .domain-node-status-dot {
-  background: var(--status-error);
+.domain-node[data-state='rejected'] .node-status-icon {
+  color: var(--status-error);
 }
 
-.domain-node[data-state='redesign'] .domain-node-status-dot {
-  background: var(--status-warning);
+.domain-node[data-state='redesign'] .node-status-icon {
+  color: var(--status-warning);
 }
 
-.domain-node[data-state='iterating'] .domain-node-status-dot {
-  background: var(--status-warning);
-  animation: dotPulse 1.5s ease-in-out infinite;
+.domain-node[data-state='iterating'] .node-status-icon {
+  color: var(--status-warning);
 }
 
 /* Dimming */
@@ -1197,7 +1203,10 @@ body::before {
 
 /* Focused/selected */
 .domain-node[data-focused='true'] .domain-node-outer {
-  box-shadow: var(--shadow-node-surface-hover), 0 0 0 2px rgba(32,32,32,0.06);
+  box-shadow: rgb(255,255,255) 0px 0px 0px 0px,
+    rgba(32,32,32,0.2) 0px 0px 0px 1.5px,
+    rgba(32,32,32,0.05) 0px 0px 24px 0px,
+    rgba(32,32,32,0.04) 0px 65px 45px 0px;
   background: var(--bg-l150);
 }
 

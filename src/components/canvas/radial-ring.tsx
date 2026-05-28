@@ -5,6 +5,7 @@ import { Compass } from 'lucide-react';
 import { useDomainStore } from '@/lib/stores/domain-store';
 import { useUIStore } from '@/lib/stores/ui-store';
 import { useProjectStore } from '@/lib/stores/project-store';
+import { NodeStatusIcon } from './node-status-icon';
 import { ALL_DOMAIN_IDS, DOMAIN_META } from '@/lib/types';
 import type { DomainStatus } from '@/lib/types';
 
@@ -114,7 +115,7 @@ export function RadialRing() {
           >
             <div className="domain-node-outer">
               <div className="domain-node-inner">
-                <span className="domain-node-status-dot" />
+                <NodeStatusIcon status={state.status} />
                 <span className="domain-node-label">{meta.shortLabel}</span>
               </div>
             </div>
