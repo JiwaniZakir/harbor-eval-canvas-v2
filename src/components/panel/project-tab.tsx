@@ -13,20 +13,20 @@ import type { Provider } from '@/lib/types';
 export function ProjectTab() {
   const project = useProjectStore((s) => s.project);
   const resetProject = useProjectStore((s) => s.resetProject);
+  const deleteProject = useProjectStore((s) => s.deleteProject);
   const resetDomains = useDomainStore((s) => s.resetDomains);
   const [confirmDialog, setConfirmDialog] = useState<'reset' | 'delete' | null>(null);
 
   const handleReset = () => {
-    resetProject();
+    // Reset clears domain progress server-side but keeps the project row.
     resetDomains();
     setConfirmDialog(null);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
+    // Hard-delete the project (and its domains via FK cascade) from Postgres.
+    await deleteProject();
     resetProject();
-    resetDomains();
-    localStorage.removeItem('harbor-project');
-    localStorage.removeItem('harbor-domains');
     setConfirmDialog(null);
   };
 

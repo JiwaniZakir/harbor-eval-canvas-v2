@@ -62,25 +62,26 @@ export function ProjectSetup() {
   const setSetupWizardOpen = useUIStore((s) => s.setSetupWizardOpen);
   const setGlobalState = useUIStore((s) => s.setGlobalState);
   const setActiveTab = useUIStore((s) => s.setActiveTab);
-  const setProject = useProjectStore((s) => s.setProject);
+  const createProject = useProjectStore((s) => s.createProject);
   const initializeDomains = useDomainStore((s) => s.initializeDomains);
   const setDomainStatus = useDomainStore((s) => s.setDomainStatus);
   const addMessage = useAgentStore((s) => s.addMessage);
   const addToast = useToastStore((s) => s.addToast);
 
-  const handleComplete = useCallback(() => {
+  const handleComplete = useCallback(async () => {
     if (!model) return;
 
-    // Set project
-    setProject({
+    // Persist the project FIRST so we have its id before writing domains.
+    const created = await createProject({
       name: name || 'Untitled Evaluation',
       targetModel: model,
       workflowDescription: workflow,
       globalProgress: 0,
       createdAt: Date.now(),
     });
+    if (!created) return; // createProject already toasted on failure
 
-    // Initialize domains
+    // Initialize domains (seeds rows server-side using the new project id).
     initializeDomains();
 
     // Set first domain to probe_queued
@@ -104,7 +105,7 @@ export function ProjectSetup() {
       setActiveTab('home');
       setClosing(false);
     }, 400);
-  }, [name, model, workflow, hypothesis, setProject, initializeDomains, setDomainStatus, addMessage, setSetupWizardOpen, setGlobalState, setActiveTab, addToast]);
+  }, [name, model, workflow, hypothesis, createProject, initializeDomains, setDomainStatus, addMessage, setSetupWizardOpen, setGlobalState, setActiveTab, addToast]);
 
   const canContinue = () => {
     switch (step) {

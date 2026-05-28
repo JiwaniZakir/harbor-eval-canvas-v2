@@ -10,6 +10,7 @@ import { CommandPaletteModal } from '@/components/studio/command-palette-modal';
 import { ToastStack } from '@/components/layout/toast-stack';
 import { ErrorBoundary } from '@/components/layout/error-boundary';
 import { useProjectStore } from '@/lib/stores/project-store';
+import { useDomainStore } from '@/lib/stores/domain-store';
 import { useUIStore } from '@/lib/stores/ui-store';
 import type { TabId } from '@/lib/types';
 
@@ -24,15 +25,30 @@ const TAB_KEYS: Record<string, TabId> = {
 export default function Home() {
   const [hydrated, setHydrated] = useState(false);
   const project = useProjectStore((s) => s.project);
+  const hydrateProject = useProjectStore((s) => s.hydrate);
+  const hydrateDomains = useDomainStore((s) => s.hydrate);
   const globalState = useUIStore((s) => s.globalState);
   const setGlobalState = useUIStore((s) => s.setGlobalState);
   const setSetupWizardOpen = useUIStore((s) => s.setSetupWizardOpen);
   const setActiveTab = useUIStore((s) => s.setActiveTab);
 
-  // Hydration guard: wait for client-side stores to rehydrate from localStorage
+  // Hydration: localStorage cache rehydrates synchronously; then we fetch the
+  // authoritative state from Postgres and reconcile (source of truth = DB).
   useEffect(() => {
-    setHydrated(true);
-  }, []);
+    let cancelled = false;
+    (async () => {
+      await hydrateProject();
+      if (cancelled) return;
+      const proj = useProjectStore.getState().project;
+      if (proj?.id) {
+        await hydrateDomains(proj.id);
+      }
+      if (!cancelled) setHydrated(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrateProject, hydrateDomains]);
 
   // Initialize state based on project presence
   useEffect(() => {

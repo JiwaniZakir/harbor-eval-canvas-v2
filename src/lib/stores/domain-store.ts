@@ -13,6 +13,27 @@ import type {
 
 // Re-import as value (not type-only)
 import { ALL_DOMAIN_IDS as DOMAIN_IDS } from '../types';
+import {
+  upsertDomain as upsertDomainAction,
+  listDomains as listDomainsAction,
+  initializeProjectDomains as initDomainsAction,
+} from '../actions/projects';
+import type { UpsertDomainInput } from '../validation/persistence';
+import { useProjectStore } from './project-store';
+import { useToastStore } from './toast-store';
+
+/* ================================================================
+   Domain store — Postgres source of truth, localStorage = cache.
+
+   Per-domain state lives in the `domains` table keyed by
+   (project_id, domain_key). Every mutation:
+     1. applies optimistically to the in-memory map,
+     2. writes through to Supabase via `upsertDomain`,
+     3. on error, rolls back to the prior snapshot and toasts (C4).
+
+   The store API is unchanged so eval-pipeline.ts and the canvas
+   components keep working untouched.
+   ================================================================ */
 
 function createInitialDomain(id: DomainId): DomainState {
   return {
@@ -31,8 +52,18 @@ function createInitialDomains(): Record<DomainId, DomainState> {
   return domains;
 }
 
+function currentProjectId(): string | null {
+  return useProjectStore.getState().project?.id ?? null;
+}
+
+function toast(message: string) {
+  useToastStore.getState().addToast(message, 'error');
+}
+
 interface DomainStoreState {
   domainStates: Record<DomainId, DomainState>;
+  hydrated: boolean;
+
   setDomainStatus: (id: DomainId, status: DomainStatus) => void;
   addArtifact: (id: DomainId, artifact: Artifact) => void;
   setProbeSummary: (id: DomainId, summary: ProbeSummary) => void;
@@ -42,81 +73,114 @@ interface DomainStoreState {
   setDomainProgress: (id: DomainId, progress: number) => void;
   initializeDomains: () => void;
   resetDomains: () => void;
+
+  /** Hydrate domain states for a project from Postgres. */
+  hydrate: (projectId: string) => Promise<void>;
 }
 
 export const useDomainStore = create<DomainStoreState>()(
   persist(
-    (set) => ({
-      domainStates: createInitialDomains(),
+    (set, get) => {
+      /**
+       * C4 core: optimistically mutate one domain, write the changed fields
+       * through to Postgres, and roll back on failure.
+       */
+      const mutate = (
+        id: DomainId,
+        patch: Partial<DomainState>,
+        writePatch: Omit<UpsertDomainInput, 'projectId' | 'domainKey'>,
+      ) => {
+        const prevAll = get().domainStates;
+        const prev = prevAll[id];
+        const next = { ...prev, ...patch };
+        set({ domainStates: { ...prevAll, [id]: next } }); // optimistic
 
-      setDomainStatus: (id, status) =>
-        set((state) => ({
-          domainStates: {
-            ...state.domainStates,
-            [id]: { ...state.domainStates[id], status },
-          },
-        })),
+        const projectId = currentProjectId();
+        if (!projectId) return; // no persisted project yet (offline/new)
 
-      addArtifact: (id, artifact) =>
-        set((state) => ({
-          domainStates: {
-            ...state.domainStates,
-            [id]: {
-              ...state.domainStates[id],
-              artifacts: [...state.domainStates[id].artifacts, artifact],
-            },
-          },
-        })),
+        void (async () => {
+          const res = await upsertDomainAction({
+            projectId,
+            domainKey: id,
+            ...writePatch,
+          });
+          if (!res.ok) {
+            set({ domainStates: { ...get().domainStates, [id]: prev } }); // rollback
+            toast(`Failed to save ${id}: ${res.error}`);
+          }
+        })();
+      };
 
-      setProbeSummary: (id, summary) =>
-        set((state) => ({
-          domainStates: {
-            ...state.domainStates,
-            [id]: { ...state.domainStates[id], probeSummary: summary },
-          },
-        })),
+      return {
+        domainStates: createInitialDomains(),
+        hydrated: false,
 
-      setScaffoldAgents: (id, agents) =>
-        set((state) => ({
-          domainStates: {
-            ...state.domainStates,
-            [id]: { ...state.domainStates[id], scaffoldAgents: agents },
-          },
-        })),
+        setDomainStatus: (id, status) =>
+          mutate(id, { status }, { status }),
 
-      setValidationGates: (id, gates) =>
-        set((state) => ({
-          domainStates: {
-            ...state.domainStates,
-            [id]: { ...state.domainStates[id], validationGates: gates },
-          },
-        })),
+        addArtifact: (id, artifact) => {
+          const artifacts = [...get().domainStates[id].artifacts, artifact];
+          mutate(id, { artifacts }, { artifacts });
+        },
 
-      setSweepSummary: (id, summary) =>
-        set((state) => ({
-          domainStates: {
-            ...state.domainStates,
-            [id]: { ...state.domainStates[id], sweepSummary: summary },
-          },
-        })),
+        setProbeSummary: (id, summary) =>
+          mutate(id, { probeSummary: summary }, { probeSummary: summary }),
 
-      setDomainProgress: (id, progress) =>
-        set((state) => ({
-          domainStates: {
-            ...state.domainStates,
-            [id]: { ...state.domainStates[id], progress },
-          },
-        })),
+        setScaffoldAgents: (id, agents) =>
+          mutate(id, { scaffoldAgents: agents }, { scaffoldAgents: agents }),
 
-      initializeDomains: () => set({ domainStates: createInitialDomains() }),
-      resetDomains: () => set({ domainStates: createInitialDomains() }),
-    }),
+        setValidationGates: (id, gates) =>
+          mutate(id, { validationGates: gates }, { validationGates: gates }),
+
+        setSweepSummary: (id, summary) =>
+          mutate(id, { sweepSummary: summary }, { sweepSummary: summary }),
+
+        setDomainProgress: (id, progress) =>
+          mutate(id, { progress }, { progress }),
+
+        // Reset the in-memory map and seed all rows server-side (idempotent).
+        initializeDomains: () => {
+          set({ domainStates: createInitialDomains() });
+          const projectId = currentProjectId();
+          if (!projectId) return;
+          void (async () => {
+            const res = await initDomainsAction(projectId, DOMAIN_IDS);
+            if (!res.ok) {
+              toast(`Failed to initialize domains: ${res.error}`);
+            }
+          })();
+        },
+
+        resetDomains: () => {
+          set({ domainStates: createInitialDomains() });
+          const projectId = currentProjectId();
+          if (!projectId) return;
+          void (async () => {
+            const res = await initDomainsAction(projectId, DOMAIN_IDS);
+            if (!res.ok) toast(`Failed to reset domains: ${res.error}`);
+          })();
+        },
+
+        hydrate: async (projectId) => {
+          const res = await listDomainsAction(projectId);
+          if (!res.ok) {
+            set({ hydrated: true });
+            return;
+          }
+          const map = createInitialDomains();
+          for (const d of res.data) {
+            map[d.id] = d;
+          }
+          set({ domainStates: map, hydrated: true });
+        },
+      };
+    },
     {
       name: 'harbor-domains',
       version: 1,
+      partialize: (state) => ({ domainStates: state.domainStates }),
       migrate: (persisted: unknown, version: number) => {
         if (version === 0 || !version) {
-          // Normalize any invalid domain statuses from old schema
           const state = persisted as DomainStoreState;
           const validStatuses = new Set<string>([
             'untested', 'probe_queued', 'probing', 'probe_complete', 'promoted',
@@ -137,6 +201,6 @@ export const useDomainStore = create<DomainStoreState>()(
         }
         return persisted as DomainStoreState;
       },
-    }
-  )
+    },
+  ),
 );
