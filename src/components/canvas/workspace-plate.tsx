@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useCallback, useState } from 'react';
-import { X, Check, Play, ArrowRight, RotateCcw } from 'lucide-react';
+import { X, Check, Play, ArrowRight, RotateCcw, Clock, ChevronDown, ChevronRight, Tag } from 'lucide-react';
 import { useUIStore } from '@/lib/stores/ui-store';
 import { useDomainStore } from '@/lib/stores/domain-store';
 import { DOMAIN_META, PIPELINE_STAGES } from '@/lib/types';
@@ -11,6 +11,7 @@ import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
 import { runDomainProbe, runDomainScaffold, runDomainValidation } from '@/lib/eval-pipeline';
+import { DOMAIN_TASKS, type DomainTask } from '@/lib/domain-tasks';
 
 function getPipelineStageState(status: DomainStatus, stageIdx: number): PipelineStageState {
   const completeStages: Record<number, DomainStatus[]> = {
@@ -130,6 +131,17 @@ export function WorkspacePlate() {
   return (
     <div className="workspace-plate" data-domain={focusedDomainId}>
       <div className="workspace-plate-card">
+        {/* Domain Graphic Banner */}
+        <div className="workspace-plate-banner">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={meta.graphic}
+            alt={meta.label}
+            className="workspace-plate-graphic"
+          />
+          <div className="workspace-plate-banner-overlay" />
+        </div>
+
         {/* Header */}
         <div className="workspace-plate-header">
           <span className="workspace-plate-dot" />
@@ -142,6 +154,9 @@ export function WorkspacePlate() {
             <X size={16} />
           </button>
         </div>
+
+        {/* Description */}
+        <p className="workspace-plate-description">{meta.description}</p>
 
         {/* Pipeline Roadmap Strip */}
         <div className="roadmap-strip">
@@ -360,7 +375,120 @@ export function WorkspacePlate() {
             ))}
           </div>
         )}
+
+        {/* Domain Tasks - Cofounder-style detailed task breakdown */}
+        <DomainTaskList domainId={focusedDomainId as DomainId} />
       </div>
+    </div>
+  );
+}
+
+/* ================================================================
+   Task List Component - Cofounder-style expandable task cards
+   ================================================================ */
+
+function DomainTaskList({ domainId }: { domainId: DomainId }) {
+  const tasks = DOMAIN_TASKS[domainId] || [];
+  const [expandedTask, setExpandedTask] = useState<string | null>(null);
+
+  if (tasks.length === 0) return null;
+
+  const totalSubtasks = tasks.reduce((sum, t) => sum + t.subtasks.length, 0);
+  const doneSubtasks = tasks.reduce((sum, t) => sum + t.subtasks.filter(s => s.done).length, 0);
+  const totalMinutes = tasks.reduce((sum, t) => sum + t.estimatedMinutes, 0);
+
+  return (
+    <div style={{ marginTop: 20 }}>
+      <div className="task-list-header">
+        <h3 className="text-heading-sm">Evaluation Tasks</h3>
+        <span className="text-caption" style={{ color: 'var(--fg-35)' }}>
+          {doneSubtasks}/{totalSubtasks} subtasks · ~{totalMinutes} min
+        </span>
+      </div>
+
+      <div className="task-list">
+        {tasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            expanded={expandedTask === task.id}
+            onToggle={() => setExpandedTask(expandedTask === task.id ? null : task.id)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TaskCard({ task, expanded, onToggle }: { task: DomainTask; expanded: boolean; onToggle: () => void }) {
+  const doneCount = task.subtasks.filter(s => s.done).length;
+  const progress = task.subtasks.length > 0 ? (doneCount / task.subtasks.length) * 100 : 0;
+
+  const priorityColor = {
+    critical: 'var(--status-error)',
+    high: 'var(--status-warning)',
+    medium: 'var(--fg-40)',
+    low: 'var(--fg-20)',
+  }[task.priority];
+
+  const stageLabel = {
+    probe: 'Probe',
+    scaffold: 'Scaffold',
+    validate: 'Validate',
+    publish: 'Publish',
+  }[task.stage];
+
+  return (
+    <div className="task-card" data-priority={task.priority}>
+      <div className="task-card-header" onClick={onToggle} style={{ cursor: 'pointer' }}>
+        <div className="task-card-expand">
+          {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+        </div>
+        <div className="task-card-content">
+          <div className="task-card-title-row">
+            <span className="task-card-title">{task.title}</span>
+            <span className="task-card-priority" style={{ color: priorityColor }}>
+              {task.priority}
+            </span>
+          </div>
+          <div className="task-card-meta">
+            <span className="task-card-stage">
+              <Tag size={10} /> {stageLabel}
+            </span>
+            <span className="task-card-time">
+              <Clock size={10} /> {task.estimatedMinutes}m
+            </span>
+            <span className="task-card-progress">
+              {doneCount}/{task.subtasks.length}
+            </span>
+          </div>
+          {/* Progress bar */}
+          <div className="task-card-progress-bar">
+            <div className="task-card-progress-fill" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+      </div>
+
+      {expanded && (
+        <div className="task-card-body">
+          <p className="task-card-description">{task.description}</p>
+          <div className="task-card-subtasks">
+            {task.subtasks.map((sub) => (
+              <label key={sub.id} className="task-card-subtask">
+                <input type="checkbox" defaultChecked={sub.done} className="task-card-checkbox" />
+                <span className="task-card-subtask-label">{sub.label}</span>
+              </label>
+            ))}
+          </div>
+          {task.tags.length > 0 && (
+            <div className="task-card-tags">
+              {task.tags.map((tag) => (
+                <span key={tag} className="task-card-tag">{tag}</span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

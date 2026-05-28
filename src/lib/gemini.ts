@@ -5,12 +5,13 @@
 
 import { GoogleGenAI } from '@google/genai';
 
-const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) {
-  throw new Error('GEMINI_API_KEY environment variable is required');
+function getClient() {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY environment variable is required. Set it in your .env.local or Vercel project settings.');
+  }
+  return new GoogleGenAI({ apiKey });
 }
-
-const ai = new GoogleGenAI({ apiKey });
 
 export const GEMINI_MODEL = 'gemini-2.5-flash';
 
@@ -19,7 +20,7 @@ export async function generateText(
   userPrompt: string,
   options?: { temperature?: number; maxTokens?: number }
 ): Promise<string> {
-  const response = await ai.models.generateContent({
+  const response = await getClient().models.generateContent({
     model: GEMINI_MODEL,
     contents: userPrompt,
     config: {
@@ -37,7 +38,7 @@ export async function* streamText(
   userPrompt: string,
   options?: { temperature?: number; maxTokens?: number }
 ): AsyncGenerator<string> {
-  const response = await ai.models.generateContentStream({
+  const response = await getClient().models.generateContentStream({
     model: GEMINI_MODEL,
     contents: userPrompt,
     config: {
@@ -60,7 +61,7 @@ export async function generateJSON<T>(
   userPrompt: string,
   options?: { temperature?: number }
 ): Promise<T> {
-  const response = await ai.models.generateContent({
+  const response = await getClient().models.generateContent({
     model: GEMINI_MODEL,
     contents: userPrompt,
     config: {

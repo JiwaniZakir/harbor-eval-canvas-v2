@@ -1474,12 +1474,45 @@ body::before {
   animation: zoom 300ms var(--ease-out-expo);
 }
 
+/* Domain Graphic Banner */
+.workspace-plate-banner {
+  position: relative;
+  width: calc(100% + 48px);
+  margin: -24px -24px 16px -24px;
+  height: 160px;
+  overflow: hidden;
+  border-radius: 22px 22px 0 0;
+}
+
+.workspace-plate-graphic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.workspace-plate-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, var(--bg-l-neg-50) 100%);
+  pointer-events: none;
+}
+
+.workspace-plate-description {
+  font-family: var(--font-figtree);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--fg-50);
+  margin-bottom: 16px;
+}
+
 .workspace-plate-header {
   display: flex; align-items: center; gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   position: sticky; top: -24px;
   padding-top: 24px; margin-top: -24px;
-  background: var(--bg-l150);
+  background: var(--bg-l-neg-50);
   z-index: 2;
 }
 
@@ -2435,4 +2468,185 @@ body::before {
   white-space: nowrap;
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   z-index: 3;
+}
+
+/* ================================================================
+   §Sprint7. TASK CARD SYSTEM — Cofounder-style detailed tasks
+   ================================================================ */
+
+.task-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Override the generic .task-card for workspace context */
+.workspace-plate-card .task-card {
+  background: var(--bg-screen);
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.04);
+  overflow: hidden;
+  transition: box-shadow 0.15s ease-out;
+}
+
+.workspace-plate-card .task-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.task-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 14px;
+}
+
+.task-card-expand {
+  color: var(--fg-30);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.task-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.task-card-title {
+  font-family: var(--font-figtree);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg-70);
+  line-height: 1.3;
+}
+
+.task-card-priority {
+  font-family: var(--font-figtree);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.task-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.task-card-stage,
+.task-card-time,
+.task-card-progress {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-figtree);
+  font-size: 11px;
+  color: var(--fg-35);
+}
+
+.task-card-progress-bar {
+  height: 3px;
+  background: rgba(0,0,0,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.task-card-progress-fill {
+  height: 100%;
+  background: var(--domain-accent, var(--fg-40));
+  border-radius: 2px;
+  transition: width 0.3s ease-out;
+}
+
+/* Expanded body */
+.task-card-body {
+  padding: 0 14px 14px 36px;
+}
+
+.task-card-description {
+  font-family: var(--font-figtree);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--fg-45);
+  margin-bottom: 12px;
+}
+
+.task-card-subtasks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.task-card-subtask {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.task-card-checkbox {
+  width: 14px;
+  height: 14px;
+  margin-top: 1px;
+  accent-color: var(--fg-60);
+  flex-shrink: 0;
+}
+
+.task-card-subtask-label {
+  font-family: var(--font-figtree);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--fg-50);
+}
+
+.task-card-subtask:has(.task-card-checkbox:checked) .task-card-subtask-label {
+  text-decoration: line-through;
+  color: var(--fg-25);
+}
+
+.task-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.task-card-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--fg-35);
+  background: rgba(0,0,0,0.04);
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+}
+
+/* Priority left border accent */
+.task-card[data-priority='critical'] {
+  border-left: 3px solid var(--status-error);
+}
+.task-card[data-priority='high'] {
+  border-left: 3px solid var(--status-warning);
 }

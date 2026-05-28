@@ -195,15 +195,15 @@ export interface ActivityItem {
 
 // --- Domain Metadata (display info) ---
 
-export const DOMAIN_META: Record<DomainId, { label: string; icon: string; shortLabel: string }> = {
-  instruction_following: { label: 'Instruction Following', icon: 'instruction', shortLabel: 'Instruction' },
-  reasoning_logic: { label: 'Reasoning & Logic', icon: 'reasoning', shortLabel: 'Reasoning' },
-  safety_alignment: { label: 'Safety & Alignment', icon: 'safety', shortLabel: 'Safety' },
-  knowledge_factuality: { label: 'Knowledge & Factuality', icon: 'knowledge', shortLabel: 'Knowledge' },
-  calibration_uncertainty: { label: 'Calibration', icon: 'creativity', shortLabel: 'Calibration' },
-  multilinguality: { label: 'Multilinguality', icon: 'multilingual', shortLabel: 'Multilingual' },
-  long_context: { label: 'Long Context', icon: 'code', shortLabel: 'Long Context' },
-  tool_use_agency: { label: 'Tool Use & Agency', icon: 'multimodal', shortLabel: 'Tool Use' },
+export const DOMAIN_META: Record<DomainId, { label: string; icon: string; shortLabel: string; graphic: string; description: string }> = {
+  instruction_following: { label: 'Instruction Following', icon: 'instruction', shortLabel: 'Instruction', graphic: '/domain-graphics/instruction_following.webp', description: 'Tests whether the model follows complex, multi-part instructions accurately and completely.' },
+  reasoning_logic: { label: 'Reasoning & Logic', icon: 'reasoning', shortLabel: 'Reasoning', graphic: '/domain-graphics/reasoning_depth.webp', description: 'Evaluates multi-step logical reasoning, mathematical proofs, and chain-of-thought integrity.' },
+  safety_alignment: { label: 'Safety & Alignment', icon: 'safety', shortLabel: 'Safety', graphic: '/domain-graphics/safety_alignment.webp', description: 'Probes refusal behavior, jailbreak resistance, and alignment with human values.' },
+  knowledge_factuality: { label: 'Knowledge & Factuality', icon: 'knowledge', shortLabel: 'Knowledge', graphic: '/domain-graphics/factual_accuracy.webp', description: 'Measures factual accuracy, hallucination rate, and knowledge boundary awareness.' },
+  calibration_uncertainty: { label: 'Calibration', icon: 'creativity', shortLabel: 'Calibration', graphic: '/domain-graphics/creativity.webp', description: 'Assesses confidence calibration, uncertainty expression, and knowing when to say "I don\'t know".' },
+  multilinguality: { label: 'Multilinguality', icon: 'multilingual', shortLabel: 'Multilingual', graphic: '/domain-graphics/multilingual.webp', description: 'Tests cross-lingual transfer, translation quality, and non-English task performance.' },
+  long_context: { label: 'Long Context', icon: 'code', shortLabel: 'Long Context', graphic: '/domain-graphics/code_generation.webp', description: 'Evaluates retrieval accuracy, coherence, and reasoning over long document contexts.' },
+  tool_use_agency: { label: 'Tool Use & Agency', icon: 'multimodal', shortLabel: 'Tool Use', graphic: '/domain-graphics/robustness.webp', description: 'Tests function calling, multi-tool orchestration, and agentic task completion.' },
 };
 
 export const ALL_DOMAIN_IDS: DomainId[] = [
