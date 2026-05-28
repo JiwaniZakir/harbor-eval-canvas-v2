@@ -2132,3 +2132,106 @@ body::before {
   .bottom-nav { padding-bottom: env(safe-area-inset-bottom); }
   .toast-stack { bottom: calc(24px + env(safe-area-inset-bottom)); }
 }
+
+/* ================================================================
+   §Sprint4. ADDITIONAL VISUAL PARITY FIXES
+   ================================================================ */
+
+/* #70/#33: Missing foreground opacity stops */
+:root {
+  --fg-35: rgba(32,32,32,0.35);
+  --fg-45: rgba(32,32,32,0.45);
+  --fg-72: rgba(32,32,32,0.72);
+  --fg-55: rgba(32,32,32,0.55);
+  --fg-65: rgba(32,32,32,0.65);
+  --fg-85: rgba(32,32,32,0.85);
+  --fg-90: rgba(32,32,32,0.90);
+  --fg-95: rgba(32,32,32,0.95);
+}
+
+/* #65: Color-mix focus rings for interactive elements */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fg-100) 6%, transparent);
+}
+
+/* #62: Agent avatar shadow */
+.agent-avatar {
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06),
+    0 2px 4px rgba(0,0,0,0.06),
+    0 0 12px rgba(0,0,0,0.03);
+}
+
+/* #29: Background overlay on nodes (double bg layer) */
+.domain-node-outer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+
+/* #28: White inset ring shadow overlay */
+.domain-node-outer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.8),
+    inset 0 0 0 0.5px rgba(255,255,255,0.6);
+  pointer-events: none;
+}
+
+/* Enable pseudo-elements on domain-node-outer */
+.domain-node-outer {
+  position: relative;
+}
+
+/* #11: Letter spacing for micro badges */
+.badge {
+  letter-spacing: 0.04em;
+}
+
+/* #15: Diagonal gradient shine overlay on workspace cards */
+.workspace-plate-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.05) 30%, transparent 55%);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}
+.workspace-plate-card {
+  position: relative;
+}
+
+/* #12/#69: Pixel drift animation */
+@keyframes pixelDrift {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(var(--drift-x, 2px), var(--drift-y, -1px)); }
+  50% { transform: translate(var(--drift-x2, -1px), var(--drift-y2, 2px)); }
+  75% { transform: translate(var(--drift-x3, 1px), var(--drift-y3, -2px)); }
+}
+
+.pixel-drift {
+  animation: pixelDrift var(--drift-dur, 8s) ease-in-out infinite;
+}
+
+/* #67: Progress ring styling */
+.progress-ring {
+  transform: rotate(-90deg);
+}
+.progress-ring-track {
+  fill: none;
+  stroke: rgba(32,32,32,0.06);
+  stroke-width: 3;
+}
+.progress-ring-fill {
+  fill: none;
+  stroke: var(--domain-accent, var(--fg-40));
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease-out;
+}
