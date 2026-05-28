@@ -466,11 +466,61 @@ The "notch" is a small floating control at the bottom of each workspace node:
 ### What's Not Captured (non-blocking)
 | Area | Reason | Impact |
 |------|--------|--------|
-| CofounderNode click | Session expired | Low - setup/onboarding flow |
-| StagingUrlsNode click | Session expired | Low - URL preview only |
-| Task detail view | Session expired | Medium - needed if building task cards |
-| Dropdown menus | Session expired | Low - derivable from CSS vars |
+| ~~CofounderNode click~~ | ✅ Captured | Adds `?tab=cofounder`, opens setup panel inline |
+| ~~StagingUrlsNode click~~ | ✅ Captured | No navigation, stays on canvas |
+| ~~Task detail view~~ | ✅ Captured | Inline expansion, 88 buttons, 2 inputs |
+| ~~Dropdown menus~~ | ✅ Captured | 2 menu types, tooltip styles |
+| ~~Tooltips~~ | ✅ Captured | Dark tooltip + popover styles |
 | Chat/Tasks pages | Different pages entirely | None - not part of canvas |
+
+### Additional Findings (Final 5% Scrape)
+
+**Node Count Update**: 21 total nodes on canvas (was seeing fewer before due to viewport):
+- 1 cofounderNode, 8 departmentNodes, 5 departmentWorkspaceHomeNodes, 6 departmentWorkspaceNodes, 1 stagingUrlsNode
+
+**CofounderNode Click**: Adds `?tab=cofounder` query param, opens setup panel inline (no modal/navigation).
+
+**StagingUrlsNode**: 260×173 node, click does nothing visible (no modal, no navigation).
+
+**Tooltip Styles** (2 types):
+```css
+/* Dark tooltip (icon buttons) */
+background: rgb(32, 32, 32);
+color: rgb(255, 255, 255);
+font-size: 12px;
+border-radius: 8px;
+padding: 8px 12px;
+box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 8px 0px;
+
+/* Popover tooltip (workspace cards) */
+background: transparent;
+color: rgb(32, 32, 32);
+font-size: 16px;
+border-radius: 6px;
+/* Recents list with task items */
+```
+
+**Input Styles** (from task detail):
+```css
+/* Text input */
+background: transparent;
+border: 1px solid rgba(0, 0, 0, 0.2);
+border-radius: 6px;
+font-size: 14px;
+padding: 4px 12px;
+height: 36px;
+placeholder: "https://staging.example.com";
+```
+
+**Additional Typography** (from workspace):
+```
+h2  32px  fw=400  ttNeoris     "Your projects."
+h3  15px  fw=600  Figtree      "Landing page"
+h2  14px  fw=400  IBM Plex Mono "Marketing Dashboard"
+h2  34px  fw=400  ttNeoris     "Create the next..."
+h3  16px  fw=500  Figtree      "Sales Roadmap"
+h3  17px  fw=500  Figtree      "Nothing needs your review"
+```
 
 ### Auth Note
 Cofounder uses `_mw_user` httpOnly cookie with ~30 min expiry. Must re-copy from Firefox profile with WAL checkpoint and use `sameSite: "Lax"` in Playwright. Cookie format:
