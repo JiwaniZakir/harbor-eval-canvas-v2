@@ -7,11 +7,13 @@ import { DatasetsPanel } from './datasets-panel';
 import { RubricBuilder } from './rubric-builder';
 import { RunsList } from './runs-list';
 import { RunDetail } from './run-detail';
+import { ModelCompareView } from './model-compare';
 
 const TABS: { id: EvalTab; label: string }[] = [
   { id: 'datasets', label: 'Datasets' },
   { id: 'rubrics', label: 'Rubrics' },
   { id: 'runs', label: 'Runs' },
+  { id: 'compare', label: 'Compare' },
 ];
 
 export function EvalDrawer() {
@@ -66,6 +68,7 @@ export function EvalDrawer() {
                 ) : (
                   <RunsList projectId={projectId} />
                 ))}
+              {tab === 'compare' && <ModelCompareView projectId={projectId} />}
             </div>
           </>
         )}

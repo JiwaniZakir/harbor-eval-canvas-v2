@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 
-export type EvalTab = 'datasets' | 'rubrics' | 'runs';
+export type EvalTab = 'datasets' | 'rubrics' | 'runs' | 'compare';
 
 interface EvalUIStore {
   open: boolean;
