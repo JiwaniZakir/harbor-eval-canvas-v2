@@ -3,9 +3,9 @@
  *
  * A rubric is a weighted set of scorers. Evaluating a case runs every scorer,
  * computes the weighted aggregate score in [0,1], and decides pass/fail by the
- * weighted-mean meeting each scorer's threshold contribution.
+ * weighted mean meeting the average per-scorer threshold.
  */
-import { getScorer } from './scorers';
+import { getScorer, getScorerThreshold } from './scorers';
 import type { ScoreResult } from './scorers/types';
 import { callModel, type ModelCallResult } from './model';
 
@@ -57,27 +57,21 @@ export async function evaluateResponse(
   let totalWeight = 0;
 
   for (const sc of rubric.scorers) {
-    const scorer = getScorer(sc.scorerId);
+    const scorer = getScorer(sc.scorerId, sc.config);
     if (!scorer) continue;
     const weight = sc.weight > 0 ? sc.weight : 1;
-    const result = await scorer.score({
-      input: caseInput.input,
-      expected: caseInput.expected,
-      response,
-      config: sc.config,
-    });
+    const result = await scorer.score(caseInput.input, caseInput.expected ?? '', response);
     breakdown.push({ ...result, scorerId: sc.scorerId, weight });
     weightedSum += result.score * weight;
     totalWeight += weight;
   }
 
   const score = totalWeight > 0 ? weightedSum / totalWeight : 0;
-  // Pass if the weighted aggregate meets the average threshold.
   const avgThreshold =
-    rubric.scorers.reduce((acc, sc) => {
-      const scorer = getScorer(sc.scorerId);
-      return acc + (sc.threshold ?? scorer?.defaultThreshold ?? 0.5);
-    }, 0) / Math.max(1, rubric.scorers.length);
+    rubric.scorers.reduce(
+      (acc, sc) => acc + (sc.threshold ?? getScorerThreshold(sc.scorerId)),
+      0,
+    ) / Math.max(1, rubric.scorers.length);
   const passed = score >= avgThreshold;
 
   const rationale = breakdown
@@ -140,7 +134,7 @@ export function summarize(results: CaseResult[]): RunSummary {
 
 /**
  * Execute a rubric over a list of cases with bounded concurrency.
- * onProgress is invoked after each case completes (for the run queue / D8).
+ * onCaseDone is invoked after each case completes (for the run queue / D8).
  */
 export async function executeRun(
   rubric: Rubric,
@@ -168,7 +162,9 @@ export async function executeRun(
     }
   }
 
-  await Promise.all(Array.from({ length: Math.min(concurrency, cases.length) }, worker));
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, cases.length) }, worker),
+  );
   const filtered = results.filter(Boolean);
   return { results: filtered, summary: summarize(filtered) };
 }

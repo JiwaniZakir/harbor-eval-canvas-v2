@@ -57,13 +57,13 @@ export async function createRubric(
   }
 }
 
-export async function deleteRubric(rubricId: string): Promise<ActionResult> {
+export async function deleteRubric(rubricId: string): Promise<ActionResult<null>> {
   const { supabase } = await requireUser();
   try {
     const { error } = await supabase.from('rubrics').delete().eq('id', rubricId);
     if (error) throw error;
     revalidatePath('/');
-    return { ok: true };
+    return { ok: true, data: null };
   } catch (e) {
     return { ok: false, error: (e as Error).message };
   }

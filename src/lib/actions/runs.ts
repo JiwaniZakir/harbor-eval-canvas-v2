@@ -67,19 +67,19 @@ export async function getRunCases(runId: string): Promise<ActionResult<RunCaseRo
   }
 }
 
-export async function setBaseline(runId: string, isBaseline: boolean): Promise<ActionResult> {
+export async function setBaseline(runId: string, isBaseline: boolean): Promise<ActionResult<null>> {
   const { supabase } = await requireUser();
   try {
     const { error } = await supabase.from('runs').update({ is_baseline: isBaseline }).eq('id', runId);
     if (error) throw error;
     revalidatePath('/');
-    return { ok: true };
+    return { ok: true, data: null };
   } catch (e) {
     return { ok: false, error: (e as Error).message };
   }
 }
 
-export async function cancelRun(runId: string): Promise<ActionResult> {
+export async function cancelRun(runId: string): Promise<ActionResult<null>> {
   const { supabase } = await requireUser();
   try {
     const { error } = await supabase
@@ -89,7 +89,7 @@ export async function cancelRun(runId: string): Promise<ActionResult> {
       .in('status', ['queued', 'running']);
     if (error) throw error;
     revalidatePath('/');
-    return { ok: true };
+    return { ok: true, data: null };
   } catch (e) {
     return { ok: false, error: (e as Error).message };
   }

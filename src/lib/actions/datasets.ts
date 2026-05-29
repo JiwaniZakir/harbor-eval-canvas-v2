@@ -117,13 +117,13 @@ export async function addCases(
   }
 }
 
-export async function deleteDataset(datasetId: string): Promise<ActionResult> {
+export async function deleteDataset(datasetId: string): Promise<ActionResult<null>> {
   const { supabase } = await requireUser();
   try {
     const { error } = await supabase.from('datasets').delete().eq('id', datasetId);
     if (error) throw error;
     revalidatePath('/');
-    return { ok: true };
+    return { ok: true, data: null };
   } catch (e) {
     return { ok: false, error: (e as Error).message };
   }
