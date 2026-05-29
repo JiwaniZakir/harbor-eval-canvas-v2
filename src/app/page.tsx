@@ -7,6 +7,7 @@ import { DetailPanel } from '@/components/layout/detail-panel';
 import { CanvasShell } from '@/components/canvas/canvas-shell';
 import { ProjectSetup } from '@/components/studio/project-setup';
 import { CommandPaletteModal } from '@/components/studio/command-palette-modal';
+import { EvalDrawer } from '@/components/eval/eval-drawer';
 import { ToastStack } from '@/components/layout/toast-stack';
 import { ErrorBoundary } from '@/components/layout/error-boundary';
 import { useProjectStore } from '@/lib/stores/project-store';

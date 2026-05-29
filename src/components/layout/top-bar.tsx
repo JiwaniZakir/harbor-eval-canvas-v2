@@ -2,10 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronDown, ChevronRight, Settings, Plus, LogOut, Download, Upload } from 'lucide-react';
+import { ChevronDown, ChevronRight, Settings, Plus, LogOut, Download, Upload, FlaskConical } from 'lucide-react';
 import { useProjectStore } from '@/lib/stores/project-store';
 import { useDomainStore } from '@/lib/stores/domain-store';
 import { useUIStore } from '@/lib/stores/ui-store';
+import { useEvalUIStore } from '@/lib/stores/eval-ui-store';
 import { useToastStore } from '@/lib/stores/toast-store';
 import { DOMAIN_META, PROVIDER_COLORS } from '@/lib/types';
 import { createClient } from '@/lib/supabase/client';
@@ -20,6 +21,7 @@ export function TopBar() {
   const dropdownOpen = useUIStore((s) => s.projectDropdownOpen);
   const setDropdownOpen = useUIStore((s) => s.setProjectDropdownOpen);
   const setSetupWizardOpen = useUIStore((s) => s.setSetupWizardOpen);
+  const openEvals = useEvalUIStore((s) => s.openTo);
   const addToast = useToastStore((s) => s.addToast);
   const [signingOut, setSigningOut] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -190,6 +192,16 @@ export function TopBar() {
             </span>
           </div>
         )}
+
+        <button
+          className="topbar-evals"
+          onClick={() => openEvals('runs')}
+          aria-label="Open evaluations"
+          title="Evaluations"
+        >
+          <FlaskConical size={14} />
+          <span>Evaluations</span>
+        </button>
 
         <button className="topbar-settings" aria-label="Settings">
           <Settings size={18} />
