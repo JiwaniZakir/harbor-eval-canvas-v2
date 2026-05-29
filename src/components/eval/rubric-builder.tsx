@@ -157,10 +157,10 @@ function CreateRubricModal({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} title="New rubric" size="lg">
+    <Dialog open={open} onClose={onClose} title="New rubric">
       <div className="eval-form">
+        <label className="field-label">Name</label>
         <Input
-          label="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Correctness + format"

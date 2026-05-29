@@ -165,10 +165,10 @@ function CreateDatasetModal({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} title="New dataset" size="lg">
+    <Dialog open={open} onClose={onClose} title="New dataset">
       <div className="eval-form">
+        <label className="field-label">Name</label>
         <Input
-          label="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Instruction-following probes"

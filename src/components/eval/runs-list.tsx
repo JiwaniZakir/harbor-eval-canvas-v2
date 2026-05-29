@@ -76,11 +76,10 @@ export function RunsList({ projectId }: { projectId: string }) {
   async function diff(run: RunRow) {
     const res = await regressionVsBaseline(run.id);
     if (res.ok) {
-      addToast({
-        title: 'Regression vs baseline',
-        description: `${res.data.regressions} regressions, ${res.data.improvements} improvements, Δavg ${res.data.deltaAvg.toFixed(3)}`,
-        variant: res.data.regressions > 0 ? 'error' : 'success',
-      });
+      addToast(
+        `Regression vs baseline: ${res.data.regressions} regressions, ${res.data.improvements} improvements, Δavg ${res.data.deltaAvg.toFixed(3)}`,
+        res.data.regressions > 0 ? 'error' : 'success',
+      );
     } else {
       addToast(`Diff failed — ${res.error}`, 'error');
     }
@@ -229,7 +228,7 @@ function RunLauncherModal({
     const res = await startRun({ projectId, datasetId, rubricId, models: modelList, isBaseline });
     setBusy(false);
     if (res.ok) {
-      addToast({ title: `Run started (${res.data.runIds.length} model(s))`, variant: 'success' });
+      addToast(`Run started (${res.data.runIds.length} model(s))`, 'success');
       onLaunched();
     } else {
       addToast(`Run failed to start — ${res.error}`, 'error');
@@ -237,7 +236,7 @@ function RunLauncherModal({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} title="New evaluation run" size="md">
+    <Dialog open={open} onClose={onClose} title="New evaluation run">
       <div className="eval-form">
         <label className="field-label">Dataset</label>
         <select className="input" value={datasetId} onChange={(e) => setDatasetId(e.target.value)}>
@@ -259,8 +258,8 @@ function RunLauncherModal({
           ))}
         </select>
 
+        <label className="field-label">Models (comma-separated for multi-model compare)</label>
         <Input
-          label="Models (comma-separated for multi-model compare)"
           value={models}
           onChange={(e) => setModels(e.target.value)}
           placeholder="gemini-2.5-flash, gemini-2.5-pro"

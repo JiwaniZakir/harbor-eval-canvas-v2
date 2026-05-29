@@ -35,6 +35,12 @@ export interface RunCaseRow {
   latency_ms: number | null;
   cost_usd: number | null;
   scorer_rationale: string | null;
+  scorer_breakdown?: Array<{
+    scorerId: string;
+    score: number;
+    weight: number;
+    rationale?: string;
+  }> | null;
 }
 
 export async function listRuns(projectId: string): Promise<ActionResult<RunRow[]>> {
