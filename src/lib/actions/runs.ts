@@ -109,14 +109,23 @@ export async function startRun(
   const { supabase, user } = await requireUser();
 
   try {
-    // Load rubric + cases once.
-    const { data: rubricRow, error: rErr } = await supabase
-      .from('rubrics')
-      .select('scorers')
-      .eq('id', parsed.data.rubricId)
-      .single();
-    if (rErr || !rubricRow) throw rErr ?? new Error('Rubric not found');
-    const rubric: Rubric = { scorers: rubricRow.scorers };
+    // Load rubric scorers + cases once.
+    const { data: scorerRows, error: rErr } = await supabase
+      .from('rubric_scorers')
+      .select('scorer_type, weight, config, position')
+      .eq('rubric_id', parsed.data.rubricId)
+      .order('position', { ascending: true });
+    if (rErr) throw rErr;
+    if (!scorerRows || scorerRows.length === 0) throw new Error('Rubric has no scorers');
+    const rubric: Rubric = {
+      scorers: scorerRows.map((s) => ({
+        scorerId: s.scorer_type,
+        weight: Number(s.weight),
+        config: s.config ?? {},
+        threshold:
+          typeof s.config?.threshold === 'number' ? (s.config.threshold as number) : undefined,
+      })),
+    };
 
     const { data: caseRows, error: cErr } = await supabase
       .from('dataset_cases')
@@ -160,12 +169,16 @@ export async function startRun(
               run_id: run.id,
               dataset_case_id: result.caseId ?? null,
               input: result.input,
+              prompt: result.input,
               response: result.response,
               score: result.score,
               passed: result.passed,
               latency_ms: result.latencyMs,
               cost_usd: result.costUsd,
               scorer_rationale: result.rationale,
+              scorer_breakdown: result.breakdown,
+              prompt_tokens: result.inputTokens,
+              completion_tokens: result.outputTokens,
             });
             await supabase.from('runs').update({ completed_cases: completed }).eq('id', run.id);
           },
